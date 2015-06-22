@@ -1,0 +1,7 @@
+<?php 
+$config['dbHostname']='';
+$config['dbUsername']='';
+$config['dbPassword']='';
+$config['dbDatabase']='';
+$config['emailFrom']='';
+?>
