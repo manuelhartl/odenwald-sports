@@ -1,5 +1,3 @@
-<html>
-<body>
 	<form name="register" action="index.php" method="post">
 		<input name="action" type="hidden" value="register-save" />
 		<table>
@@ -22,5 +20,3 @@
 			</tr>
 		</table>
 	</form>
-</body>
-</html>

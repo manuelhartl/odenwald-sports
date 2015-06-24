@@ -24,6 +24,19 @@ function getTourObject($row) {
 	array_push ( $tourObj->attendees, new User () );
 	return $tourObj;
 }
+function insertTour($pdo, Tour $tour) {
+	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description) VALUES(?,?,?,?,?)" );
+	if (! ex2er ( $stmt, array (
+			$tour->guide->id,
+			$tour->startDateTime,
+			$tour->duration,
+			$tour->meetingPoint,
+			$tour->description
+	) )) {
+		return false;
+	}
+	return true;
+}
 function getAttendees($pdo, $tourid) {
 	$stmt = $pdo->prepare ( "select user.id as id, user.username as username from tour_attendee left join user ON (fk_user_id=user.id) where fk_tour_id = ?" );
 	if (! ex2er ( $stmt, array (
@@ -32,6 +45,26 @@ function getAttendees($pdo, $tourid) {
 		return false;
 	}
 	return $stmt->fetchAll ( PDO::FETCH_ASSOC );
+}
+function tourJoin($pdo, $userid, $tourid) {
+	$stmt = $pdo->prepare ( "insert into tour_attendee (fk_user_id,fk_tour_id) VALUES(?,?)" );
+	if (! ex2er ( $stmt, array (
+			$userid,
+			$tourid 
+	) )) {
+		return false;
+	}
+	return true;
+}
+function tourLeave($pdo, $userid, $tourid) {
+	$stmt = $pdo->prepare ( "delete from tour_attendee where fk_user_id = ? and fk_tour_id = ?" );
+	if (! ex2er ( $stmt, array (
+			$userid,
+			$tourid 
+	) )) {
+		return false;
+	}
+	return true;
 }
 
 ?>

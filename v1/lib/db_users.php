@@ -14,7 +14,11 @@ function checkAuth($pdo, $userName, $password) {
 			$userName 
 	) );
 	$user = $stmt->fetch ( PDO::FETCH_OBJ );
-	return password_verify ( $password, $user->hashedpassword );
+	if ($user) {
+		return password_verify ( $password, $user->hashedpassword );
+	} else {
+		return false;
+	}
 }
 function registerUser($pdo, $username, $hashedpassword, $email) {
 	$stmt = $pdo->prepare ( "insert into user (username, hashedpassword, email, status, register_date) VALUES (?,?,?,'registered',now())" );
@@ -54,7 +58,7 @@ function activate($pdo, $token) {
 	)) )) {
 		return false;
 	}
-	return $stmt->rowCount()>0;
+	return $stmt->rowCount () > 0;
 }
 
 ?>

@@ -6,7 +6,7 @@
 		<td>Beschreibung</td>
 		<td>Guide</td>
 		<td>Teilnehmer</td>
-		<td>Funktionen</td>
+		<td><a href="?action=tour-new">Neue Tour</a></td>
 	</tr>
 <?php
 require_once 'lib/global.php';

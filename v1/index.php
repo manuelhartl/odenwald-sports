@@ -1,6 +1,14 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Touren</title>
+<link href="pages/default.css" rel="stylesheet" type="text/css">
+</head>
+<body>
 <?php
 require_once 'lib/global.php';
 require_once 'lib/db_users.php';
+require_once 'lib/db_tours.php';
 require_once 'lib/users.php';
 function setPage($page) {
 	$_SESSION ['page'] = $page;
@@ -13,10 +21,10 @@ function getPage() {
 }
 
 $pdo = db_open ();
-
+$input;
 // work on form inputs
-if (array_key_exists ( 'action', $_POST )) {
-	switch ($_POST ['action']) {
+if (array_key_exists ( 'action', $_REQUEST )) {
+	switch ($_REQUEST ['action']) {
 		case 'login' :
 			$userName = $_POST ['username'];
 			$password = $_POST ['password'];
@@ -26,6 +34,7 @@ if (array_key_exists ( 'action', $_POST )) {
 				echo "logged in";
 			} else {
 				setPage ( "login" );
+				$input ['username'] = $userName;
 				echo "login failed";
 			}
 			break;
@@ -67,9 +76,20 @@ if (array_key_exists ( 'action', $_POST )) {
 			sendActivationMail ( $userName, $token, $email );
 			setPage ( "register-save" );
 			break;
+		case 'tour-new' :
+			setPage ( 'tour-new' );
+			break;
+		case 'tour-save' :
+			echo "tour saved";
+			setPage ( 'home' );
+			break;
 		case 'tour-join' :
+			$tourid = $_POST ['tourid'];
+			tourJoin ( $pdo, authUser ()->id, $tourid );
 			break;
 		case 'tour-leave' :
+			$tourid = $_POST ['tourid'];
+			tourLeave ( $pdo, authUser ()->id, $tourid );
 			break;
 		default :
 			die ();
@@ -80,6 +100,7 @@ if (! hasAuth () && getPage () != "login" && getPage () != "register" && getPage
 	echo "not logged in";
 	die ();
 }
+echo '<div id="main">';
 switch (getPage ()) {
 	default :
 	case "login" :
@@ -94,10 +115,15 @@ switch (getPage ()) {
 		require_once 'pages/register-save.php';
 		break;
 	case "home" :
-		require_once 'pages/tours.php';
-		include 'pages/logout.php';
+		require_once 'pages/tour-list.php';
+		require_once 'pages/logout.php';
+		break;
+	case "tour-new" :
+		require_once 'pages/tour-new.php';
+		require_once 'pages/logout.php';
 		break;
 }
+echo '</div>';
 /*
  * echo "<pre>";
  * print_r ( $_SESSION );
@@ -105,5 +131,6 @@ switch (getPage ()) {
  * print_r ( $_POST );
  * echo "</pre>";
  */
-
 ?>
+</body>
+</html>
