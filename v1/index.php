@@ -68,6 +68,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$userName = strtolower ( $_POST ['username'] );
 			$password = $_POST ['password'];
 			$email = $_POST ['email'];
+			$input ['username'] = $userName;
+			$input ['email'] = $email;
 			// validate
 			if (strlen ( $userName ) < 3) {
 				setMessage ( 'username must be at least 3 characters' );
@@ -79,6 +81,16 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			}
 			if (! filter_var ( $email, FILTER_VALIDATE_EMAIL )) {
 				setMessage ( 'email not valid' );
+				break;
+			}
+			// check if email already registered
+			if (userExists ( $pdo, $userName )) {
+				setMessage ( $userName . ' already registered' );
+				break;
+			}
+			// check if name is already registered
+			if (emailExists ( $pdo, $email )) {
+				setMessage ( $email . ' is already registered' );
 				break;
 			}
 			// register

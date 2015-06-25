@@ -20,6 +20,22 @@ function checkAuth($pdo, $userName, $password) {
 		return false;
 	}
 }
+function userExists($pdo, $userName) {
+	$stmt = $pdo->prepare ( 'select username from user where username=?' );
+	$stmt->execute ( array (
+			$userName 
+	) );
+	$stmt->fetch ( PDO::FETCH_OBJ );
+	return $stmt->rowCount () > 0;
+}
+function emailExists($pdo, $email) {
+	$stmt = $pdo->prepare ( 'select email from user where email=?' );
+	$stmt->execute ( array (
+			$email 
+	) );
+	$stmt->fetch ( PDO::FETCH_OBJ );
+	return $stmt->rowCount () > 0;
+}
 function registerUser($pdo, $username, $hashedpassword, $email) {
 	$stmt = $pdo->prepare ( "insert into user (username, hashedpassword, email, status, register_date) VALUES (?,?,?,'registered',now())" );
 	if (! ex2er ( $stmt, (array (
