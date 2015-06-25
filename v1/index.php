@@ -43,7 +43,7 @@ $input;
 if (array_key_exists ( 'action', $_REQUEST )) {
 	switch ($_REQUEST ['action']) {
 		case 'login' :
-			$userName = $_POST ['username'];
+			$userName = strtolower ( $_POST ['username'] );
 			$password = $_POST ['password'];
 			if (checkAuth ( $pdo, $userName, $password )) {
 				login ( $pdo, $userName );
@@ -65,7 +65,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			break;
 		case 'register-save' :
 			setPage ( "register" );
-			$userName = $_POST ['username'];
+			$userName = strtolower ( $_POST ['username'] );
 			$password = $_POST ['password'];
 			$email = $_POST ['email'];
 			// validate
