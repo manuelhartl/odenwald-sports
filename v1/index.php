@@ -137,7 +137,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 
 if (! hasAuth () && getPage () != "login" && getPage () != "register" && getPage () != "register-save") {
 	echo "not logged in";
-	die ();
+	setPage('login');
 }
 require_once 'pages/navigation.php';
 echo '<div id="main">';
