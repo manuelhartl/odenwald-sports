@@ -99,6 +99,16 @@ input[type=submit],a {
 	-moz-user-select: none;
 }
 
+input[value=Anmelden] {
+	background-color: #00bb00;
+}
+
+input[value=Abmelden] {
+	background-color: #bb0000;
+}
+
+
+
 tr,td,table {
 	padding: 3px;
 	margin: 3px;
