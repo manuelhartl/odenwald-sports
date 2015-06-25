@@ -13,7 +13,18 @@
 		</tr>
 		<tr>
 			<td>Datum/Uhrzeit</td>
-			<td><input type="text" name="startdate" value="" /></td>
+			<td>
+				<div class="row">
+					<div class='col-sm-6'>
+						<input type='text' class="form-control" id='startdate' name="startdate" />
+					</div>
+					<script type="text/javascript">
+            $(function () {
+                $('#startdate').datetimepicker();
+            });
+        </script>
+				</div>
+			</td>
 		</tr>
 		<tr>
 			<td>Dauer (Minuten)</td>
@@ -23,7 +34,7 @@
 			<td></td>
 			<td><input type="submit" value="Speichern" /></td>
 		</tr>
-		</table>
+	</table>
 </form>
 
 <?php

@@ -1,6 +1,6 @@
 <table>
 	<tr>
-		<td>id</td>
+		<!-- <td>id</td>  -->
 		<td>Datum</td>
 		<td>Treffpunkt</td>
 		<td>Beschreibung</td>
@@ -19,8 +19,8 @@ $authuserid = authUser ()->id;
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$tour = getTourObject ( $row );
 	echo "<tr>";
-	echo "<td>" . $tour->id . "</td>";
-	echo "<td>" . $tour->startDateTime . "</td>";
+	// echo "<td>" . $tour->id . "</td>";
+	echo "<td>" . substr ( $tour->startDateTime, 1, 15 ) . "</td>";
 	echo "<td>" . $tour->meetingPoint . "</td>";
 	echo "<td>" . $tour->description . "</td>";
 	echo "<td>" . $tour->guide->username . "</td>";

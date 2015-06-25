@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2015 at 09:49 PM
+-- Generation Time: Jun 25, 2015 at 08:43 PM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -43,8 +43,10 @@ CREATE TABLE IF NOT EXISTS `tour` (
   `startdate` datetime NOT NULL,
   `duration` smallint(6) NOT NULL,
   `meetingpoint` varchar(250) COLLATE utf8_bin NOT NULL,
-  `description` text COLLATE utf8_bin NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  `description` text COLLATE utf8_bin NOT NULL,
+  `adddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -69,8 +71,9 @@ CREATE TABLE IF NOT EXISTS `user` (
   `hashedpassword` varchar(100) COLLATE utf8_bin NOT NULL,
   `email` varchar(200) COLLATE utf8_bin NOT NULL,
   `status` enum('registered','verified') COLLATE utf8_bin NOT NULL,
-  `register_date` datetime NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  `register_date` datetime NOT NULL,
+  `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Indexes for dumped tables
@@ -108,12 +111,12 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `tour`
 --
 ALTER TABLE `tour`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT;
 --
 -- Constraints for dumped tables
 --

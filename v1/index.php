@@ -1,10 +1,24 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Tours">
+<meta name="author" content="Manuel Hartl">
 <title>Touren</title>
-<link href="pages/default.css" rel="stylesheet" type="text/css">
+<link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+<!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
+<link href="css/bootstrap-datetimepicker.css" rel="stylesheet"
+	type="text/css">
+<link href="css/default.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/moment.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
 </head>
 <body>
+	<div class="container">
 <?php
 require_once 'lib/global.php';
 require_once 'lib/db_users.php';
@@ -19,6 +33,9 @@ function getPage() {
 	}
 	return $_SESSION ['page'];
 }
+function setMessage($message) {
+	echo '<div id="message">' . $message . '</div>';
+}
 
 $pdo = db_open ();
 $input;
@@ -31,11 +48,11 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			if (checkAuth ( $pdo, $userName, $password )) {
 				login ( $pdo, $userName );
 				setPage ( "home" );
-				echo "logged in";
+				setMessage ( 'logged in' );
 			} else {
 				setPage ( "login" );
 				$input ['username'] = $userName;
-				echo "login failed";
+				setMessage ( 'login failed' );
 			}
 			break;
 		case 'logout' :
@@ -53,15 +70,15 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$email = $_POST ['email'];
 			// validate
 			if (strlen ( $userName ) < 3) {
-				echo "username must be at least 3 characters";
+				setMessage ( 'username must be at least 3 characters' );
 				break;
 			}
 			if (strlen ( $password ) < 6) {
-				echo "password must be at least 6 characters";
+				setMessage ( 'password must be at least 6 characters"' );
 				break;
 			}
 			if (! filter_var ( $email, FILTER_VALIDATE_EMAIL )) {
-				echo "email not valid";
+				setMessage ( 'email not valid' );
 				break;
 			}
 			// register
@@ -70,7 +87,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$userId = registerUser ( $pdo, $userName, $hashedPassword, $email );
 			if (! $userId) {
 				print_r ( $pdo->errorInfo () );
-				echo "registering not successful";
+				setMessage ( 'registering not successful' );
 			}
 			addActivationToken ( $pdo, $userId, $token );
 			sendActivationMail ( $userName, $token, $email );
@@ -81,6 +98,13 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			break;
 		case 'tour-save' :
 			echo "tour saved";
+			$tour = new Tour ();
+			$tour->guide = authUser ();
+			$tour->description = $_REQUEST ['description'];
+			$tour->duration = $_REQUEST ['duration'];
+			$tour->meetingPoint = $_REQUEST ['meetingpoint'];
+			$tour->startDateTime = $_REQUEST ['startdate'];
+			insertTour ( $pdo, $tour );
 			setPage ( 'home' );
 			break;
 		case 'tour-join' :
@@ -91,6 +115,9 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$tourid = $_POST ['tourid'];
 			tourLeave ( $pdo, authUser ()->id, $tourid );
 			break;
+		case 'home' :
+			setPage ( 'home' );
+			break;
 		default :
 			die ();
 	}
@@ -100,6 +127,7 @@ if (! hasAuth () && getPage () != "login" && getPage () != "register" && getPage
 	echo "not logged in";
 	die ();
 }
+require_once 'pages/navigation.php';
 echo '<div id="main">';
 switch (getPage ()) {
 	default :
@@ -132,5 +160,6 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
+</div>
 </body>
 </html>
