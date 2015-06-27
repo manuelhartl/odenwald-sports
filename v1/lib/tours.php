@@ -22,7 +22,9 @@ function mailNewTour($pdo, $tour) {
 '<tr><td>Wo ? </td><td>' . $tour->meetingPoint . '</td>' . //
 '<tr><td>Was ? </td><td>' . $tour->description . '</td>' . //
 '<tr><td>Wie lange ? </td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //
-'</table>';
+'</table>' . //
+'<a href="'.getUrlPrefix() . '/index.php?action=tour-list">Touren auflisten</a>' //
+;
 	
 	$stmt = $pdo->prepare ( "select username,email from user WHERE status='verified' ORDER BY username ASC" );
 	$stmt->execute ( array () );

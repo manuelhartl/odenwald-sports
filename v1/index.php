@@ -212,6 +212,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						mailCancelTour ( $pdo, $tour );
 						setMessage ( 'tour abgesagt' );
 						break;
+					case 'tour-list' :
 					case 'home' :
 						setPage ( 'home' );
 						break;
