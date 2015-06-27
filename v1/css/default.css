@@ -1,6 +1,6 @@
 #login {
 	position: fixed;
-	top: 50%;
+	top: 25%;
 	left: 40%;
 }
 
@@ -109,6 +109,15 @@ input[value=Abmelden] {
 
 input[value=Logout] {
 	background-color: #aa0000;
+}
+
+input[value=Login] {
+	float: right;
+}
+
+input[value=Register] {
+	margin-left: auto;
+	margin-right: auto;
 }
 
 tr, td, th, table {

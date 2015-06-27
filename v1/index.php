@@ -58,6 +58,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			break;
 		case 'logout' :
 			session_destroy ();
+			unset($_SESSION);
 			setMessage ( 'logged out' );
 			setPage ( "login" );
 			break;
@@ -205,7 +206,9 @@ if (! hasAuth () && getPage () != "login" && getPage () != "register" && getPage
 	echo "not logged in";
 	setPage ( 'login' );
 }
-require_once 'pages/navigation.php';
+if (hasAuth ()) {
+	require_once 'pages/navigation.php';
+}
 echo '<div id="main">';
 switch (getPage ()) {
 	default :

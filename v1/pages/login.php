@@ -13,17 +13,14 @@
 				<td><input name="password" type="password" /></td>
 			</tr>
 			<tr>
-				<td></td>
-				<td><input id="submit" name="submit" type="submit" value="Login" /></td>
+				<td colspan="2"><input id="submit" name="submit" type="submit"
+					value="Login" /></td>
 			</tr>
 		</table>
 	</form>
-	or
+	<br><hr>
 	<form name="register" action="index.php" method="post">
-		<input name="action" type="hidden" value="register" />
-		<tr>
-			<td><input id="submit" name="submit" type="submit" value="Register" /></td>
-		</tr>
-		</table>
+		<input name="action" type="hidden" value="register" /> <input
+			id="submit" name="submit" type="submit" value="Register" />
 	</form>
 </div>
