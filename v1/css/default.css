@@ -1,60 +1,23 @@
-#login {
-	position: fixed;
-	top: 25%;
-	left: 40%;
-}
-
-#logout {
-	position: fixed;
-	top: 0px;
-	left: 0px;
-}
-
-#navigation {
-	position: absolute;
-	left: 0px;
-	top: 100px;
-}
-
-#main {
-	position: absolute;
-	left: 200px;
-	top: 100px;
-}
-
 #message {
-	position: fixed;
-	top: 0px;
-	left: 50%;
 	color: red;
 }
 
 input[type=submit], a {
 	background-color: #31B0D5;
 	background-image: none;
-	border-bottom-color: #269ABC;
+	border-width: 1px;
+	border-color: #111111;
+	border-style: solid;
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
 	border-collapse: collapse;
 	border-image-outset: 0 0 0 0;
 	border-image-repeat: stretch stretch;
 	border-image-slice: 100% 100% 100% 100%;
 	border-image-source: none;
-	border-image-width: 1 1 1 1;
-	border-left-color: #269ABC;
-	border-left-style: solid;
-	border-left-width: 1px;
-	border-right-color: #269ABC;
-	border-right-style: solid;
-	border-right-width: 1px;
 	border-spacing: 0px 0px;
-	border-top-color: #269ABC;
 	border-top-left-radius: 6px;
 	border-top-right-radius: 6px;
-	border-top-style: solid;
-	border-top-width: 1px;
 	box-sizing: border-box;
 	color: #FFF;
 	cursor: pointer;
@@ -63,8 +26,6 @@ input[type=submit], a {
 	font-feature-settings: normal;
 	font-kerning: auto;
 	font-language-override: normal;
-	font-size: 18px;
-	font-size-adjust: none;
 	font-stretch: normal;
 	font-style: normal;
 	font-synthesis: weight style;
@@ -75,16 +36,15 @@ input[type=submit], a {
 	font-variant-ligatures: normal;
 	font-variant-numeric: normal;
 	font-variant-position: normal;
-	font-weight: 400;
 	line-height: 24px;
 	margin-bottom: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
 	margin-top: 0px;
-	padding-bottom: 10px;
-	padding-left: 16px;
-	padding-right: 16px;
-	padding-top: 10px;
+	padding-bottom: 5px;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 5px;
 	text-align: center;
 	text-decoration: none;
 	text-decoration-color: #FFF;
@@ -118,6 +78,11 @@ input[value=Login] {
 input[value=Register] {
 	margin-left: auto;
 	margin-right: auto;
+}
+
+
+th {
+ background-color: #eeeeee;	
 }
 
 tr, td, th, table {

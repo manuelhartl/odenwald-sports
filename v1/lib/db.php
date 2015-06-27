@@ -11,9 +11,12 @@ function fromDbmsDate($datetimeString) {
 	return DateTime::createFromFormat ( "Y-m-d H:i:s", $datetimeString );
 }
 function ex2er($stmt, $params) {
+	global $config;
 	$result = $stmt->execute ( $params );
 	if (! $result) {
-		print_r ( $stmt->errorInfo () );
+		if (array_key_exists ( 'debug', $config ) && ($config ['debug'])) {
+			print_r ( $stmt->errorInfo () );
+		}
 	}
 	return $result;
 }

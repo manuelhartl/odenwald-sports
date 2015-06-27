@@ -18,7 +18,7 @@
 <script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
 </head>
 <body>
-	<div class="container">
+	<div class="container-fluid">
 <?php
 require_once 'lib/global.php';
 require_once 'lib/db_users.php';
@@ -34,8 +34,9 @@ function getPage() {
 	}
 	return $_SESSION ['page'];
 }
-function setMessage($message) {
-	echo '<div id="message">' . $message . '</div>';
+$_SESSION ['message'] = '';
+function setMessage($msg) {
+	$_SESSION ['message'] = $msg;
 }
 
 $pdo = db_open ();
@@ -58,7 +59,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			break;
 		case 'logout' :
 			session_destroy ();
-			unset($_SESSION);
+			unset ( $_SESSION );
 			setMessage ( 'logged out' );
 			setPage ( "login" );
 			break;
@@ -177,10 +178,12 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 					case 'tour-join' :
 						$tourid = $_POST ['tourid'];
 						tourJoin ( $pdo, authUser ()->id, $tourid );
+						setMessage ( 'tour joined' );
 						break;
 					case 'tour-leave' :
 						$tourid = $_POST ['tourid'];
 						tourLeave ( $pdo, authUser ()->id, $tourid );
+						setMessage ( 'left tour' );
 						break;
 					case 'tour-cancel' :
 						$tourid = $_POST ['tourid'];
@@ -206,9 +209,17 @@ if (! hasAuth () && getPage () != "login" && getPage () != "register" && getPage
 	echo "not logged in";
 	setPage ( 'login' );
 }
+echo '<div class="row">';
 if (hasAuth ()) {
+	echo '<div class="col-md-2">';
 	require_once 'pages/navigation.php';
+	echo '</div>';
 }
+echo '<div class="col-md-1">';
+echo '<div id="message">' . $_SESSION ['message'] . '</div>';
+echo '</div>';
+echo '</div>';
+
 echo '<div id="main">';
 switch (getPage ()) {
 	default :
@@ -225,12 +236,10 @@ switch (getPage ()) {
 		break;
 	case "home" :
 		require_once 'pages/tour-list.php';
-		require_once 'pages/logout.php';
 		break;
 	case "tour-edit" :
 	case "tour-new" :
 		require_once 'pages/tour-new-edit.php';
-		require_once 'pages/logout.php';
 		break;
 }
 echo '</div>';
