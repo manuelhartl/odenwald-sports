@@ -17,7 +17,7 @@ function mailNewTour($pdo, $tour) {
 '<tr><td>Wie lange ? </td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //
 '</table>';
 	
-	$stmt = $pdo->prepare ( "select username,email from user WHERE status='registered' ORDER BY username ASC" );
+	$stmt = $pdo->prepare ( "select username,email from user WHERE status='verified' ORDER BY username ASC" );
 	$stmt->execute ( array () );
 	while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		sendmail ( $row ['email'], $subject, $text );

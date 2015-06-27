@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2015 at 08:43 PM
+-- Generation Time: Jun 27, 2015 at 03:01 AM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -45,7 +45,8 @@ CREATE TABLE IF NOT EXISTS `tour` (
   `meetingpoint` varchar(250) COLLATE utf8_bin NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
   `adddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` enum('active','canceled') COLLATE utf8_bin NOT NULL DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
