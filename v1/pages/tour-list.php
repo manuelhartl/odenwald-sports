@@ -3,6 +3,7 @@
 		<!-- <td>id</td>  -->
 		<th>Datum</th>
 		<th>Treffpunkt</th>
+		<th>Entfernung zum B&ouml;lle</th>
 		<th>Beschreibung</th>
 		<th>Dauer</th>
 		<th>Guide</th>
@@ -13,18 +14,24 @@
 require_once 'lib/global.php';
 require_once 'lib/tours.php';
 
-$stmt = $pdo->prepare ( 'select *,t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename from tour t left join user g ON (t.fk_guide_id=g.id) ' . //
-'WHERE startdate>now()' . //
-'order by startdate ASC' ); //
-$stmt->execute ( array () );
+$reference = getPlaceById ( $pdo, 1 );
+$stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename from tour t left join user g ON (t.fk_guide_id=g.id) ' . //
+' WHERE startdate>now()' . //
+' order by startdate ASC' ); //
+ex2er ( $stmt, array (
+		$reference->gps->lat,
+		$reference->gps->long 
+) );
 
 $authuserid = authUser ()->id;
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
+	// print_r($row);
 	$tour = getTourObject ( $row );
 	echo '<tr class=' . ($tour->canceled ? 'canceled' : '') . '>';
 	// echo "<td>" . $tour->id . "</td>";
 	echo "<td>" . substr ( $tour->startDateTime, 0, 16 ) . "</td>";
 	echo "<td>" . $tour->meetingPoint . "</td>";
+	echo "<td>" . formatMeters ( $row ['refm'] ) . "</td>";
 	echo "<td>" . $tour->description . "</td>";
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . $tour->guide->username . "</td>";

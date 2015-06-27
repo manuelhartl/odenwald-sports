@@ -16,6 +16,9 @@
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script type="text/javascript" src="js/locationpicker.jquery.js"></script>
 </head>
 <body>
 	<div class="container-fluid">
@@ -125,6 +128,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$tour = getTourById ( $pdo, $tourid );
 						$input ['tourid'] = $tourid;
 						$input ['meetingpoint'] = $tour->meetingPoint;
+						$input ['meetingpoint-lat'] = $tour->meetingPoint_lat;
+						$input ['meetingpoint-lon'] = $tour->meetingPoint_long;
 						$input ['description'] = $tour->description;
 						$input ['startdate'] = $tour->startDateTime;
 						$input ['duration'] = $tour->duration;
@@ -135,6 +140,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$input ['tourid'] = $_REQUEST ['tourid'];
 						}
 						$input ['meetingpoint'] = $_REQUEST ['meetingpoint'];
+						$input ['meetingpoint-lat'] = $_REQUEST ['meetingpoint-lat'];
+						$input ['meetingpoint-lon'] = $_REQUEST ['meetingpoint-lon'];
 						$input ['description'] = $_REQUEST ['description'];
 						$input ['duration'] = $_REQUEST ['duration'];
 						if (strlen ( $_REQUEST ['description'] ) < 10) {
@@ -153,6 +160,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$tour->description = $_REQUEST ['description'];
 							$tour->duration = $_REQUEST ['duration'];
 							$tour->meetingPoint = $_REQUEST ['meetingpoint'];
+							$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
+							$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];
 							updateTour ( $pdo, $tour );
 							setMessage ( 'tour updated' );
 							setPage ( 'home' );
@@ -169,10 +178,16 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$tour->description = $_REQUEST ['description'];
 								$tour->duration = $_REQUEST ['duration'];
 								$tour->meetingPoint = $_REQUEST ['meetingpoint'];
+								$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
+								$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];
 								$tour->startDateTime = $_REQUEST ['startdate'];
-								insertTour ( $pdo, $tour );
-								mailNewTour ( $pdo, $tour );
-								setMessage ( 'tour saved' );
+								if (insertTour ( $pdo, $tour )) {
+									mailNewTour ( $pdo, $tour );
+									setMessage ( 'tour saved' );
+								} else {
+									// mail admin?
+									setMessage ( 'internal error - mail admin' );
+								}
 								setPage ( 'home' );
 							}
 						}

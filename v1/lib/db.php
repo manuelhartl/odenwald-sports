@@ -10,12 +10,15 @@ function toDbmsDate($datetime) {
 function fromDbmsDate($datetimeString) {
 	return DateTime::createFromFormat ( "Y-m-d H:i:s", $datetimeString );
 }
-function ex2er($stmt, $params) {
+function ex2er($stmt, $params = null) {
 	global $config;
 	$result = $stmt->execute ( $params );
 	if (! $result) {
 		if (array_key_exists ( 'debug', $config ) && ($config ['debug'])) {
+			echo "<pre>";
 			print_r ( $stmt->errorInfo () );
+			$stmt->debugDumpParams ();
+			echo "</pre>";
 		}
 	}
 	return $result;

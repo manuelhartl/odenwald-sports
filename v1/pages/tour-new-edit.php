@@ -13,8 +13,26 @@
 	<table>
 		<tr>
 			<td>Treffpunkt</td>
-			<td><input type="text" name="meetingpoint"
-				value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" /></td>
+			<td>
+				<div id="meetingpoint-map" style="width: 500px; height: 400px;"></div>
+				<input type="text" id="meetingpoint" style="width: 400px"
+				name="meetingpoint"
+				value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" />
+				<input type="hidden" id="meetingpoint-radius" /> <input
+				type="hidden" id="meetingpoint-lat" name="meetingpoint-lat" /><input
+				type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" /> <script>$('#meetingpoint-map').locationpicker({
+	location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
+	radius: 50,
+	inputBinding: {
+        latitudeInput: $('#meetingpoint-lat'),
+        longitudeInput: $('#meetingpoint-lon'),
+        radiusInput: $('#meetingpoint-radius'),
+        locationNameInput: $('#meetingpoint')
+    },
+	enableAutocomplete: true
+	});
+</script>
+			</td>
 		</tr>
 		<tr>
 			<td>Beschreibung</td>
@@ -24,7 +42,7 @@
 			<td>Datum/Uhrzeit</td>
 			<td><?php
 			if ($update) {
-				echo $input['startdate'];
+				echo $input ['startdate'];
 			} else {
 				?>
 				<div class="row">
