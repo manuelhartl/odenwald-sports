@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 27, 2015 at 03:01 AM
+-- Generation Time: Jun 27, 2015 at 08:19 PM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -34,6 +34,18 @@ CREATE TABLE IF NOT EXISTS `email_verification` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `place`
+--
+
+CREATE TABLE IF NOT EXISTS `place` (
+  `id` tinyint(4) NOT NULL,
+  `name` varchar(200) COLLATE utf8_bin NOT NULL,
+  `coord` point NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tour`
 --
 
@@ -43,11 +55,12 @@ CREATE TABLE IF NOT EXISTS `tour` (
   `startdate` datetime NOT NULL,
   `duration` smallint(6) NOT NULL,
   `meetingpoint` varchar(250) COLLATE utf8_bin NOT NULL,
+  `meetingpoint_coord` point NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
   `adddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` enum('active','canceled') COLLATE utf8_bin NOT NULL DEFAULT 'active'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -74,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `status` enum('registered','verified') COLLATE utf8_bin NOT NULL,
   `register_date` datetime NOT NULL,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Indexes for dumped tables
@@ -85,6 +98,12 @@ CREATE TABLE IF NOT EXISTS `user` (
 --
 ALTER TABLE `email_verification`
   ADD PRIMARY KEY (`fk_user_id`,`token`);
+
+--
+-- Indexes for table `place`
+--
+ALTER TABLE `place`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `tour`
@@ -109,15 +128,20 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `place`
+--
+ALTER TABLE `place`
+  MODIFY `id` tinyint(4) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
+--
 -- AUTO_INCREMENT for table `tour`
 --
 ALTER TABLE `tour`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=43;
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=16;
 --
 -- Constraints for dumped tables
 --
