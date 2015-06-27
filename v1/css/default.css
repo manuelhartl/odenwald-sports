@@ -2,6 +2,10 @@
 	color: red;
 }
 
+input[id=submit-logout] {
+	right: 0px;
+}
+
 input[type=submit], a {
 	background-color: #31B0D5;
 	background-image: none;
@@ -80,9 +84,8 @@ input[value=Register] {
 	margin-right: auto;
 }
 
-
 th {
- background-color: #eeeeee;	
+	background-color: #eeeeee;
 }
 
 tr, td, th, table {
