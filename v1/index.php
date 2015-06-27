@@ -137,13 +137,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['meetingpoint'] = $_REQUEST ['meetingpoint'];
 						$input ['description'] = $_REQUEST ['description'];
 						$input ['duration'] = $_REQUEST ['duration'];
-						$input ['startdate'] = $_REQUEST ['startdate'];
 						if (strlen ( $_REQUEST ['description'] ) < 10) {
 							setMessage ( 'Beschreibung zu kurz' );
-						} else if (strlen ( $_REQUEST ['startdate'] ) < 14) {
-							setMessage ( 'Datum angeben' );
-						} else if ($_REQUEST ['startdate'] < date ( 'Y-m-d H:i:s' )) {
-							setMessage ( 'Datum muss in der Zukunft liegen' );
 						} else if (strlen ( $_REQUEST ['meetingpoint'] ) < 5) {
 							setMessage ( 'Treffpunkt angeben' );
 						} else if (strlen ( $_REQUEST ['duration'] ) < 1) {
@@ -162,17 +157,24 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							setMessage ( 'tour updated' );
 							setPage ( 'home' );
 						} else {
-							// new
-							$tour = new Tour ();
-							$tour->guide = authUser ();
-							$tour->description = $_REQUEST ['description'];
-							$tour->duration = $_REQUEST ['duration'];
-							$tour->meetingPoint = $_REQUEST ['meetingpoint'];
-							$tour->startDateTime = $_REQUEST ['startdate'];
-							insertTour ( $pdo, $tour );
-							mailNewTour ( $pdo, $tour );
-							setMessage ( 'tour saved' );
-							setPage ( 'home' );
+							$input ['startdate'] = $_REQUEST ['startdate'];
+							if (strlen ( $_REQUEST ['startdate'] ) < 14) {
+								setMessage ( 'Datum angeben' );
+							} else if ($_REQUEST ['startdate'] < date ( 'Y-m-d H:i:s' )) {
+								setMessage ( 'Datum muss in der Zukunft liegen' );
+							} else {
+								// new
+								$tour = new Tour ();
+								$tour->guide = authUser ();
+								$tour->description = $_REQUEST ['description'];
+								$tour->duration = $_REQUEST ['duration'];
+								$tour->meetingPoint = $_REQUEST ['meetingpoint'];
+								$tour->startDateTime = $_REQUEST ['startdate'];
+								insertTour ( $pdo, $tour );
+								mailNewTour ( $pdo, $tour );
+								setMessage ( 'tour saved' );
+								setPage ( 'home' );
+							}
 						}
 						break;
 					case 'tour-join' :

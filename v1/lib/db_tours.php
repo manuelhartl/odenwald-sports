@@ -42,7 +42,7 @@ function insertTour($pdo, Tour $tour) {
 	return true;
 }
 function updateTour($pdo, Tour $tour) {
-	$stmt = $pdo->prepare ( "update tour set duration=?,meetingpoint=?,description=? where id=?" );
+	$stmt = $pdo->prepare ( "update tour set duration=?,meetingpoint=?,description=? where id=? and status='active'" );
 	if (! ex2er ( $stmt, array (
 			$tour->duration,
 			$tour->meetingPoint,
