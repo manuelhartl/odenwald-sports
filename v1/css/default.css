@@ -6,7 +6,7 @@
 
 #logout {
 	position: fixed;
-	bottom: 0px;
+	top: 0px;
 	left: 0px;
 }
 
@@ -29,7 +29,7 @@
 	color: red;
 }
 
-input[type=submit],a {
+input[type=submit], a {
 	background-color: #31B0D5;
 	background-image: none;
 	border-bottom-color: #269ABC;
@@ -107,11 +107,22 @@ input[value=Abmelden] {
 	background-color: #bb0000;
 }
 
+input[value=Logout] {
+	background-color: #aa0000;
+}
 
-
-tr,td,table {
+tr, td, th, table {
 	padding: 3px;
 	margin: 3px;
+}
+
+form {
+	display: inline;
+}
+
+.canceled {
+	color: #dddddd;
+	text-decoration: line-through;
 }
 
 /* input[type=text], input[type=password], textarea { */

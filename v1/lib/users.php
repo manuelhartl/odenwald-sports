@@ -23,9 +23,9 @@ function get_current_url($strip = true) {
 	
 	return 'http' . (($_SERVER ['SERVER_PORT'] == '443') ? 's' : '') . '://' . $_SERVER ['SERVER_NAME'] . $filter ( $_SERVER ['REQUEST_URI'] );
 }
-function sendActivationMail($userName, $token, $email) {
+function sendActivationMail($username, $token, $email) {
 	$text = '<a href="'.dirname ( get_current_url () ) . '/activate.php?token=' . urlencode ( $token ).'">Aktivierung</a>';
-	$subject = 'Aktivierung des Touren-Kontos';
+	$subject = 'Aktivierung des Touren-Kontos von '.$username;
 	sendmail ( $email, $subject, $text );
 }
 

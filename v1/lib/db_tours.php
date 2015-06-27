@@ -9,6 +9,7 @@ class Tour {
 	public $description;
 	public /*User */$guide;
 	public $attendees;
+	public $canceled;
 }
 function getTourObject($row) {
 	$tourObj = new Tour ();
@@ -22,6 +23,9 @@ function getTourObject($row) {
 	$tourObj->guide->username = $row ['guidename'];
 	$tourObj->attendees = array ();
 	array_push ( $tourObj->attendees, new User () );
+ 	$tourObj->canceled = ($row ['tourstatus'] == 'canceled');
+// 	print_r($row);
+// 	print_r($tourObj);
 	return $tourObj;
 }
 function insertTour($pdo, Tour $tour) {
@@ -31,14 +35,33 @@ function insertTour($pdo, Tour $tour) {
 			$tour->startDateTime,
 			$tour->duration,
 			$tour->meetingPoint,
-			$tour->description
+			$tour->description 
 	) )) {
 		return false;
 	}
 	return true;
 }
+function updateTour($pdo, Tour $tour) {
+	$stmt = $pdo->prepare ( "update tour set duration=?,meetingpoint=?,description=? where id=?" );
+	if (! ex2er ( $stmt, array (
+			$tour->duration,
+			$tour->meetingPoint,
+			$tour->description, 
+			$tour->id
+	) )) {
+		return false;
+	}
+	return true;
+}
+function getTourById($pdo, $tourid) {
+	$stmt = $pdo->prepare ( "select *,t.status as tourstatus, t.id as id, g.id as guide, g.username as guidename from tour t left join user g ON (t.fk_guide_id=g.id) where t.id=?" );
+	$stmt->execute ( array (
+			$tourid 
+	) );
+	return getTourObject ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
+}
 function getAttendees($pdo, $tourid) {
-	$stmt = $pdo->prepare ( "select user.id as id, user.username as username from tour_attendee left join user ON (fk_user_id=user.id) where fk_tour_id = ?" );
+	$stmt = $pdo->prepare ( "select user.id as id, user.username as username, user.email as email from tour_attendee left join user ON (fk_user_id=user.id) where fk_tour_id = ?" );
 	if (! ex2er ( $stmt, array (
 			$tourid 
 	) )) {
@@ -60,6 +83,16 @@ function tourLeave($pdo, $userid, $tourid) {
 	$stmt = $pdo->prepare ( "delete from tour_attendee where fk_user_id = ? and fk_tour_id = ?" );
 	if (! ex2er ( $stmt, array (
 			$userid,
+			$tourid 
+	) )) {
+		return false;
+	}
+	return true;
+}
+
+function tourCancel($pdo, $tourid) {
+	$stmt = $pdo->prepare ( "update tour set status='canceled' where id = ?" );
+	if (! ex2er ( $stmt, array (
 			$tourid 
 	) )) {
 		return false;

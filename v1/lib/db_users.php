@@ -3,15 +3,15 @@ require_once 'db.php';
 function getUserObject($user) {
 	$userObj = new User ();
 	$userObj->id = $user ['id'];
-	$userObj->userName = $user ['username'];
+	$userObj->username = $user ['username'];
 	$userObj->email = $user ['email'];
 	return $userObj;
 }
-function checkAuth($pdo, $userName, $password) {
-	$stmt = $pdo->prepare ( 'select hashedpassword from user where status=? and username=?' );
+function checkAuth($pdo, $username, $password) {
+	$stmt = $pdo->prepare ( 'select hashedpassword from user where status=? and LOWER(username)=LOWER(?)' );
 	$stmt->execute ( array (
 			'verified',
-			$userName 
+			$username 
 	) );
 	$user = $stmt->fetch ( PDO::FETCH_OBJ );
 	if ($user) {
@@ -20,10 +20,10 @@ function checkAuth($pdo, $userName, $password) {
 		return false;
 	}
 }
-function userExists($pdo, $userName) {
+function userExists($pdo, $username) {
 	$stmt = $pdo->prepare ( 'select username from user where username=?' );
 	$stmt->execute ( array (
-			$userName 
+			$username 
 	) );
 	$stmt->fetch ( PDO::FETCH_OBJ );
 	return $stmt->rowCount () > 0;
@@ -54,8 +54,8 @@ function addActivationToken($pdo, $userid, $token) {
 			$token 
 	)) );
 }
-function getUser($pdo, $username) {
-	$stmt = $pdo->prepare ( "select * from user where username = ?" );
+function getUserByName($pdo, $username) {
+	$stmt = $pdo->prepare ( "select * from user where LOWER(username) = LOWER(?)" );
 	$stmt->execute ( array (
 			$username 
 	) );
@@ -76,5 +76,4 @@ function activate($pdo, $token) {
 	}
 	return $stmt->rowCount () > 0;
 }
-
 ?>

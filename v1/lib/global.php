@@ -4,7 +4,7 @@ session_start ();
 date_default_timezone_set ( "Europe/Berlin" );
 class User {
 	public $id;
-	public $userName;
+	public $username;
 	public $email;
 }
 function hasAuth() {
@@ -19,8 +19,8 @@ function requireAuth() {
 		exit ();
 	}
 }
-function login($pdo, $userName) {
-	$user = getUser ( $pdo, $userName );
+function login($pdo, $username) {
+	$user = getUserByName( $pdo, $username );
 	$_SESSION ['userObj'] = getUserObject ( $user );
 }
 function authUser() {

@@ -1,28 +1,32 @@
 <table>
 	<tr>
 		<!-- <td>id</td>  -->
-		<td>Datum</td>
-		<td>Treffpunkt</td>
-		<td>Beschreibung</td>
-		<td>Guide</td>
-		<td>Teilnehmer</td>
-		<td><a href="?action=tour-new">Neue Tour</a></td>
+		<th>Datum</th>
+		<th>Treffpunkt</th>
+		<th>Beschreibung</th>
+		<th>Dauer</th>
+		<th>Guide</th>
+		<th>Teilnehmer</th>
+		<th><?php echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';?></th>
 	</tr>
 <?php
 require_once 'lib/global.php';
-require_once 'lib/db_tours.php';
+require_once 'lib/tours.php';
 
-$stmt = $pdo->prepare ( "select *,t.id as id, g.id as guide, g.username as guidename from tour t left join user g ON (t.fk_guide_id=g.id) order by startdate DESC" );
+$stmt = $pdo->prepare ( 'select *,t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename from tour t left join user g ON (t.fk_guide_id=g.id) ' . //
+'WHERE startdate>now()' . //
+'order by startdate ASC' ); //
 $stmt->execute ( array () );
 
 $authuserid = authUser ()->id;
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$tour = getTourObject ( $row );
-	echo "<tr>";
+	echo '<tr class=' . ($tour->canceled ? 'canceled' : '') . '>';
 	// echo "<td>" . $tour->id . "</td>";
-	echo "<td>" . substr ( $tour->startDateTime, 1, 15 ) . "</td>";
+	echo "<td>" . substr ( $tour->startDateTime, 0, 16 ) . "</td>";
 	echo "<td>" . $tour->meetingPoint . "</td>";
 	echo "<td>" . $tour->description . "</td>";
+	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . $tour->guide->username . "</td>";
 	$users = getAttendees ( $pdo, $tour->id );
 	echo "<td>";
@@ -34,12 +38,22 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		}
 	}
 	echo "</td>";
-	if ($joinedTour) {
-		echo '<td><form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Abmelden"/></form></td>';
+	echo '<td>';
+	if ($tour->guide->id == $authuserid) {
+		// edit
+		echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Edit"/></form>';
+		if (! $tour->canceled) {
+			echo '<form action="" method="post"><input type="hidden" name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Absagen"/></form>';
+		}
 	} else {
-		echo '<td><form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Anmelden"/></form></td>';
+		// Join/leave
+		if ($joinedTour) {
+			echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Abmelden"/></form>';
+		} else {
+			echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Anmelden"/></form>';
+		}
 	}
-	echo "</tr>";
+	echo "<td></tr>";
 }
 ?>
 </table>

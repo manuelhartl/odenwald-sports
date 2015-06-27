@@ -24,6 +24,7 @@ require_once 'lib/global.php';
 require_once 'lib/db_users.php';
 require_once 'lib/db_tours.php';
 require_once 'lib/users.php';
+require_once 'lib/tours.php';
 function setPage($page) {
 	$_SESSION ['page'] = $page;
 }
@@ -43,21 +44,21 @@ $input;
 if (array_key_exists ( 'action', $_REQUEST )) {
 	switch ($_REQUEST ['action']) {
 		case 'login' :
-			$userName = strtolower ( $_POST ['username'] );
+			$username = $_POST ['username'];
 			$password = $_POST ['password'];
-			if (checkAuth ( $pdo, $userName, $password )) {
-				login ( $pdo, $userName );
+			if (checkAuth ( $pdo, $username, $password )) {
+				login ( $pdo, $username );
 				setPage ( "home" );
 				setMessage ( 'logged in' );
 			} else {
 				setPage ( "login" );
-				$input ['username'] = $userName;
+				$input ['username'] = $username;
 				setMessage ( 'login failed' );
 			}
 			break;
 		case 'logout' :
 			session_destroy ();
-			echo "logged out";
+			setMessage ( 'logged out' );
 			setPage ( "login" );
 			break;
 		case 'register' :
@@ -65,14 +66,16 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			break;
 		case 'register-save' :
 			setPage ( "register" );
-			$userName = strtolower ( $_POST ['username'] );
+			$username = $_POST ['username'];
 			$password = $_POST ['password'];
 			$email = $_POST ['email'];
-			$input ['username'] = $userName;
-			$input ['email'] = $email;
 			// validate
-			if (strlen ( $userName ) < 3) {
-				setMessage ( 'username must be at least 3 characters' );
+			if (! preg_match ( "/^[a-zA-Z][0-9a-zA-Z]*$/", $username )) {
+				setMessage ( 'username must only consist of A-Z and 0-9 and start with a character' );
+				break;
+			}
+			if (strlen ( $username ) < 2) {
+				setMessage ( 'username must be at least 2 characters' );
 				break;
 			}
 			if (strlen ( $password ) < 6) {
@@ -84,8 +87,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				break;
 			}
 			// check if email already registered
-			if (userExists ( $pdo, $userName )) {
-				setMessage ( $userName . ' already registered' );
+			if (userExists ( $pdo, $username )) {
+				setMessage ( $username . ' already registered' );
 				break;
 			}
 			// check if name is already registered
@@ -96,48 +99,111 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			// register
 			$hashedPassword = password_hash ( $password, PASSWORD_BCRYPT );
 			$token = bin2hex ( openssl_random_pseudo_bytes ( 16 ) );
-			$userId = registerUser ( $pdo, $userName, $hashedPassword, $email );
+			$userId = registerUser ( $pdo, $username, $hashedPassword, $email );
 			if (! $userId) {
 				print_r ( $pdo->errorInfo () );
 				setMessage ( 'registering not successful' );
 			}
 			addActivationToken ( $pdo, $userId, $token );
-			sendActivationMail ( $userName, $token, $email );
+			sendActivationMail ( $username, $token, $email );
+			$input ['username'] = $username;
+			$input ['email'] = $email;
 			setPage ( "register-save" );
 			break;
-		case 'tour-new' :
-			setPage ( 'tour-new' );
-			break;
-		case 'tour-save' :
-			echo "tour saved";
-			$tour = new Tour ();
-			$tour->guide = authUser ();
-			$tour->description = $_REQUEST ['description'];
-			$tour->duration = $_REQUEST ['duration'];
-			$tour->meetingPoint = $_REQUEST ['meetingpoint'];
-			$tour->startDateTime = $_REQUEST ['startdate'];
-			insertTour ( $pdo, $tour );
-			setPage ( 'home' );
-			break;
-		case 'tour-join' :
-			$tourid = $_POST ['tourid'];
-			tourJoin ( $pdo, authUser ()->id, $tourid );
-			break;
-		case 'tour-leave' :
-			$tourid = $_POST ['tourid'];
-			tourLeave ( $pdo, authUser ()->id, $tourid );
-			break;
-		case 'home' :
-			setPage ( 'home' );
-			break;
 		default :
-			die ();
+			if (! hasAuth ()) {
+				setPage ( 'login' );
+			} else {
+				switch ($_REQUEST ['action']) {
+					case 'tour-new' :
+						setPage ( 'tour-new' );
+						break;
+					case 'tour-edit' :
+						$tourid = $_POST ['tourid'];
+						$tour = getTourById ( $pdo, $tourid );
+						$input ['tourid'] = $tourid;
+						$input ['meetingpoint'] = $tour->meetingPoint;
+						$input ['description'] = $tour->description;
+						$input ['startdate'] = $tour->startDateTime;
+						$input ['duration'] = $tour->duration;
+						setPage ( 'tour-edit' );
+						break;
+					case 'tour-save' :
+						if (isset ( $_REQUEST ['tourid'] )) {
+							$input ['tourid'] = $_REQUEST ['tourid'];
+						}
+						$input ['meetingpoint'] = $_REQUEST ['meetingpoint'];
+						$input ['description'] = $_REQUEST ['description'];
+						$input ['duration'] = $_REQUEST ['duration'];
+						$input ['startdate'] = $_REQUEST ['startdate'];
+						if (strlen ( $_REQUEST ['description'] ) < 10) {
+							setMessage ( 'Beschreibung zu kurz' );
+						} else if (strlen ( $_REQUEST ['startdate'] ) < 14) {
+							setMessage ( 'Datum angeben' );
+						} else if ($_REQUEST ['startdate'] < date ( 'Y-m-d H:i:s' )) {
+							setMessage ( 'Datum muss in der Zukunft liegen' );
+						} else if (strlen ( $_REQUEST ['meetingpoint'] ) < 5) {
+							setMessage ( 'Treffpunkt angeben' );
+						} else if (strlen ( $_REQUEST ['duration'] ) < 1) {
+							setMessage ( 'Dauer angeben' );
+						} else if (isset ( $_POST ['tourid'] )) {
+							// edit
+							$tour = getTourById ( $pdo, $_POST ['tourid'] );
+							if ($tour->guide->id != authUser ()->id) {
+								// at the moment only the guide may edit a tour
+								die ();
+							}
+							$tour->description = $_REQUEST ['description'];
+							$tour->duration = $_REQUEST ['duration'];
+							$tour->meetingPoint = $_REQUEST ['meetingpoint'];
+							updateTour ( $pdo, $tour );
+							setMessage ( 'tour updated' );
+							setPage ( 'home' );
+						} else {
+							// new
+							$tour = new Tour ();
+							$tour->guide = authUser ();
+							$tour->description = $_REQUEST ['description'];
+							$tour->duration = $_REQUEST ['duration'];
+							$tour->meetingPoint = $_REQUEST ['meetingpoint'];
+							$tour->startDateTime = $_REQUEST ['startdate'];
+							insertTour ( $pdo, $tour );
+							mailNewTour ( $pdo, $tour );
+							setMessage ( 'tour saved' );
+							setPage ( 'home' );
+						}
+						break;
+					case 'tour-join' :
+						$tourid = $_POST ['tourid'];
+						tourJoin ( $pdo, authUser ()->id, $tourid );
+						break;
+					case 'tour-leave' :
+						$tourid = $_POST ['tourid'];
+						tourLeave ( $pdo, authUser ()->id, $tourid );
+						break;
+					case 'tour-cancel' :
+						$tourid = $_POST ['tourid'];
+						$tour = getTourById ( $pdo, $tourid );
+						if (authUser ()->id != $tour->guide->id) {
+							die ();
+						}
+						tourCancel ( $pdo, $tourid );
+						mailCancelTour ( $pdo, $tour );
+						setMessage ( 'tour abgesagt' );
+						break;
+					case 'home' :
+						setPage ( 'home' );
+						break;
+					default :
+						die ();
+				}
+			}
 	}
 }
 
 if (! hasAuth () && getPage () != "login" && getPage () != "register" && getPage () != "register-save") {
 	echo "not logged in";
-	setPage('login');
+	setPage ( 'login' );
 }
 require_once 'pages/navigation.php';
 echo '<div id="main">';
@@ -158,8 +224,9 @@ switch (getPage ()) {
 		require_once 'pages/tour-list.php';
 		require_once 'pages/logout.php';
 		break;
+	case "tour-edit" :
 	case "tour-new" :
-		require_once 'pages/tour-new.php';
+		require_once 'pages/tour-new-edit.php';
 		require_once 'pages/logout.php';
 		break;
 }
