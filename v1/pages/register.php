@@ -23,3 +23,8 @@
 		</tr>
 	</table>
 </form>
+<form name="home" action="index.php" method="post">
+	<input name="action" type="hidden" value="home" /> <input id="submit"
+		name="submit" type="submit" value="Abbrechen" />
+</form>
+
