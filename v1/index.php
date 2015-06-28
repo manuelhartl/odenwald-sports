@@ -121,12 +121,14 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			} else {
 				switch ($_REQUEST ['action']) {
 					case 'tour-new' :
+						$sports = getSports ( $pdo );
 						setPage ( 'tour-new' );
 						break;
 					case 'tour-edit' :
 						$tourid = $_POST ['tourid'];
 						$tour = getTourById ( $pdo, $tourid );
 						$input ['tourid'] = $tourid;
+						$input ['sport'] = $tour->sport->sportsubid;
 						$input ['meetingpoint'] = $tour->meetingPoint;
 						$input ['meetingpoint-lat'] = $tour->meetingPoint_lat;
 						$input ['meetingpoint-lon'] = $tour->meetingPoint_long;
@@ -136,6 +138,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						setPage ( 'tour-edit' );
 						break;
 					case 'tour-save' :
+						$sports = getSports ( $pdo );
 						if (isset ( $_REQUEST ['tourid'] )) {
 							$input ['tourid'] = $_REQUEST ['tourid'];
 						}
@@ -166,6 +169,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							setMessage ( 'tour updated' );
 							setPage ( 'home' );
 						} else {
+							// new
 							$input ['startdate'] = $_REQUEST ['startdate'];
 							if (strlen ( $_REQUEST ['startdate'] ) < 14) {
 								setMessage ( 'Datum angeben' );
@@ -177,6 +181,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$tour->guide = authUser ();
 								$tour->description = $_REQUEST ['description'];
 								$tour->duration = $_REQUEST ['duration'];
+								$tour->sport = new Sport ();
+								$tour->sport->sportsubid = $_REQUEST ['sport'];
 								$tour->meetingPoint = $_REQUEST ['meetingpoint'];
 								$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
 								$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];

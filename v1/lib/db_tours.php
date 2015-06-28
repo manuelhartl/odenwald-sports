@@ -5,6 +5,7 @@ class Tour {
 	public $id;
 	public $startDateTime;
 	public $duration;
+	public $sport;
 	public $meetingPoint;
 	public $description;
 	public /*User */$guide;
@@ -22,11 +23,20 @@ class Place {
 	public $name;
 	public $gps; // Gps
 }
+class Sport {
+	public $sportsubid;
+	public $sportsubname;
+	public $sportname;
+}
 function getTourObject($row) {
 	$tourObj = new Tour ();
 	$tourObj->id = $row ['id'];
 	$tourObj->startDateTime = $row ['startdate'];
 	$tourObj->duration = $row ['duration'];
+	$tourObj->sport = new Sport ();
+	$tourObj->sport->sportname = $row ['sportname'];
+	// $tourObj->sport->sportsubid = $row ['sportsubid'];
+	$tourObj->sport->sportsubname = $row ['sportsubname'];
 	$tourObj->meetingPoint = $row ['meetingpoint'];
 	if (isset ( $row ['meetingpoint_lat'] )) {
 		$tourObj->meetingPoint_lat = $row ['meetingpoint_lat'];
@@ -55,7 +65,7 @@ function getPlaceObject($row) {
 	return $place;
 }
 function insertTour($pdo, Tour $tour) {
-	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord) VALUES(?,?,?,?,?,PointFromText(?))" );
+	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id) VALUES(?,?,?,?,?,PointFromText(?),?)" );
 	$stmt->bindParam ( 1, $tour->guide->id );
 	$stmt->bindParam ( 2, $tour->startDateTime );
 	$stmt->bindParam ( 3, $tour->duration );
@@ -63,6 +73,7 @@ function insertTour($pdo, Tour $tour) {
 	$stmt->bindParam ( 5, $tour->description );
 	$point = 'POINT(' . $tour->meetingPoint_lat . " " . $tour->meetingPoint_long . ')';
 	$stmt->bindParam ( 6, $point );
+	$stmt->bindParam ( 7, $tour->sport->sportsubid );
 	if (! ex2er ( $stmt )) {
 		return false;
 	}
@@ -83,7 +94,12 @@ function updateTour($pdo, Tour $tour) {
 	return true;
 }
 function getTourById($pdo, $tourid) {
-	$stmt = $pdo->prepare ( "select *,X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long,t.status as tourstatus, t.id as id, g.id as guide, g.username as guidename from tour t left join user g ON (t.fk_guide_id=g.id) where t.id=?" );
+	$stmt = $pdo->prepare ( //
+'select *,sportname,ss.sportsubname as sportsubname, ss.id as sportsubid, X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long,t.status as tourstatus, t.id as id, g.id as guide, g.username as guidename' . //
+' from tour t left join user g ON (t.fk_guide_id=g.id)' . //
+' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
+' left join sport s ON (ss.fk_sport_id=s.id) ' . //
+' where t.id=?' );
 	$stmt->execute ( array (
 			$tourid 
 	) );
@@ -104,6 +120,13 @@ function getAttendees($pdo, $tourid) {
 		return false;
 	}
 	return $stmt->fetchAll ( PDO::FETCH_ASSOC );
+}
+function getSports($pdo) {
+	$stmt = $pdo->prepare ( "select sportname,sport_subtype.sportsubname as sportsubname, sport_subtype.id as sportsubid from sport_subtype left join sport ON (fk_sport_id=sport.id) ORDER BY sportname ASC, sportsubname ASC" );
+	if (! ex2er ( $stmt, array () )) {
+		return false;
+	}
+	return $stmt->fetchAll ( PDO::FETCH_OBJ );
 }
 function tourJoin($pdo, $userid, $tourid) {
 	$stmt = $pdo->prepare ( "insert into tour_attendee (fk_user_id,fk_tour_id) VALUES(?,?)" );

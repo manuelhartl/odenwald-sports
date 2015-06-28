@@ -12,15 +12,30 @@
 	 
 	<table>
 		<tr>
-			<td>Treffpunkt</td>
+			<td>Sport</td>
 			<td>
-				<div id="meetingpoint-map" style="width: 500px; height: 400px;"></div>
-				<input type="text" id="meetingpoint" style="width: 400px"
-				name="meetingpoint"
-				value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" />
-				<input type="hidden" id="meetingpoint-radius" /> <input
-				type="hidden" id="meetingpoint-lat" name="meetingpoint-lat" /><input
-				type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" /> <script>$('#meetingpoint-map').locationpicker({
+			<?php
+			if ($update) {
+				echo $tour->sport->sportname . '/' . $tour->sport->sportsubname;
+			} else {
+				echo '<select name="sport">';
+				foreach ( $sports as $sport ) {
+					echo '<option value="' . $sport->sportsubid . '">' . $sport->sportname . '/' . $sport->sportsubname . '</option>';
+				}
+				echo '</select>';
+			}
+			?>
+			</td>
+		</tr>
+		<td>Treffpunkt</td>
+		<td>
+			<div id="meetingpoint-map" style="width: 500px; height: 400px;"></div>
+			<input type="text" id="meetingpoint" style="width: 400px"
+			name="meetingpoint"
+			value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" />
+			<input type="hidden" id="meetingpoint-radius" /> <input type="hidden"
+			id="meetingpoint-lat" name="meetingpoint-lat" /><input type="hidden"
+			id="meetingpoint-lon" name="meetingpoint-lon" /> <script>$('#meetingpoint-map').locationpicker({
 	location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
 	radius: 50,
 	inputBinding: {
@@ -32,7 +47,7 @@
 	enableAutocomplete: true
 	});
 </script>
-			</td>
+		</td>
 		</tr>
 		<tr>
 			<td>Beschreibung</td>

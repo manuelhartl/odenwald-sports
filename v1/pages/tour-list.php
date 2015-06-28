@@ -1,7 +1,7 @@
 <table>
 	<tr>
-		<!-- <td>id</td>  -->
 		<th>Datum</th>
+		<th>Sport</th>
 		<th>Treffpunkt</th>
 		<th>Entfernung zum B&ouml;lle</th>
 		<th>Beschreibung</th>
@@ -15,7 +15,11 @@ require_once 'lib/global.php';
 require_once 'lib/tours.php';
 
 $reference = getPlaceById ( $pdo, 1 );
-$stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename from tour t left join user g ON (t.fk_guide_id=g.id) ' . //
+$stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
+' from tour t' . //
+' left join user g ON (t.fk_guide_id=g.id) ' . //
+' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
+' left join sport s ON (ss.fk_sport_id=s.id) ' . //
 ' WHERE startdate>now()' . //
 ' order by startdate ASC' ); //
 ex2er ( $stmt, array (
@@ -30,6 +34,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '<tr class=' . ($tour->canceled ? 'canceled' : '') . '>';
 	// echo "<td>" . $tour->id . "</td>";
 	echo "<td>" . substr ( $tour->startDateTime, 0, 16 ) . "</td>";
+	echo "<td>" . $tour->sport->sportsubname . "</td>"; // . $tour->sport->sportname.' '
 	echo "<td>" . $tour->meetingPoint . "</td>";
 	echo "<td>" . formatMeters ( $row ['refm'] ) . "</td>";
 	echo "<td>" . $tour->description . "</td>";
