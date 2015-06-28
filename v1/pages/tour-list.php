@@ -44,7 +44,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo "<td>";
 	$joinedTour = false;
 	foreach ( $users as $user ) {
-		echo $user ['username'] . "<br/>";
+		echo $user ['username'] . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
@@ -59,10 +59,12 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		}
 	} else {
 		// Join/leave
-		if ($joinedTour) {
-			echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Abmelden"/></form>';
-		} else {
-			echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Anmelden"/></form>';
+		if (! $tour->canceled) {
+			if ($joinedTour) {
+				echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Abmelden"/></form>';
+			} else {
+				echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Anmelden"/></form>';
+			}
 		}
 	}
 	echo "<td></tr>";

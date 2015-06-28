@@ -205,11 +205,19 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						break;
 					case 'tour-join' :
 						$tourid = $_POST ['tourid'];
+						$tour = getTourById ( $pdo, $tourid );
+						if ($tour->canceled) {
+							die (); // hack
+						}
 						tourJoin ( $pdo, authUser ()->id, $tourid );
 						setMessage ( 'tour joined' );
 						break;
 					case 'tour-leave' :
 						$tourid = $_POST ['tourid'];
+						$tour = getTourById ( $pdo, $tourid );
+						if ($tour->canceled) {
+							die (); // hack
+						}
 						tourLeave ( $pdo, authUser ()->id, $tourid );
 						setMessage ( 'left tour' );
 						break;
