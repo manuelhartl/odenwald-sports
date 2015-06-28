@@ -18,13 +18,13 @@ function formatMeters($meters) {
 function mailNewTour($pdo, $tour) {
 	$subject = $tour->guide->username . ' hat neue Tour eingestellt';
 	$text = '<table>' . //
+'<tr><td>Was ? </td><td>' . $tour->sport->sportsubname . '</td>' . //
 '<tr><td>Wann ? </td><td>' . $tour->startDateTime . '</td>' . //
 '<tr><td>Wo ? </td><td>' . $tour->meetingPoint . '</td>' . //
-'<tr><td>Was ? </td><td>' . $tour->description . '</td>' . //
+'<tr><td>Wie ? </td><td>' . $tour->description . '</td>' . //
 '<tr><td>Wie lange ? </td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //
 '</table>' . //
-'<a href="'.getUrlPrefix() . '/index.php?action=tour-list">Touren auflisten</a>' //
-;
+'<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a>'; //
 	
 	$stmt = $pdo->prepare ( "select username,email from user WHERE status='verified' ORDER BY username ASC" );
 	$stmt->execute ( array () );
@@ -35,9 +35,10 @@ function mailNewTour($pdo, $tour) {
 function mailCancelTour($pdo, $tour) {
 	$subject = $tour->guide->username . ' hat eine Tour abgesagt';
 	$text = '<table>' . //
+'<tr><td>Was ? </td><td>' . $tour->sport->sportsubname . '</td>' . //
 '<tr><td>Wann ? </td><td>' . $tour->startDateTime . '</td>' . //
 '<tr><td>Wo ? </td><td>' . $tour->meetingPoint . '</td>' . //
-'<tr><td>Was ? </td><td>' . $tour->description . '</td>' . //
+'<tr><td>Wie ? </td><td>' . $tour->description . '</td>' . //
 '<tr><td>Wie lange ? </td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //
 '</table>';
 	

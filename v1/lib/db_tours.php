@@ -128,6 +128,15 @@ function getSports($pdo) {
 	}
 	return $stmt->fetchAll ( PDO::FETCH_OBJ );
 }
+function getSport($pdo, $id) {
+	$stmt = $pdo->prepare ( "select sportname,sport_subtype.sportsubname as sportsubname, sport_subtype.id as sportsubid from sport_subtype left join sport ON (fk_sport_id=sport.id) and (sport_subtype.id = ?)" );
+	if (! ex2er ( $stmt, array (
+			$id 
+	) )) {
+		return false;
+	}
+	return $stmt->fetch ( PDO::FETCH_OBJ );
+}
 function tourJoin($pdo, $userid, $tourid) {
 	$stmt = $pdo->prepare ( "insert into tour_attendee (fk_user_id,fk_tour_id) VALUES(?,?)" );
 	if (! ex2er ( $stmt, array (

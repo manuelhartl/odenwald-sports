@@ -122,6 +122,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				switch ($_REQUEST ['action']) {
 					case 'tour-new' :
 						$sports = getSports ( $pdo );
+						$input ['sport'] = 1; // MTB is default
 						setPage ( 'tour-new' );
 						break;
 					case 'tour-edit' :
@@ -147,6 +148,12 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['meetingpoint-lon'] = $_REQUEST ['meetingpoint-lon'];
 						$input ['description'] = $_REQUEST ['description'];
 						$input ['duration'] = $_REQUEST ['duration'];
+						if (isset ( $_REQUEST ['sport'] )) {
+							$input ['sport'] = $_REQUEST ['sport'];
+						}
+						if (isset ( $_REQUEST ['startdate'] )) {
+							$input ['startdate'] = $_REQUEST ['startdate'];
+						}
 						if (strlen ( $_REQUEST ['description'] ) < 10) {
 							setMessage ( 'Beschreibung zu kurz' );
 						} else if (strlen ( $_REQUEST ['meetingpoint'] ) < 5) {
@@ -170,7 +177,6 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							setPage ( 'home' );
 						} else {
 							// new
-							$input ['startdate'] = $_REQUEST ['startdate'];
 							if (strlen ( $_REQUEST ['startdate'] ) < 14) {
 								setMessage ( 'Datum angeben' );
 							} else if ($_REQUEST ['startdate'] < date ( 'Y-m-d H:i:s' )) {
@@ -181,8 +187,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$tour->guide = authUser ();
 								$tour->description = $_REQUEST ['description'];
 								$tour->duration = $_REQUEST ['duration'];
-								$tour->sport = new Sport ();
-								$tour->sport->sportsubid = $_REQUEST ['sport'];
+								$tour->sport = getSport ( $pdo, $_REQUEST ['sport'] );
 								$tour->meetingPoint = $_REQUEST ['meetingpoint'];
 								$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
 								$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];

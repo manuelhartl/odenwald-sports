@@ -20,7 +20,8 @@
 			} else {
 				echo '<select name="sport">';
 				foreach ( $sports as $sport ) {
-					echo '<option value="' . $sport->sportsubid . '">' . $sport->sportname . '/' . $sport->sportsubname . '</option>';
+					$selected = $sport->sportsubid == $input ['sport'] ? ' selected ' : '';
+					echo '<option value="' . $sport->sportsubid . '"' . $selected . '>' . $sport->sportname . '/' . $sport->sportsubname . '</option>';
 				}
 				echo '</select>';
 			}
