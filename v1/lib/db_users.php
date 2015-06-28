@@ -21,7 +21,7 @@ function checkAuth($pdo, $username, $password) {
 	}
 }
 function userExists($pdo, $username) {
-	$stmt = $pdo->prepare ( 'select username from user where username=?' );
+	$stmt = $pdo->prepare ( 'select username from user where LOWER(username) = LOWER(?)' );
 	$stmt->execute ( array (
 			$username 
 	) );
@@ -29,7 +29,7 @@ function userExists($pdo, $username) {
 	return $stmt->rowCount () > 0;
 }
 function emailExists($pdo, $email) {
-	$stmt = $pdo->prepare ( 'select email from user where email=?' );
+	$stmt = $pdo->prepare ( 'select email from user where LOWER(email) = LOWER(?)' );
 	$stmt->execute ( array (
 			$email 
 	) );
