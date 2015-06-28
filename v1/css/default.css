@@ -60,11 +60,11 @@ input[type=submit], a {
 	-moz-user-select: none;
 }
 
-input[value=Anmelden] {
+input[id=tour-join] {
 	background-color: #00bb00;
 }
 
-input[value=Abmelden] {
+input[id=tour-leave] {
 	background-color: #bb0000;
 }
 
