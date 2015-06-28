@@ -63,14 +63,16 @@
 				?>
 				<div class="row">
 					<div class='col-sm-6'>
-						<input type="text" class="form-control" id='startdate'
+						<input type="text" class="form-control" style="width: 150px;" id="startdate" maxlength="10" 
 							name="startdate"
 							value="<?php echo isset($input['startdate']) ? $input['startdate'] : '';?>" />
 					</div>
 					<script type="text/javascript">
             $(function () {
                 $('#startdate').datetimepicker({
+						format: 'DD.MM.YYYY HH:mm',
                 		showTodayButton: true,
+                		sideBySide: true,
 						minDate: moment()
                 		}
                       );
@@ -93,6 +95,3 @@
 		</tr>
 	</table>
 </form>
-
-<?php
-?>

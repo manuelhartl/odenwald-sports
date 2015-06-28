@@ -1,5 +1,6 @@
 <table>
 	<tr>
+		<th></th>
 		<th>Datum</th>
 		<th>Sport</th>
 		<th>Treffpunkt</th>
@@ -32,8 +33,14 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
 	$tour = getTourObject ( $row );
 	echo '<tr class=' . ($tour->canceled ? 'canceled' : '') . '>';
-	// echo "<td>" . $tour->id . "</td>";
-	echo "<td>" . substr ( $tour->startDateTime, 0, 16 ) . "</td>";
+	$startdate = fromDbmsDate ( $tour->startDateTime );
+	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
+		echo '<td></td><td></td>';
+	} else {
+		echo "<td>" . getWeekDay ( $startdate ) . "</td>";
+		echo "<td>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
+	}
+	
 	echo "<td>" . $tour->sport->sportsubname . "</td>"; // . $tour->sport->sportname.' '
 	echo "<td>" . $tour->meetingPoint . "</td>";
 	echo "<td>" . formatMeters ( $row ['refm'] ) . "</td>";
@@ -68,6 +75,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		}
 	}
 	echo "<td></tr>";
+	$lastdate = $startdate;
 }
 ?>
 </table>
