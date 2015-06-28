@@ -19,7 +19,7 @@ function mailNewTour($pdo, $tour) {
 	$subject = $tour->guide->username . ' hat neue Tour eingestellt';
 	$text = '<table>' . //
 '<tr><td>Was ? </td><td>' . $tour->sport->sportsubname . '</td>' . //
-'<tr><td>Wann ? </td><td>' . $tour->startDateTime . '</td>' . //
+'<tr><td>Wann ? </td><td>' . $tour->startDateTime->format('d.m.Y H:i') . '</td>' . //
 '<tr><td>Wo ? </td><td>' . $tour->meetingPoint . '</td>' . //
 '<tr><td>Wie ? </td><td>' . $tour->description . '</td>' . //
 '<tr><td>Wie lange ? </td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //
@@ -36,7 +36,7 @@ function mailCancelTour($pdo, $tour) {
 	$subject = $tour->guide->username . ' hat eine Tour abgesagt';
 	$text = '<table>' . //
 '<tr><td>Was ? </td><td>' . $tour->sport->sportsubname . '</td>' . //
-'<tr><td>Wann ? </td><td>' . $tour->startDateTime . '</td>' . //
+'<tr><td>Wann ? </td><td>' . $tour->startDateTime->format('d.m.Y H:i') . '</td>' . //
 '<tr><td>Wo ? </td><td>' . $tour->meetingPoint . '</td>' . //
 '<tr><td>Wie ? </td><td>' . $tour->description . '</td>' . //
 '<tr><td>Wie lange ? </td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //

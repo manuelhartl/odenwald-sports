@@ -177,9 +177,10 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							setPage ( 'home' );
 						} else {
 							// new
+							$date = DateTime::createFromFormat('d.m.Y H:i', $_REQUEST ['startdate']);
 							if (strlen ( $_REQUEST ['startdate'] ) < 14) {
 								setMessage ( 'Datum angeben' );
-							} else if ($_REQUEST ['startdate'] < date ( 'Y-m-d H:i:s' )) {
+							} else if ($date < date ( 'Y-m-d H:i:s' )) {
 								setMessage ( 'Datum muss in der Zukunft liegen' );
 							} else {
 								// new
@@ -191,7 +192,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$tour->meetingPoint = $_REQUEST ['meetingpoint'];
 								$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
 								$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];
-								$tour->startDateTime = $_REQUEST ['startdate'];
+								$tour->startDateTime = $date;
 								if (insertTour ( $pdo, $tour )) {
 									mailNewTour ( $pdo, $tour );
 									setMessage ( 'tour saved' );

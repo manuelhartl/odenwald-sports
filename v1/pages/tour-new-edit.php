@@ -58,7 +58,7 @@
 			<td>Datum/Uhrzeit</td>
 			<td><?php
 			if ($update) {
-				echo $input ['startdate'];
+				echo $input ['startdate']->format('d.m.Y H:i');
 			} else {
 				?>
 				<div class="row">

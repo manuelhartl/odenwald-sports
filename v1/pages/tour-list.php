@@ -33,7 +33,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
 	$tour = getTourObject ( $row );
 	echo '<tr class=' . ($tour->canceled ? 'canceled' : '') . '>';
-	$startdate = fromDbmsDate ( $tour->startDateTime );
+	$startdate = $tour->startDateTime;
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
 		echo '<td></td><td></td>';
 	} else {

@@ -31,7 +31,7 @@ class Sport {
 function getTourObject($row) {
 	$tourObj = new Tour ();
 	$tourObj->id = $row ['id'];
-	$tourObj->startDateTime = $row ['startdate'];
+	$tourObj->startDateTime = date_create ( $row ['startdate'] );
 	$tourObj->duration = $row ['duration'];
 	$tourObj->sport = new Sport ();
 	$tourObj->sport->sportname = $row ['sportname'];
@@ -67,7 +67,8 @@ function getPlaceObject($row) {
 function insertTour($pdo, Tour $tour) {
 	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id) VALUES(?,?,?,?,?,PointFromText(?),?)" );
 	$stmt->bindParam ( 1, $tour->guide->id );
-	$stmt->bindParam ( 2, $tour->startDateTime );
+	$date = toDbmsDate($tour->startDateTime);
+	$stmt->bindParam ( 2, $date );
 	$stmt->bindParam ( 3, $tour->duration );
 	$stmt->bindParam ( 4, $tour->meetingPoint );
 	$stmt->bindParam ( 5, $tour->description );
