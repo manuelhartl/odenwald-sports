@@ -58,27 +58,34 @@ function changePassword($pdo, $userid, $hashedpassword) {
 	return true;
 }
 function addActivationToken($pdo, $userid, $token) {
-	$stmt = $pdo->prepare ( "insert into email_verification (fk_user_id,token)  VALUES (?,?)" );
+	$stmt = $pdo->prepare ( "insert into token (fk_user_id,token,action)  VALUES (?,?,'emailverification')" );
+	return ex2er ( $stmt, (array (
+			$userid,
+			$token 
+	)) );
+}
+function addPasswordresetToken($pdo, $userid, $token) {
+	$stmt = $pdo->prepare ( "insert into token (fk_user_id,token,action)  VALUES (?,?,'passwordreset')" );
 	return ex2er ( $stmt, (array (
 			$userid,
 			$token 
 	)) );
 }
 function getUserByName($pdo, $username) {
-	$stmt = $pdo->prepare ( "select * from user where LOWER(username) = LOWER(?)" );
+	$stmt = $pdo->prepare ( "select id,username,email from user where LOWER(username) = LOWER(?)" );
 	$stmt->execute ( array (
 			$username 
 	) );
 	return $stmt->fetch ( PDO::FETCH_ASSOC );
 }
 function activate($pdo, $token) {
-	$stmt = $pdo->prepare ( "update user left JOIN email_verification ON user.id=email_verification.fk_user_id set status='verified' where email_verification.token = ?" );
+	$stmt = $pdo->prepare ( "update user left JOIN token ON user.id=token.fk_user_id set status='verified' where token.token = ? and token.action = 'emailverification'" );
 	if (! ex2er ( $stmt, (array (
 			$token 
 	)) )) {
 		return false;
 	}
-	$stmt = $pdo->prepare ( "delete from email_verification where email_verification.token = ?" );
+	$stmt = $pdo->prepare ( "delete from token where token.token = ?" );
 	if (! ex2er ( $stmt, (array (
 			$token 
 	)) )) {
@@ -86,4 +93,21 @@ function activate($pdo, $token) {
 	}
 	return $stmt->rowCount () > 0;
 }
+function resetPassword($pdo, $token, $hashedpassword) {
+	$stmt = $pdo->prepare ( "update user left JOIN token ON user.id=token.fk_user_id set hashedpassword=? where token.token = ? and token.action = 'passwordreset'" );
+	if (! ex2er ( $stmt, (array (
+			$hashedpassword,
+			$token 
+	)) )) {
+		return false;
+	}
+	$stmt = $pdo->prepare ( "delete from token where token.token = ?" );
+	if (! ex2er ( $stmt, (array (
+			$token 
+	)) )) {
+		return false;
+	}
+	return $stmt->rowCount () > 0;
+}
+
 ?>

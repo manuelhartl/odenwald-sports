@@ -66,27 +66,25 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			setMessage ( 'logged out' );
 			setPage ( "login" );
 			break;
-		case 'password-change' :
-			setPage ( "password-change" );
+		case 'password-reset' :
+			setPage ( "password-reset" );
 			break;
-		case 'password-change-save' :
-			$oldpassword = $_POST ['oldpassword'];
-			$newpassword = $_POST ['newpassword'];
-			$newpassword2 = $_POST ['newpassword2'];
-			if (! validatePassword ( $newpassword )) {
-				setMessage ( 'password must be at least 6 characters"' );
-			} else if (! checkAuth ( $pdo, authUser ()->username, $oldpassword )) {
-				setMessage ( 'Altes Passwort falsch' );
-			} else if ($newpassword != $newpassword2) {
-				setMessage ( 'Die Eingaben f&uuml;r das neue Passwort stimmen nicht &uuml;berein' );
+		case 'password-reset-save' :
+			$email = $_POST ['email'];
+			$username = $_POST ['username'];
+			$input ['username'] = $username;
+			$userrow = getUserByName ( $pdo, $username );
+			$userid = $userrow ['id'];
+			if (! validateEmail ( $email )) {
+				setMessage ( 'Gib eine korrekte E-Mail Adresse ein' );
+			} else if ($userrow ['email'] != $email) {
+				setMessage ( 'Die E-Email Adresse ist falsch' );
 			} else {
-				$hashedPassword = password_hash ( $newpassword, PASSWORD_BCRYPT );
-				if (changePassword ( $pdo, authUser ()->id, $hashedPassword )) {
-					setMessage ( 'Passwort erfolgreich ge&auml;ndert' );
-					setPage ( "home" );
-				} else {
-					setMessage ( 'Passwort nicht erfolgreich ge&auml;ndert - contact admin' );
-				}
+				$token = bin2hex ( openssl_random_pseudo_bytes ( 16 ) );
+				addPasswordresetToken ( $pdo, $userid, $token );
+				sendPasswordresetMail ( $username, $token, $email );
+				setMessage ( 'Passwort reset link gesendet an: ' . $email );
+				setPage ( 'login' );
 			}
 			break;
 		case 'register' :
@@ -116,7 +114,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				setMessage ( 'passwords do not match' );
 				break;
 			}
-			if (! filter_var ( $email, FILTER_VALIDATE_EMAIL )) {
+			if (! validateEmail ( $email )) {
 				setMessage ( 'email not valid' );
 				break;
 			}
@@ -149,6 +147,32 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				setPage ( 'login' );
 			} else {
 				switch ($_REQUEST ['action']) {
+					case 'home' :
+						setPage ( 'home' );
+						break;
+					case 'password-change' :
+						setPage ( "password-change" );
+						break;
+					case 'password-change-save' :
+						$oldpassword = $_POST ['oldpassword'];
+						$newpassword = $_POST ['newpassword'];
+						$newpassword2 = $_POST ['newpassword2'];
+						if (! validatePassword ( $newpassword )) {
+							setMessage ( 'password must be at least 6 characters"' );
+						} else if (! checkAuth ( $pdo, authUser ()->username, $oldpassword )) {
+							setMessage ( 'Altes Passwort falsch' );
+						} else if ($newpassword != $newpassword2) {
+							setMessage ( 'Die Eingaben f&uuml;r das neue Passwort stimmen nicht &uuml;berein' );
+						} else {
+							$hashedPassword = password_hash ( $newpassword, PASSWORD_BCRYPT );
+							if (changePassword ( $pdo, authUser ()->id, $hashedPassword )) {
+								setMessage ( 'Passwort erfolgreich ge&auml;ndert' );
+								setPage ( "home" );
+							} else {
+								setMessage ( 'Passwort nicht erfolgreich ge&auml;ndert - contact admin' );
+							}
+						}
+						break;
 					case 'tour-new' :
 						$sports = getSports ( $pdo );
 						$input ['sport'] = 1; // MTB is default
@@ -262,9 +286,6 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						setMessage ( 'tour abgesagt' );
 						break;
 					case 'tour-list' :
-					case 'home' :
-						setPage ( 'home' );
-						break;
 					default :
 						die ();
 				}
@@ -272,7 +293,13 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 	}
 }
 
-if (! hasAuth () && getPage () != "login" && getPage () != "register" && getPage () != "register-save") {
+if (! hasAuth () && //
+(getPage () != "login") && //
+(getPage () != "register") && //
+(getPage () != "register-save") && //
+(getPage () != "password-reset") && //
+(getPage () != "password-reset-save")) //
+{
 	echo "not logged in";
 	setPage ( 'login' );
 }
@@ -295,6 +322,9 @@ switch (getPage ()) {
 		break;
 	case 'password-change' :
 		require_once 'pages/password-change.php';
+		break;
+	case 'password-reset' :
+		require_once 'pages/password-reset.php';
 		break;
 	case 'register' :
 		require_once 'pages/register.php';

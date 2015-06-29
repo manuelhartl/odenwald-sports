@@ -1,15 +1,7 @@
 <h1>Passwort &auml;ndern</h1>
 
 <form action="index.php" method="post">
-
 	<input type="hidden" name="action" value="password-change-save" />
-	<?php
-	$update = isset ( $input ['tourid'] );
-	if ($update) {
-		echo '<input type="hidden" name="tourid" value="' . $input ['tourid'] . '"/>';
-	}
-	?>
-	 
 	<table>
 		<tr>
 			<td style="text-align: right;">Altes Passwort</td>

@@ -52,10 +52,12 @@ function get_current_url($strip = true) {
 function getUrlPrefix() {
 	return dirname ( get_current_url () );
 }
-
 function validatePassword($input) {
 	// TODO: check for character classes
 	return strlen ( $input ) >= 6;
+}
+function validateEmail($input) {
+	return filter_var ( $input, FILTER_VALIDATE_EMAIL );
 }
 
 ?>

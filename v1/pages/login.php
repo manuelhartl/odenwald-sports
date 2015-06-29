@@ -17,10 +17,14 @@
 			</tr>
 		</table>
 	</form>
-	<br>
-	<hr>
+	<hr/>
+	<form name="password-reset" action="index.php" method="post">
+		<input name="action" type="hidden" value="password-reset" /> <input
+			name="submit" type="submit" value="Passwort vergessen?" />
+	</form>
 	<form name="register" action="index.php" method="post">
 		<input name="action" type="hidden" value="register" /> <input
 			name="submit" type="submit" value="Register" />
 	</form>
+
 </div>
