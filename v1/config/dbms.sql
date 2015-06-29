@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 28, 2015 at 02:23 PM
+-- Generation Time: Jun 29, 2015 at 09:52 PM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -19,18 +19,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `usr_ud01_314_2`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `email_verification`
---
-
-CREATE TABLE IF NOT EXISTS `email_verification` (
-  `fk_user_id` mediumint(9) NOT NULL,
-  `token` varchar(32) COLLATE utf8_bin NOT NULL,
-  `adddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -70,6 +58,19 @@ CREATE TABLE IF NOT EXISTS `sport_subtype` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `token`
+--
+
+CREATE TABLE IF NOT EXISTS `token` (
+  `fk_user_id` mediumint(9) NOT NULL,
+  `token` varchar(32) COLLATE utf8_bin NOT NULL,
+  `action` enum('emailverification','passwordreset') COLLATE utf8_bin NOT NULL,
+  `adddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tour`
 --
 
@@ -85,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `tour` (
   `adddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` enum('active','canceled') COLLATE utf8_bin NOT NULL DEFAULT 'active'
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -113,17 +114,11 @@ CREATE TABLE IF NOT EXISTS `user` (
   `status` enum('registered','verified') COLLATE utf8_bin NOT NULL,
   `register_date` datetime NOT NULL,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Indexes for dumped tables
 --
-
---
--- Indexes for table `email_verification`
---
-ALTER TABLE `email_verification`
-  ADD PRIMARY KEY (`fk_user_id`,`token`);
 
 --
 -- Indexes for table `place`
@@ -142,6 +137,12 @@ ALTER TABLE `sport`
 --
 ALTER TABLE `sport_subtype`
   ADD PRIMARY KEY (`id`), ADD KEY `fk_sport_id` (`fk_sport_id`);
+
+--
+-- Indexes for table `token`
+--
+ALTER TABLE `token`
+  ADD PRIMARY KEY (`fk_user_id`,`token`);
 
 --
 -- Indexes for table `tour`
@@ -184,27 +185,27 @@ ALTER TABLE `sport_subtype`
 -- AUTO_INCREMENT for table `tour`
 --
 ALTER TABLE `tour`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=66;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=76;
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=17;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `email_verification`
---
-ALTER TABLE `email_verification`
-ADD CONSTRAINT `email_verification_ibfk_1` FOREIGN KEY (`fk_user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `sport_subtype`
 --
 ALTER TABLE `sport_subtype`
 ADD CONSTRAINT `fk_sport_id` FOREIGN KEY (`fk_sport_id`) REFERENCES `sport` (`id`);
+
+--
+-- Constraints for table `token`
+--
+ALTER TABLE `token`
+ADD CONSTRAINT `token_ibfk_1` FOREIGN KEY (`fk_user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tour`
