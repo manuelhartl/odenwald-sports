@@ -47,6 +47,16 @@ function registerUser($pdo, $username, $hashedpassword, $email) {
 	}
 	return $pdo->lastInsertId ();
 }
+function changePassword($pdo, $userid, $hashedpassword) {
+	$stmt = $pdo->prepare ( "update user set hashedpassword = ? where id = ?" );
+	if (! ex2er ( $stmt, (array (
+			$hashedpassword,
+			$userid 
+	)) )) {
+		return false;
+	}
+	return true;
+}
 function addActivationToken($pdo, $userid, $token) {
 	$stmt = $pdo->prepare ( "insert into email_verification (fk_user_id,token)  VALUES (?,?)" );
 	return ex2er ( $stmt, (array (

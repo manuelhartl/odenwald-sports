@@ -66,6 +66,29 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			setMessage ( 'logged out' );
 			setPage ( "login" );
 			break;
+		case 'password-change' :
+			setPage ( "password-change" );
+			break;
+		case 'password-change-save' :
+			$oldpassword = $_POST ['oldpassword'];
+			$newpassword = $_POST ['newpassword'];
+			$newpassword2 = $_POST ['newpassword2'];
+			if (! validatePassword ( $newpassword )) {
+				setMessage ( 'password must be at least 6 characters"' );
+			} else if (! checkAuth ( $pdo, authUser ()->username, $oldpassword )) {
+				setMessage ( 'Altes Passwort falsch' );
+			} else if ($newpassword != $newpassword2) {
+				setMessage ( 'Die Eingaben f&uuml;r das neue Passwort stimmen nicht &uuml;berein' );
+			} else {
+				$hashedPassword = password_hash ( $newpassword, PASSWORD_BCRYPT );
+				if (changePassword ( $pdo, authUser ()->id, $hashedPassword )) {
+					setMessage ( 'Passwort erfolgreich ge&auml;ndert' );
+					setPage ( "home" );
+				} else {
+					setMessage ( 'Passwort nicht erfolgreich ge&auml;ndert - contact admin' );
+				}
+			}
+			break;
 		case 'register' :
 			setPage ( "register" );
 			break;
@@ -73,6 +96,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			setPage ( "register" );
 			$username = $_POST ['username'];
 			$password = $_POST ['password'];
+			$password2 = $_POST ['password2'];
 			$email = $_POST ['email'];
 			// validate
 			if (! preg_match ( "/^[a-zA-Z][0-9a-zA-Z]*$/", $username )) {
@@ -83,8 +107,13 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				setMessage ( 'username must be at least 2 characters' );
 				break;
 			}
-			if (strlen ( $password ) < 6) {
-				setMessage ( 'password must be at least 6 characters"' );
+			
+			if (! validatePassword ( $password )) {
+				setMessage ( 'password must be at least 6 characters' );
+				break;
+			}
+			if ($password != $password2) {
+				setMessage ( 'passwords do not match' );
 				break;
 			}
 			if (! filter_var ( $email, FILTER_VALIDATE_EMAIL )) {
@@ -177,7 +206,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							setPage ( 'home' );
 						} else {
 							// new
-							$date = DateTime::createFromFormat('d.m.Y H:i', $_REQUEST ['startdate']);
+							$date = DateTime::createFromFormat ( 'd.m.Y H:i', $_REQUEST ['startdate'] );
 							if (strlen ( $_REQUEST ['startdate'] ) < 14) {
 								setMessage ( 'Datum angeben' );
 							} else if ($date < date ( 'Y-m-d H:i:s' )) {
@@ -261,22 +290,25 @@ echo '</div>';
 echo '<div id="main">';
 switch (getPage ()) {
 	default :
-	case "login" :
+	case 'login' :
 		require_once 'pages/login.php';
 		break;
-	case "register" :
+	case 'password-change' :
+		require_once 'pages/password-change.php';
+		break;
+	case 'register' :
 		require_once 'pages/register.php';
 		break;
-	case "register-save" :
+	case 'register-save' :
 		setPage ( 'login' );
 		$email = $_POST ['email'];
 		require_once 'pages/register-save.php';
 		break;
-	case "home" :
+	case 'home' :
 		require_once 'pages/tour-list.php';
 		break;
-	case "tour-edit" :
-	case "tour-new" :
+	case 'tour-edit' :
+	case 'tour-new' :
 		require_once 'pages/tour-new-edit.php';
 		break;
 }

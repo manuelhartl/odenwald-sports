@@ -53,4 +53,9 @@ function getUrlPrefix() {
 	return dirname ( get_current_url () );
 }
 
+function validatePassword($input) {
+	// TODO: check for character classes
+	return strlen ( $input ) >= 6;
+}
+
 ?>

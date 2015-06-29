@@ -12,6 +12,10 @@
 			<td><input name="password" type="password" /></td>
 		</tr>
 		<tr>
+			<td>Passwort wiederholen:</td>
+			<td><input name="password2" type="password" /></td>
+		</tr>
+		<tr>
 			<td>Email-Adresse:</td>
 			<td><input name="email" type="text"
 				value="<?php echo isset($input['email']) ? $input['email'] : '';?>" /></td>
