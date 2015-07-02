@@ -6,7 +6,7 @@
 		<?php
 		if (hasAuth ()) {
 			echo '<th>Treffpunkt</th>';
-			echo '<th>Entfernung zum B&ouml;lle</th>';
+			echo '<th>Entfernung zu mir</th>';
 		}
 		?>
 		<th>Beschreibung</th>
@@ -26,6 +26,14 @@ require_once 'lib/global.php';
 require_once 'lib/tours.php';
 
 $reference = getPlaceById ( $pdo, 1 );
+if (hasAuth ()) {
+	$userextra = getUserExtraById ( $pdo, authUser ()->id );
+	if (isset ( $userextra->address_lat )) {
+		$reference->gps->lat = $userextra->address_lat;
+		$reference->gps->long = $userextra->address_long;
+	}
+}
+
 $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
 ' from tour t' . //
 ' left join user g ON (t.fk_guide_id=g.id) ' . //

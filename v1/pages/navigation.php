@@ -43,6 +43,10 @@ if (hasAuth ()) {
 		</li>
 	</ul>
 	 -->
+<form name="user-edit" action="index.php" method="post">
+	<input name="action" type="hidden" value="user-edit" /> <input
+		name="submit" type="submit" value="Mein Profil" />
+</form>
 <form name="password-change" action="index.php" method="post">
 	<input name="action" type="hidden" value="password-change" /> <input
 		id="submit-password-change" name="submit" type="submit"

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 29, 2015 at 09:52 PM
+-- Generation Time: Jul 02, 2015 at 11:35 PM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `sport_subtype` (
   `id` mediumint(9) NOT NULL,
   `fk_sport_id` mediumint(9) NOT NULL,
   `sportsubname` varchar(50) COLLATE utf8_bin NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `tour` (
   `adddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` enum('active','canceled') COLLATE utf8_bin NOT NULL DEFAULT 'active'
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -115,6 +115,20 @@ CREATE TABLE IF NOT EXISTS `user` (
   `register_date` datetime NOT NULL,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_extra`
+--
+
+CREATE TABLE IF NOT EXISTS `user_extra` (
+  `fk_user_id` mediumint(6) NOT NULL,
+  `realname` varchar(200) COLLATE utf8_bin DEFAULT NULL,
+  `birthdate` datetime DEFAULT NULL,
+  `address` varchar(200) COLLATE utf8_bin DEFAULT NULL,
+  `address_coord` point DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Indexes for dumped tables
@@ -154,13 +168,19 @@ ALTER TABLE `tour`
 -- Indexes for table `tour_attendee`
 --
 ALTER TABLE `tour_attendee`
-  ADD PRIMARY KEY (`fk_tour_id`,`fk_user_id`), ADD KEY `fk_user_id` (`fk_user_id`);
+  ADD PRIMARY KEY (`fk_tour_id`,`fk_user_id`), ADD KEY `tour_attendee_ibfk_3` (`fk_user_id`);
 
 --
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
   ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `username` (`username`), ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `user_extra`
+--
+ALTER TABLE `user_extra`
+  ADD PRIMARY KEY (`fk_user_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -180,12 +200,12 @@ ALTER TABLE `sport`
 -- AUTO_INCREMENT for table `sport_subtype`
 --
 ALTER TABLE `sport_subtype`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `tour`
 --
 ALTER TABLE `tour`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=76;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=77;
 --
 -- AUTO_INCREMENT for table `user`
 --
@@ -199,7 +219,7 @@ ALTER TABLE `user`
 -- Constraints for table `sport_subtype`
 --
 ALTER TABLE `sport_subtype`
-ADD CONSTRAINT `fk_sport_id` FOREIGN KEY (`fk_sport_id`) REFERENCES `sport` (`id`);
+ADD CONSTRAINT `fk_sport_id` FOREIGN KEY (`fk_sport_id`) REFERENCES `sport` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `token`
@@ -218,8 +238,14 @@ ADD CONSTRAINT `fk_sport_subtype_id` FOREIGN KEY (`fk_sport_subtype_id`) REFEREN
 -- Constraints for table `tour_attendee`
 --
 ALTER TABLE `tour_attendee`
-ADD CONSTRAINT `tour_attendee_ibfk_2` FOREIGN KEY (`fk_tour_id`) REFERENCES `tour` (`id`),
-ADD CONSTRAINT `tour_attendee_ibfk_3` FOREIGN KEY (`fk_user_id`) REFERENCES `user` (`id`);
+ADD CONSTRAINT `tour_attendee_ibfk_2` FOREIGN KEY (`fk_tour_id`) REFERENCES `tour` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `tour_attendee_ibfk_3` FOREIGN KEY (`fk_user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_extra`
+--
+ALTER TABLE `user_extra`
+ADD CONSTRAINT `user_extra_ibfk_1` FOREIGN KEY (`fk_user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

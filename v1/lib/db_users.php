@@ -1,11 +1,33 @@
 <?php
 require_once 'db.php';
+class UserExtra {
+	public $id;
+	public $birtdate;
+	public $realname;
+	public $address;
+	public $address_lat;
+	public $address_long;
+}
 function getUserObject($user) {
 	$userObj = new User ();
 	$userObj->id = $user ['id'];
 	$userObj->username = $user ['username'];
 	$userObj->email = $user ['email'];
 	return $userObj;
+}
+function getUserExtraObject($row) {
+	$userextra = new UserExtra ();
+	$userextra->id = $row ['fk_user_id'];
+	$userextra->realname = $row ['realname'];
+	$userextra->birtdate = date_create ( $row ['birthdate'] );
+	$userextra->address = $row ['address'];
+	if (isset ( $row ['address_lat'] )) {
+		$userextra->address_lat = $row ['address_lat'];
+	}
+	if (isset ( $row ['address_long'] )) {
+		$userextra->address_long = $row ['address_long'];
+	}
+	return $userextra;
 }
 function checkAuth($pdo, $username, $password) {
 	$stmt = $pdo->prepare ( 'select hashedpassword from user where status=? and LOWER(username)=LOWER(?)' );
@@ -28,6 +50,16 @@ function userExists($pdo, $username) {
 	$stmt->fetch ( PDO::FETCH_OBJ );
 	return $stmt->rowCount () > 0;
 }
+function userExtraExists($pdo, $id) {
+	$stmt = $pdo->prepare ( 'SELECT fk_user_id from user_extra WHERE fk_user_id = ?' );
+	if (! ex2er ( $stmt, (array (
+			$id 
+	)) )) {
+		return false;
+	}
+	$stmt->fetch ( PDO::FETCH_OBJ );
+	return $stmt->rowCount () > 0;
+}
 function emailExists($pdo, $email) {
 	$stmt = $pdo->prepare ( 'select email from user where LOWER(email) = LOWER(?)' );
 	$stmt->execute ( array (
@@ -46,6 +78,37 @@ function registerUser($pdo, $username, $hashedpassword, $email) {
 		return false;
 	}
 	return $pdo->lastInsertId ();
+}
+function addUserExtra($pdo, $id) {
+	$stmt = $pdo->prepare ( "insert into user_extra (fk_user_id) VALUES (?)" );
+	if (! ex2er ( $stmt, (array (
+			$id 
+	)) )) {
+		return false;
+	}
+	return $pdo->lastInsertId ();
+}
+function updateUserExtra($pdo, UserExtra $userextra) {
+	$stmt = $pdo->prepare ( "update user_extra set realname = ?, birthdate = ? , address= ? , address_coord = PointFromText(?) where fk_user_id = ?" );
+	$point = 'POINT(' . $userextra->address_lat . " " . $userextra->address_long . ')';
+	$date = toDbmsDate($userextra->birtdate);
+	if (! ex2er ( $stmt, array (
+			$userextra->realname,
+			$date,
+			$userextra->address,
+			$point,
+			$userextra->id 
+	) )) {
+		return false;
+	}
+	return true;
+}
+function getUserExtraById($pdo, $userid) {
+	$stmt = $pdo->prepare ( 'select *,X(address_coord) as address_lat,Y(address_coord) as address_long from user_extra where user_extra.fk_user_id = ?' );
+	$stmt->execute ( array (
+			$userid 
+	) );
+	return getUserExtraObject ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
 }
 function changePassword($pdo, $userid, $hashedpassword) {
 	$stmt = $pdo->prepare ( "update user set hashedpassword = ? where id = ?" );

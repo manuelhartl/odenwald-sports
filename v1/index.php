@@ -136,7 +136,6 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$token = bin2hex ( openssl_random_pseudo_bytes ( 16 ) );
 			$userId = registerUser ( $pdo, $username, $hashedPassword, $email );
 			if (! $userId) {
-				print_r ( $pdo->errorInfo () );
 				setMessage ( 'registering not successful' );
 			}
 			addActivationToken ( $pdo, $userId, $token );
@@ -286,6 +285,39 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						mailCancelTour ( $pdo, $tour );
 						setMessage ( 'tour abgesagt' );
 						break;
+					case 'user-edit' :
+						$input ['userid'] = authUser ()->id;
+						$userextra = getUserExtraById ( $pdo, $input ['userid'] );
+						$input ['realname'] = $userextra->realname;
+						$input ['birthdate'] = $userextra->birtdate;
+						$input ['address'] = $userextra->address;
+						if (isset ( $userextra->address_lat )) {
+							$input ['address-lat'] = $userextra->address_lat;
+						}
+						if (isset ( $userextra->address_long )) {
+							$input ['address-lon'] = $userextra->address_long;
+						}
+						setPage ( "user-edit" );
+						break;
+					case 'user-save' :
+						if (isset ( $_REQUEST ['userid'] )) {
+							// edit
+							$userextra = new UserExtra ();
+							$userextra->id = authUser ()->id;
+							$userextra->birtdate = DateTime::createFromFormat ( 'Y', $_REQUEST ['birthdate'] );
+							$userextra->realname = $_REQUEST ['realname'];
+							$userextra->address = $_REQUEST ['address'];
+							$userextra->address_lat = $_REQUEST ['address-lat'];
+							$userextra->address_long = $_REQUEST ['address-lon'];
+							if (! userExtraExists ( $pdo, $userextra->id )) {
+								addUserExtra ( $pdo, $userextra->id );
+							}
+							updateUserExtra ( $pdo, $userextra );
+							setMessage ( 'Profil aktualisiert' );
+							setPage ( 'home' );
+						}
+						$input ['userid'] = authUser ()->id;
+						break;
 					default :
 						die ();
 				}
@@ -311,7 +343,6 @@ echo '</div>';
 echo '<div class="row">';
 echo '<div class="col-xs-12">';
 switch (getPage ()) {
-	default :
 	case 'login' :
 		require_once 'pages/login.php';
 		break;
@@ -329,12 +360,16 @@ switch (getPage ()) {
 		$email = $_POST ['email'];
 		require_once 'pages/register-save.php';
 		break;
+	default :
 	case 'home' :
 		require_once 'pages/tour-list.php';
 		break;
 	case 'tour-edit' :
 	case 'tour-new' :
 		require_once 'pages/tour-new-edit.php';
+		break;
+	case 'user-edit' :
+		require_once 'pages/user-edit.php';
 		break;
 }
 echo '</div>';
