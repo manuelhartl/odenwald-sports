@@ -17,7 +17,11 @@
 		</tr>
 		<tr>
 			<td></td>
-			<td><input type="submit" value="&Auml;ndern" /></td>
+			<td><input type="submit" value="&Auml;ndern" />
+			</form>
+				<form name="login" action="index.php" method="post">
+					<input name="action" type="hidden" value="home" /> <input
+						name="submit" type="submit" value="Abbrechen" />
+				</form></td>
 		</tr>
 	</table>
-</form>

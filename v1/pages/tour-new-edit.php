@@ -1,6 +1,6 @@
 <h1><?php echo isset($input['tourid']) ? 'Tour editieren' : 'Neue Tour';?></h1>
 
-<form action="index.php" method="post">
+<form action="index.php" method="post" style="width: 100%;">
 
 	<input type="hidden" name="action" value="tour-save" />
 	<?php
@@ -10,9 +10,9 @@
 	}
 	?>
 	 
-	<table>
+	<table style="width: 100%">
 		<tr>
-			<td>Sport</td>
+			<td style="width: 1%">Sport</td>
 			<td>
 			<?php
 			if ($update) {
@@ -29,14 +29,14 @@
 			</td>
 		</tr>
 		<td>Treffpunkt</td>
-		<td>
-			<div id="meetingpoint-map" style="width: 500px; height: 400px;"></div>
-			<input type="text" id="meetingpoint" style="width: 400px"
+		<td><input type="text" id="meetingpoint" style="width: 100%"
 			name="meetingpoint"
 			value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" />
 			<input type="hidden" id="meetingpoint-radius" /> <input type="hidden"
 			id="meetingpoint-lat" name="meetingpoint-lat" /><input type="hidden"
-			id="meetingpoint-lon" name="meetingpoint-lon" /> <script>$('#meetingpoint-map').locationpicker({
+			id="meetingpoint-lon" name="meetingpoint-lon" />
+			<div id="meetingpoint-map" style="width: 100%; height: 400px;"></div>
+			<script>$('#meetingpoint-map').locationpicker({
 	location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
 	radius: 50,
 	inputBinding: {
@@ -47,24 +47,24 @@
     },
 	enableAutocomplete: true
 	});
-</script>
-		</td>
+</script></td>
 		</tr>
 		<tr>
 			<td>Beschreibung</td>
-			<td><textarea name="description" rows="10" cols="50"><?php echo isset($input['description']) ? $input['description'] : '';?></textarea></td>
+			<td><textarea name="description" rows="10" cols="50"
+					style="width: 100%"><?php echo isset($input['description']) ? $input['description'] : '';?></textarea></td>
 		</tr>
 		<tr>
 			<td>Datum/Uhrzeit</td>
 			<td><?php
 			if ($update) {
-				echo $input ['startdate']->format('d.m.Y H:i');
+				echo $input ['startdate']->format ( 'd.m.Y H:i' );
 			} else {
 				?>
 				<div class="row">
 					<div class='col-sm-6'>
-						<input type="text" class="form-control" style="width: 150px;" id="startdate" maxlength="10" 
-							name="startdate"
+						<input type="text" class="form-control" style="width: 150px;"
+							id="startdate" maxlength="10" name="startdate"
 							value="<?php echo isset($input['startdate']) ? $input['startdate'] : '';?>" />
 					</div>
 					<script type="text/javascript">
@@ -91,7 +91,11 @@
 		</tr>
 		<tr>
 			<td></td>
-			<td><input type="submit" value="Speichern" /></td>
+			<td><input type="submit" value="Speichern" />
+			</form>
+				<form name="login" action="index.php" method="post">
+					<input name="action" type="hidden" value="home" /> <input
+						name="submit" type="submit" value="Abbrechen" />
+				</form></td>
 		</tr>
 	</table>
-</form>

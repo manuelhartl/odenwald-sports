@@ -1,7 +1,3 @@
-#message {
-	color: red;
-}
-
 input[id=submit-logout] {
 	right: 0px;
 }
@@ -72,31 +68,30 @@ input[value=Logout] {
 	background-color: #aa0000;
 }
 
-input[value=Login] {
-	float: right;
-}
-
-input[value=Register] {
-	margin-left: auto;
-	margin-right: auto;
-}
-
 th {
 	background-color: #eeeeee;
 }
 
 tr, td, th, table {
+	margin: 0px;
 	padding: 3px;
+	margin: 3px;
+	vertical-align: top;
 	margin: 3px;
 }
 
 form {
-	display: inline;
+	display: inline-block;
 }
 
 .canceled {
 	color: #dddddd;
 	text-decoration: line-through;
+}
+
+#message {
+	color: red;
+	display: inline-block;
 }
 
 /* input[type=text], input[type=password], textarea { */

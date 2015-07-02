@@ -3,13 +3,23 @@
 		<th></th>
 		<th>Datum</th>
 		<th>Sport</th>
-		<th>Treffpunkt</th>
-		<th>Entfernung zum B&ouml;lle</th>
+		<?php
+		if (hasAuth ()) {
+			echo '<th>Treffpunkt</th>';
+			echo '<th>Entfernung zum B&ouml;lle</th>';
+		}
+		?>
 		<th>Beschreibung</th>
 		<th>Dauer</th>
-		<th>Guide</th>
-		<th>Teilnehmer</th>
-		<th><?php echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';?></th>
+		<?php
+		if (hasAuth ()) {
+			echo '<th>Guide</th>';
+			echo '<th>Teilnehmer</th>';
+			echo '<th><form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form></th>';
+		} else {
+			echo '<th>Teilnehmer</th>';
+		}
+		?>
 	</tr>
 <?php
 require_once 'lib/global.php';
@@ -22,13 +32,13 @@ $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_
 ' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
 ' left join sport s ON (ss.fk_sport_id=s.id) ' . //
 ' WHERE startdate>now()' . //
+(! hasAuth () ? ' AND t.status = "active"' : '') . //
 ' order by startdate ASC' ); //
 ex2er ( $stmt, array (
 		$reference->gps->lat,
 		$reference->gps->long 
 ) );
 
-$authuserid = authUser ()->id;
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
 	$tour = getTourObject ( $row );
@@ -42,42 +52,53 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	}
 	
 	echo "<td>" . $tour->sport->sportsubname . "</td>"; // . $tour->sport->sportname.' '
-	echo "<td>" . $tour->meetingPoint . "</td>";
-	echo "<td>" . formatMeters ( $row ['refm'] ) . "</td>";
+	if (hasAuth ()) {
+		echo "<td>" . $tour->meetingPoint . "</td>";
+		echo "<td>" . formatMeters ( $row ['refm'] ) . "</td>";
+	}
 	echo "<td>" . $tour->description . "</td>";
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
-	echo "<td>" . $tour->guide->username . "</td>";
 	$users = getAttendees ( $pdo, $tour->id );
-	echo "<td>";
-	$joinedTour = false;
-	foreach ( $users as $user ) {
-		echo $user ['username'] . " ";
-		if ($user ['id'] == $authuserid) {
-			$joinedTour = true;
-		}
-	}
-	echo "</td>";
-	echo '<td>';
-	if ($tour->guide->id == $authuserid) {
-		// edit
-		if (! $tour->canceled) {
-			echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Edit"/></form>';
-			echo '<form action="" method="post"><input type="hidden" name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Absagen"/></form>';
-		}
-	} else {
-		// Join/leave
-		if (! $tour->canceled) {
-			$tooltipdate = getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
-			if ($joinedTour) {
-				$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' abmelden';
-				echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" value="-" title="' . $tooltip . '"/></form>';
-			} else {
-				$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' anmelden';
-				echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-join" value="+" title="' . $tooltip . '"/></form>';
+	if (hasAuth ()) {
+		// guide
+		echo "<td>" . $tour->guide->username . "</td>";
+		// attendees
+		$authuserid = authUser ()->id;
+		echo "<td>";
+		$joinedTour = false;
+		foreach ( $users as $user ) {
+			echo $user ['username'] . " ";
+			if ($user ['id'] == $authuserid) {
+				$joinedTour = true;
 			}
 		}
+		echo "</td>";
+		// functions
+		echo '<td>';
+		if ($tour->guide->id == $authuserid) {
+			// edit
+			if (! $tour->canceled) {
+				echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Edit"/></form>';
+				echo '<form action="" method="post"><input type="hidden" name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Absagen"/></form>';
+			}
+		} else {
+			// Join/leave
+			if (! $tour->canceled) {
+				$tooltipdate = getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
+				if ($joinedTour) {
+					$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' abmelden';
+					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" value="-" title="' . $tooltip . '"/></form>';
+				} else {
+					$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' anmelden';
+					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-join" value="+" title="' . $tooltip . '"/></form>';
+				}
+			}
+		}
+		echo "<td>";
+	} else {
+		echo "<td>" . count ( $users ) . "</td>";
 	}
-	echo "<td></tr>";
+	echo "</tr>";
 	$lastdate = $startdate;
 }
 ?>

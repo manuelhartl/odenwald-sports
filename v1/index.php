@@ -33,7 +33,7 @@ function setPage($page) {
 }
 function getPage() {
 	if (! array_key_exists ( 'page', $_SESSION )) {
-		$_SESSION ['page'] = 'login';
+		$_SESSION ['page'] = 'home';
 	}
 	return $_SESSION ['page'];
 }
@@ -47,6 +47,9 @@ $input;
 // work on form inputs
 if (array_key_exists ( 'action', $_REQUEST )) {
 	switch ($_REQUEST ['action']) {
+		case 'home' :
+			setPage ( 'home' );
+			break;
 		case 'login' :
 			$username = $_POST ['username'];
 			$password = $_POST ['password'];
@@ -64,7 +67,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			session_destroy ();
 			unset ( $_SESSION );
 			setMessage ( 'logged out' );
-			setPage ( "login" );
+			setPage ( "home" );
 			break;
 		case 'password-reset' :
 			setPage ( "password-reset" );
@@ -148,9 +151,6 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			} else {
 				switch ($_REQUEST ['action']) {
 					case 'tour-list' :
-					case 'home' :
-						setPage ( 'home' );
-						break;
 					case 'password-change' :
 						setPage ( "password-change" );
 						break;
@@ -300,21 +300,16 @@ if (! hasAuth () && //
 (getPage () != "password-reset") && //
 (getPage () != "password-reset-save")) //
 {
-	echo "not logged in";
-	setPage ( 'login' );
+	setPage ( 'home' );
 }
 echo '<div class="row">';
-if (hasAuth ()) {
-	echo '<div class="col-md-2">';
-	require_once 'pages/navigation.php';
-	echo '</div>';
-}
-echo '<div class="col-md-1">';
-echo '<div id="message">' . $_SESSION ['message'] . '</div>';
+echo '<div class="col-xs-12">';
+require_once 'pages/navigation.php';
 echo '</div>';
 echo '</div>';
 
-echo '<div id="main">';
+echo '<div class="row">';
+echo '<div class="col-xs-12">';
 switch (getPage ()) {
 	default :
 	case 'login' :
@@ -342,6 +337,7 @@ switch (getPage ()) {
 		require_once 'pages/tour-new-edit.php';
 		break;
 }
+echo '</div>';
 echo '</div>';
 /*
  * echo "<pre>";
