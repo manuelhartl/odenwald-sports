@@ -64,7 +64,7 @@
 				<div class="row">
 					<div class='col-sm-6'>
 						<input type="text" class="form-control" style="width: 150px;"
-							id="startdate" maxlength="10" name="startdate"
+							id="startdate" maxlength="16" name="startdate"
 							value="<?php echo isset($input['startdate']) ? $input['startdate'] : '';?>" />
 					</div>
 					<script type="text/javascript">

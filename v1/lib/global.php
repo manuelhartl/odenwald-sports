@@ -52,6 +52,14 @@ function get_current_url($strip = true) {
 function getUrlPrefix() {
 	return dirname ( get_current_url () );
 }
+function printInVa($index, $default) {
+	global $input;
+	echo isset ( $input [$index] ) ? $input [$index] : $default;
+}
+function getInVa($index) {
+	global $input;
+	return isset ( $input [$index] ) ? $input [$index] : '';
+}
 function validatePassword($input) {
 	// TODO: check for character classes
 	return strlen ( $input ) >= 6;

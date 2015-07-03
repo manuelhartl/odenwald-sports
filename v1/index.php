@@ -149,7 +149,11 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				setPage ( 'login' );
 			} else {
 				switch ($_REQUEST ['action']) {
+					case 'tour-list-canceled' :
+						$input ['showcanceled'] = $_REQUEST ['showcanceled']; // == 'true' ? 'false' : 'true';
+						break;
 					case 'tour-list' :
+						break;
 					case 'password-change' :
 						setPage ( "password-change" );
 						break;
@@ -374,14 +378,15 @@ switch (getPage ()) {
 }
 echo '</div>';
 echo '</div>';
+echo '</div>';
+echo '<div id="version">Version: '.$config['version'].'</div>';
 /*
  * echo "<pre>";
  * print_r ( $_SESSION );
- * print_r ( $_GET );
- * print_r ( $_POST );
+ * print_r ( $_REQUEST );
  * echo "</pre>";
  */
 ?>
-</div>
+
 </body>
 </html>

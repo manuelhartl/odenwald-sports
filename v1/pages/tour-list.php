@@ -1,3 +1,15 @@
+<form name="tour-list-update" action="" method="post">
+	<input name="action" type="hidden" value="tour-list-canceled" />
+	<?php
+	if (getInVa ( 'showcanceled' ) == 'true') {
+		echo '<input name="showcanceled" type="hidden" value="false" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
+	} else {
+		echo '<input name="showcanceled" type="hidden" value="true" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
+	}
+	?>
+</form>
 <table>
 	<tr>
 		<th></th>
@@ -33,13 +45,13 @@ if (hasAuth ()) {
 		$reference->gps->long = $userextra->address_long;
 	}
 }
-
 $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
 ' from tour t' . //
 ' left join user g ON (t.fk_guide_id=g.id) ' . //
 ' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
 ' left join sport s ON (ss.fk_sport_id=s.id) ' . //
 ' WHERE startdate>now()' . //
+(getInVa ( 'showcanceled' ) == 'true' ? '' : ' AND (t.status = "active")') . //
 (! hasAuth () ? ' AND t.status = "active"' : '') . //
 ' order by startdate ASC' ); //
 ex2er ( $stmt, array (
