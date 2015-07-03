@@ -1,5 +1,5 @@
 <?php
-require_once 'db.php';
+require_once __DIR__ . '/db.php';
 class UserExtra {
 	public $id;
 	public $birtdate;
@@ -91,7 +91,7 @@ function addUserExtra($pdo, $id) {
 function updateUserExtra($pdo, UserExtra $userextra) {
 	$stmt = $pdo->prepare ( "update user_extra set realname = ?, birthdate = ? , address= ? , address_coord = PointFromText(?) where fk_user_id = ?" );
 	$point = 'POINT(' . $userextra->address_lat . " " . $userextra->address_long . ')';
-	$date = toDbmsDate($userextra->birtdate);
+	$date = toDbmsDate ( $userextra->birtdate );
 	if (! ex2er ( $stmt, array (
 			$userextra->realname,
 			$date,

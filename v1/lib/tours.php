@@ -1,6 +1,6 @@
 <?php
-require_once 'lib/db_tours.php';
-require_once 'lib/mail.php';
+require_once __DIR__ . '/db_tours.php';
+require_once __DIR__ . '/mail.php';
 function formatMinutes($minutes) {
 	if ($minutes < 60) {
 		return $minutes . 'min';

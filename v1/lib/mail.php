@@ -1,5 +1,5 @@
 <?php
-require_once 'config/settings.php';
+require_once __DIR__ . '/../config/settings.php';
 function sendmail($to, $subject, $body) {
 	sendmail_local ( $to, $subject, $body );
 }

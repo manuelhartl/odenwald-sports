@@ -1,6 +1,5 @@
 <?php
-require_once 'db.php';
-require_once 'db_tours.php';
+require_once __DIR__ . '/db.php';
 class Tour {
 	public $id;
 	public $startDateTime;
@@ -67,7 +66,7 @@ function getPlaceObject($row) {
 function insertTour($pdo, Tour $tour) {
 	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id) VALUES(?,?,?,?,?,PointFromText(?),?)" );
 	$stmt->bindParam ( 1, $tour->guide->id );
-	$date = toDbmsDate($tour->startDateTime);
+	$date = toDbmsDate ( $tour->startDateTime );
 	$stmt->bindParam ( 2, $date );
 	$stmt->bindParam ( 3, $tour->duration );
 	$stmt->bindParam ( 4, $tour->meetingPoint );

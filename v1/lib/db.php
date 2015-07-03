@@ -1,5 +1,5 @@
 <?php
-require 'config/settings.php';
+require_once __DIR__ . '/../config/settings.php';
 function db_open() {
 	global $config;
 	return new PDO ( 'mysql:host=' . $config ['dbHostname'] . ';dbname=' . $config ['dbDatabase'] . ';charset=utf8', $config ['dbUsername'], $config ['dbPassword'] );
