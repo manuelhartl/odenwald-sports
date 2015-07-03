@@ -19,7 +19,9 @@
 		<tr>
 			<td>Echter Name</td>
 			<td><input type="text" style="width: 100%" name="realname"
-				value="<?php echo isset($input['realname']) ? $input['realname'] : '';?>" /></td>
+				value="<?php echo isset($input['realname']) ? $input['realname'] : '';?>" /><br>
+				(Dies ist f&uuml;r angemeldeten Benutzer sichtbar - Nur eintragen
+				wenn dies in Ordnung ist)</td>
 		</tr>
 		<tr>
 			<td>Geburtsjahr</td>
@@ -44,7 +46,8 @@
 //   			maxDate: moment().subtract(16,'years').format('YYYY'),
             
         </script>
-				</div></td>
+				</div> (Dies ist f&uuml;r angemeldeten Benutzer sichtbar - Nur
+				eintragen wenn dies in Ordnung ist)</td>
 		</tr>
 		<td>Treffpunktreferenz bzw. Wohnanschrift)</td>
 		<td><input type="text" id="address" style="width: 100%" name="address"

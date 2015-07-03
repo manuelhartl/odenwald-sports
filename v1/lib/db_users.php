@@ -10,17 +10,17 @@ class UserExtra {
 }
 function getUserObject($user) {
 	$userObj = new User ();
-	$userObj->id = $user ['id'];
-	$userObj->username = $user ['username'];
-	$userObj->email = $user ['email'];
+	$userObj->id = isset ( $user ['id'] ) ? $user ['id'] : false;
+	$userObj->username = isset ( $user ['username'] ) ? $user ['username'] : false;
+	$userObj->email = isset ( $user ['email'] ) ? $user ['email'] : false;
 	return $userObj;
 }
 function getUserExtraObject($row) {
 	$userextra = new UserExtra ();
-	$userextra->id = $row ['fk_user_id'];
+	$userextra->id = isset ( $row ['fk_user_id'] ) ? $row ['fk_user_id'] : false;
 	$userextra->realname = $row ['realname'];
 	$userextra->birtdate = date_create ( $row ['birthdate'] );
-	$userextra->address = $row ['address'];
+	$userextra->address = isset ( $row ['address'] ) ? $row ['address'] : false;
 	if (isset ( $row ['address_lat'] )) {
 		$userextra->address_lat = $row ['address_lat'];
 	}

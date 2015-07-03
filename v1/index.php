@@ -289,6 +289,9 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						mailCancelTour ( $pdo, $tour );
 						setMessage ( 'tour abgesagt' );
 						break;
+					case 'user-list' :
+						setPage ( 'user-list' );
+						break;
 					case 'user-edit' :
 						$input ['userid'] = authUser ()->id;
 						$userextra = getUserExtraById ( $pdo, $input ['userid'] );
@@ -372,6 +375,9 @@ switch (getPage ()) {
 	case 'tour-new' :
 		require_once 'pages/tour-new-edit.php';
 		break;
+	case 'user-list' :
+		require_once 'pages/user-list.php';
+		break;
 	case 'user-edit' :
 		require_once 'pages/user-edit.php';
 		break;
@@ -379,7 +385,7 @@ switch (getPage ()) {
 echo '</div>';
 echo '</div>';
 echo '</div>';
-echo '<div id="version">Version: '.$config['version'].'</div>';
+echo '<div id="version">Version: ' . $config ['version'] . '</div>';
 /*
  * echo "<pre>";
  * print_r ( $_SESSION );
@@ -387,6 +393,10 @@ echo '<div id="version">Version: '.$config['version'].'</div>';
  * echo "</pre>";
  */
 ?>
+
+
+
+
 
 </body>
 </html>

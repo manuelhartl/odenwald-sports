@@ -43,7 +43,11 @@ if (hasAuth ()) {
 		</li>
 	</ul>
 	 -->
-<form name="user-edit" action="index.php" method="post">
+<form name="user-list" action="index.php" method="post">
+	<input name="action" type="hidden" value="user-list" /> <input
+		name="submit" type="submit" value="Benutzerliste" />
+</form>
+	<form name="user-edit" action="index.php" method="post">
 	<input name="action" type="hidden" value="user-edit" /> <input
 		name="submit" type="submit" value="Mein Profil" />
 </form>

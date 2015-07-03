@@ -34,14 +34,15 @@ function mailNewTour($pdo, $tour) {
 }
 function mailCancelTour($pdo, $tour) {
 	$subject = $tour->guide->username . ' hat eine Tour abgesagt';
-	$text = '<table>' . //
-'<tr><td>Was ? </td><td>' . $tour->sport->sportsubname . '</td>' . //
-'<tr><td>Wann ? </td><td>' . $tour->startDateTime->format('d.m.Y H:i') . '</td>' . //
-'<tr><td>Wo ? </td><td>' . $tour->meetingPoint . '</td>' . //
-'<tr><td>Wie ? </td><td>' . $tour->description . '</td>' . //
-'<tr><td>Wie lange ? </td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //
-'</table>';
-	
+	$text = '<html><body><table>' . //
+'<tr><td>Sport:</td><td>' . $tour->sport->sportsubname . '</td>' . //
+'<tr><td>Datum/Uhrzeit:</td><td>' . $tour->startDateTime->format('d.m.Y H:i') . '</td>' . //
+'<tr><td>Treffpunkt:</td><td>' . $tour->meetingPoint . '</td>' . //
+'<tr><td>Beschreibung:</td><td>' . $tour->description . '</td>' . //
+'<tr><td>Dauer:</td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //
+'</table>' . //
+'<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a></body><html>'; //
+		
 	$users = getAttendees ( $pdo, $tour->id );
 	foreach ( $users as $user ) {
 		sendmail ( $user ['email'], $subject, $text );

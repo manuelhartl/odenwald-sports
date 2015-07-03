@@ -1,12 +1,14 @@
 <form name="tour-list-update" action="" method="post">
 	<input name="action" type="hidden" value="tour-list-canceled" />
 	<?php
-	if (getInVa ( 'showcanceled' ) == 'true') {
-		echo '<input name="showcanceled" type="hidden" value="false" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
-	} else {
-		echo '<input name="showcanceled" type="hidden" value="true" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
+	if (hasAuth ()) {
+		if (getInVa ( 'showcanceled' ) == 'true') {
+			echo '<input name="showcanceled" type="hidden" value="false" />';
+			echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
+		} else {
+			echo '<input name="showcanceled" type="hidden" value="true" />';
+			echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
+		}
 	}
 	?>
 </form>
