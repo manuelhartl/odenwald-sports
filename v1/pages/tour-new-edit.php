@@ -29,14 +29,11 @@
 			</td>
 		</tr>
 		<td>Treffpunkt</td>
-		<td><input type="text" id="meetingpoint" style="width: 100%"
-			name="meetingpoint"
-			value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" />
-			<input type="hidden" id="meetingpoint-radius" /> <input type="hidden"
-			id="meetingpoint-lat" name="meetingpoint-lat" /><input type="hidden"
+		<td><input type="text" id="meetingpoint" style="width: 100%" name="meetingpoint"
+			value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" /> <input type="hidden"
+			id="meetingpoint-radius" /> <input type="hidden" id="meetingpoint-lat" name="meetingpoint-lat" /><input type="hidden"
 			id="meetingpoint-lon" name="meetingpoint-lon" />
-			<div id="meetingpoint-map" style="width: 100%; height: 400px;"></div>
-			<script>$('#meetingpoint-map').locationpicker({
+			<div id="meetingpoint-map" style="width: 100%; height: 400px;"></div> <script>$('#meetingpoint-map').locationpicker({
 	location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
 	radius: 50,
 	inputBinding: {
@@ -51,8 +48,7 @@
 		</tr>
 		<tr>
 			<td>Beschreibung</td>
-			<td><textarea name="description" rows="10" cols="50"
-					style="width: 100%"><?php echo isset($input['description']) ? $input['description'] : '';?></textarea></td>
+			<td><textarea name="description" rows="10" cols="50" style="width: 100%"><?php echo isset($input['description']) ? $input['description'] : '';?></textarea></td>
 		</tr>
 		<tr>
 			<td>Datum/Uhrzeit</td>
@@ -63,8 +59,7 @@
 				?>
 				<div class="row">
 					<div class='col-sm-6'>
-						<input type="text" class="form-control" style="width: 150px;"
-							id="startdate" maxlength="16" name="startdate"
+						<input type="text" class="form-control" style="width: 150px;" id="startdate" maxlength="16" name="startdate"
 							value="<?php echo isset($input['startdate']) ? $input['startdate'] : '';?>" />
 					</div>
 					<script type="text/javascript">
@@ -73,7 +68,7 @@
 						format: 'DD.MM.YYYY HH:mm',
                 		showTodayButton: true,
                 		sideBySide: true,
-						minDate: moment()
+						minDate: moment().add(15,'minute')
                 		}
                       );
             });
@@ -85,17 +80,34 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Dauer (Minuten)</td>
-			<td><input type="text" name="duration"
-				value="<?php echo isset($input['duration']) ? $input['duration'] : '';?>" /></td>
+			<td>Geschwindigkeit</td>
+			<td><?php echo getStars($input['speed'], 'speed',false); ?></td>
+		</tr>
+		<tr>
+			<td>Technik</td>
+			<td><?php echo getStars($input['skill'], 'skill',false); ?></td>
+		</tr>
+		<tr>
+			<td>Distanz</td>
+			<td><input type="text" name="distance" value="<?php echo isset($input['distance']) ? $input['distance'] : '';?>" />
+				Kilometer</td>
+		</tr>
+		<tr>
+			<td>H&ouml;henmeter</td>
+			<td><input type="text" name="elevation" value="<?php echo isset($input['elevation']) ? $input['elevation'] : '';?>" />
+				Meter</td>
+		</tr>
+		<tr>
+			<td>Dauer</td>
+			<td><input type="text" name="duration" value="<?php echo isset($input['duration']) ? $input['duration'] : '';?>" />
+				Minuten</td>
 		</tr>
 		<tr>
 			<td></td>
 			<td><input type="submit" value="Speichern" />
-			</form>
+				</form>
 				<form name="login" action="index.php" method="post">
-					<input name="action" type="hidden" value="home" /> <input
-						name="submit" type="submit" value="Abbrechen" />
+					<input name="action" type="hidden" value="home" /> <input name="submit" type="submit" value="Abbrechen" />
 				</form></td>
 		</tr>
 	</table>

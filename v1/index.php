@@ -9,16 +9,17 @@
 <title>Touren</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
-<link href="css/bootstrap-datetimepicker.css" rel="stylesheet"
-	type="text/css">
+<link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
+<link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
 <link href="css/default.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript"
-	src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script type="text/javascript" src="js/locationpicker.jquery.js"></script>
+<script type="text/javascript" src="js/jquery.rating.pack.js"></script>
+
 </head>
 <body>
 	<div class="container-fluid">
@@ -180,6 +181,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 					case 'tour-new' :
 						$sports = getSports ( $pdo );
 						$input ['sport'] = 1; // MTB is default
+						$input ['skill'] = 3; //
+						$input ['speed'] = 3; //
 						setPage ( 'tour-new' );
 						break;
 					case 'tour-edit' :
@@ -193,6 +196,10 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['description'] = $tour->description;
 						$input ['startdate'] = $tour->startDateTime;
 						$input ['duration'] = $tour->duration;
+						$input ['skill'] = $tour->skill;
+						$input ['speed'] = $tour->speed;
+						$input ['distance'] = $tour->distance / 1000;
+						$input ['elevation'] = $tour->elevation;
 						setPage ( 'tour-edit' );
 						break;
 					case 'tour-save' :
@@ -229,7 +236,12 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$tour->meetingPoint = $_REQUEST ['meetingpoint'];
 							$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
 							$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];
+							$tour->skill = $_REQUEST ['skill'];
+							$tour->speed = $_REQUEST ['speed'];
+							$tour->distance = $_REQUEST ['distance'] * 1000;
+							$tour->elevation = $_REQUEST ['elevation'];
 							updateTour ( $pdo, $tour );
+							mailUpdateTour ( $pdo, $tour );
 							setMessage ( 'tour updated' );
 							setPage ( 'home' );
 						} else {
@@ -250,6 +262,10 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
 								$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];
 								$tour->startDateTime = $date;
+								$tour->skill = $_REQUEST ['skill'];
+								$tour->speed = $_REQUEST ['speed'];
+								$tour->distance = $_REQUEST ['distance'] * 1000;
+								$tour->elevation = $_REQUEST ['elevation'];
 								if (insertTour ( $pdo, $tour )) {
 									mailNewTour ( $pdo, $tour );
 									setMessage ( 'tour saved' );
@@ -393,6 +409,26 @@ echo '<div id="version">Version: ' . $config ['version'] . '</div>';
  * echo "</pre>";
  */
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

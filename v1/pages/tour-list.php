@@ -25,6 +25,10 @@
 		?>
 		<th>Beschreibung</th>
 		<th>Dauer</th>
+		<th>Distanz</th>
+		<th>Bergauf</th>
+		<th>Pace</th>
+		<th>Technik</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th>Guide</th>';
@@ -80,6 +84,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	}
 	echo "<td>" . $tour->description . "</td>";
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
+	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
+	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";
+	echo "<td style='width: 100px;'>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>";
+	echo "<td style='width: 100px;'>" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>";
+	
 	$users = getAttendees ( $pdo, $tour->id );
 	if (hasAuth ()) {
 		// guide
