@@ -71,10 +71,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '<tr class=' . ($tour->canceled ? 'canceled' : '') . '>';
 	$startdate = $tour->startDateTime;
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
-		echo '<td></td><td></td>';
+		echo '<td></td>';
+		echo "<td style='text-align: right;'>" . $startdate->format ( 'H:i' ) . "</td>";
 	} else {
 		echo "<td>" . getWeekDay ( $startdate ) . "</td>";
-		echo "<td>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
+		echo "<td style='text-align: right;'>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
 	}
 	
 	echo "<td>" . $tour->sport->sportsubname . "</td>"; // . $tour->sport->sportname.' '
