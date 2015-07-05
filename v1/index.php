@@ -19,16 +19,15 @@
 <script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script type="text/javascript" src="js/locationpicker.jquery.js"></script>
 <script type="text/javascript" src="js/jquery.rating.pack.js"></script>
-
 </head>
 <body>
 	<div class="container-fluid">
 <?php
-require_once 'lib/global.php';
-require_once 'lib/db_users.php';
-require_once 'lib/db_tours.php';
-require_once 'lib/users.php';
-require_once 'lib/tours.php';
+require_once __DIR__ . '/lib/global.php';
+require_once __DIR__ . '/lib/db_users.php';
+require_once __DIR__ . '/lib/db_tours.php';
+require_once __DIR__ . '/lib/users.php';
+require_once __DIR__ . '/lib/tours.php';
 function setPage($page) {
 	$_SESSION ['page'] = $page;
 }
@@ -212,6 +211,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['meetingpoint-lon'] = $_REQUEST ['meetingpoint-lon'];
 						$input ['description'] = $_REQUEST ['description'];
 						$input ['duration'] = $_REQUEST ['duration'];
+						$input ['skill'] = $_REQUEST ['skill'];
+						$input ['speed'] = $_REQUEST ['speed'];
 						if (isset ( $_REQUEST ['sport'] )) {
 							$input ['sport'] = $_REQUEST ['sport'];
 						}
@@ -280,11 +281,10 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 					case 'tour-join' :
 						$tourid = $_POST ['tourid'];
 						$tour = getTourById ( $pdo, $tourid );
-						if ($tour->canceled) {
-							die (); // hack
+						if (! $tour->canceled) {
+							tourJoin ( $pdo, authUser ()->id, $tourid );
+							setMessage ( 'tour joined' );
 						}
-						tourJoin ( $pdo, authUser ()->id, $tourid );
-						setMessage ( 'tour joined' );
 						break;
 					case 'tour-leave' :
 						$tourid = $_POST ['tourid'];
@@ -311,9 +311,17 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 					case 'user-edit' :
 						$input ['userid'] = authUser ()->id;
 						$userextra = getUserExtraById ( $pdo, $input ['userid'] );
-						$input ['realname'] = $userextra->realname;
-						$input ['birthdate'] = $userextra->birtdate;
-						$input ['address'] = $userextra->address;
+						if ($userextra) {
+							$input ['realname'] = $userextra->realname;
+							$input ['birthdate'] = $userextra->birtdate;
+							$input ['address'] = $userextra->address;
+							$input ['mailing'] = $userextra->mailing;
+						} else {
+							$input ['realname'] = '';
+							$input ['birthdate'] = DateTime::createFromFormat ( 'Y', '0000' );
+							$input ['address'] = '';
+							$input ['mailing'] = true;
+						}
 						if (isset ( $userextra->address_lat )) {
 							$input ['address-lat'] = $userextra->address_lat;
 						}
@@ -335,6 +343,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							if (! userExtraExists ( $pdo, $userextra->id )) {
 								addUserExtra ( $pdo, $userextra->id );
 							}
+							$userextra->mailing = isset ( $_REQUEST ['mailing'] ) ? $_REQUEST ['mailing'] == 'true' : false;
 							updateUserExtra ( $pdo, $userextra );
 							setMessage ( 'Profil aktualisiert' );
 							setPage ( 'home' );
@@ -409,6 +418,60 @@ echo '<div id="version">Version: ' . $config ['version'] . '</div>';
  * echo "</pre>";
  */
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

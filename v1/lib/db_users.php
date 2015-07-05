@@ -7,6 +7,7 @@ class UserExtra {
 	public $address;
 	public $address_lat;
 	public $address_long;
+	public $mailing;
 }
 function getUserObject($user) {
 	$userObj = new User ();
@@ -16,6 +17,9 @@ function getUserObject($user) {
 	return $userObj;
 }
 function getUserExtraObject($row) {
+	if (! $row) {
+		return false;
+	}
 	$userextra = new UserExtra ();
 	$userextra->id = isset ( $row ['fk_user_id'] ) ? $row ['fk_user_id'] : false;
 	$userextra->realname = $row ['realname'];
@@ -27,6 +31,7 @@ function getUserExtraObject($row) {
 	if (isset ( $row ['address_long'] )) {
 		$userextra->address_long = $row ['address_long'];
 	}
+	$userextra->mailing = $row ['mailing'];
 	return $userextra;
 }
 function checkAuth($pdo, $username, $password) {
@@ -89,7 +94,7 @@ function addUserExtra($pdo, $id) {
 	return $pdo->lastInsertId ();
 }
 function updateUserExtra($pdo, UserExtra $userextra) {
-	$stmt = $pdo->prepare ( "update user_extra set realname = ?, birthdate = ? , address= ? , address_coord = PointFromText(?) where fk_user_id = ?" );
+	$stmt = $pdo->prepare ( "update user_extra set realname = ?, birthdate = ? , address= ? , address_coord = PointFromText(?), mailing = ? where fk_user_id = ?" );
 	$point = 'POINT(' . $userextra->address_lat . " " . $userextra->address_long . ')';
 	$date = toDbmsDate ( $userextra->birtdate );
 	if (! ex2er ( $stmt, array (
@@ -97,6 +102,7 @@ function updateUserExtra($pdo, UserExtra $userextra) {
 			$date,
 			$userextra->address,
 			$point,
+			$userextra->mailing,
 			$userextra->id 
 	) )) {
 		return false;

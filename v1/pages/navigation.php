@@ -1,4 +1,4 @@
-<form name="home" action="index.php" method="post">
+<form name="home" action="" method="post">
 	<input name="action" type="hidden" value="home" /> <input id="submit"
 		name="submit" type="submit" value="Start" />
 </form>

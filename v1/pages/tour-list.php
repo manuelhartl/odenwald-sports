@@ -12,6 +12,11 @@
 	}
 	?>
 </form>
+<?php
+if (hasAuth ()) {
+	echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>';
+}
+?>
 <table>
 	<tr>
 		<th></th>
@@ -78,7 +83,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		echo "<td style='text-align: right;'>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
 	}
 	
-	echo "<td>" . $tour->sport->sportsubname . "</td>"; // . $tour->sport->sportname.' '
+	echo "<td>" . $tour->sport->sportsubname . "</td>";
 	if (hasAuth ()) {
 		echo "<td>" . $tour->meetingPoint . "</td>";
 		echo "<td>" . formatMeters ( $row ['refm'] ) . "</td>";

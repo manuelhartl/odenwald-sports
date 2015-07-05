@@ -2,7 +2,7 @@
 require_once __DIR__ . '/db_tours.php';
 require_once __DIR__ . '/mail.php';
 function getStars($number, $id, $readonly = true) {
-	$result = ''; //'<div>';
+	$result = ''; // '<div>';
 	$disabled = $readonly ? 'disabled' : '';
 	for($i = 1; $i <= 5; $i ++) {
 		if ($number == $i) {
@@ -29,23 +29,30 @@ function formatMeters($meters) {
 		return round ( $meters / 1000, 1 ) . 'km';
 	}
 }
-function getMailText($tour) {
+function getMailText($tour, $attendees = 0) {
 	return '<html><body><table>' . //
-'<tr><td>Sport:</td><td>' . $tour->sport->sportsubname . '</td>' . //
-'<tr><td>Datum/Uhrzeit:</td><td>' . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '</td>' . //
-'<tr><td>Treffpunkt:</td><td>' . $tour->meetingPoint . '</td>' . //
-'<tr><td>Beschreibung:</td><td>' . $tour->description . '</td>' . //
-'<tr><td>Dauer:</td><td>' . formatMinutes ( $tour->duration ) . '</td>' . //
+'<tr><td>Sport:</td><td>' . $tour->sport->sportsubname . '</td></tr>' . //
+'<tr><td>Datum/Uhrzeit:</td><td>' . getWeekDay ( $tour->startDateTime ) . ', ' . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '</td></tr>' . //
+'<tr><td>Treffpunkt:</td><td>' . $tour->meetingPoint . '</td></tr>' . //
+($attendees == 0 ? '' : '<tr><td>Aktuell angemeldet:</td><td>' . $attendees . '</td></tr>') . //
+'<tr><td>Dauer:</td><td>' . formatMinutes ( $tour->duration ) . '</td></tr>' . //
+'<tr><td>Distanz:</td><td>' . formatMeters ( $tour->distance ) . '</td></tr>' . //
+'<tr><td>Bergauf:</td><td>' . formatMeters ( $tour->elevation ) . '</td></tr>' . //
+'<tr><td>Technik:</td><td>' . $tour->skill . '/5</td></tr>' . //
+'<tr><td>Pace:</td><td>' . $tour->speed . '/5</td></tr>' . //
+'<tr><td>Beschreibung:</td><td>' . $tour->description . '</td></tr>' . //
 '</table>' . //
 '<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a></body><html>'; //
 }
 function mailNewTour($pdo, $tour) {
 	$subject = $tour->guide->username . ' hat neue Tour eingestellt';
 	$text = getMailText ( $tour );
-	$stmt = $pdo->prepare ( "select username,email from user WHERE status='verified' ORDER BY username ASC" );
+	$stmt = $pdo->prepare ( "select username, email, mailing from user u left join user_extra ue ON (ue.fk_user_id=u.id) WHERE status='verified' ORDER BY username ASC" );
 	$stmt->execute ( array () );
 	while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-		sendmail ( $row ['email'], $subject, $text );
+		if (! isset ( $row ['mailing'] ) || $row ['mailing']) {
+			sendmail ( $row ['email'], $subject, $text );
+		}
 	}
 }
 function mailUpdateTour($pdo, $tour) {

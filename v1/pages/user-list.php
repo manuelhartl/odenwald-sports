@@ -32,7 +32,7 @@ if (isset ( $userextra->address_lat )) {
 	$reference->long = $userextra->address_long;
 }
 
-$stmt = $pdo->prepare ( 'select username,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist ' . //
+$stmt = $pdo->prepare ( 'select username,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, mailing ' . //
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
