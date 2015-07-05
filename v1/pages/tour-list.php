@@ -92,8 +92,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";
-	echo "<td style='width: 100px;'>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>";
-	echo "<td style='width: 100px;'>" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>";
+	echo "<td style='width: 110px;'>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>";
+	echo "<td style='width: 110px;'>" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>";
 	
 	$users = getAttendees ( $pdo, $tour->id );
 	if (hasAuth ()) {

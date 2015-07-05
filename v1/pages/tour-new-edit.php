@@ -85,7 +85,22 @@
 		</tr>
 		<tr>
 			<td>Technik</td>
-			<td><?php echo getStars($input['skill'], 'skill',false); ?></td>
+			<td><?php echo getStars($input['skill'], 'skill',false); ?><span id="skill-tip"></span> <a target="_blank"
+				href="http://www.singletrail-skala.de/">SingleTrail Skala 1-6 (S0-S5)</a> <script type="text/javascript">
+			
+// 			$('#skill').rating({
+// 						 focus: function(value, link) {
+// 						 var tip = $('#skill-tip');
+//  						 tip[0].data = tip[0].data || tip.html();
+//           				 tip.html(link.title || 'value: '+value);
+// 						  }
+//  					 , blur: function(value, link) {
+//  						 var tip = $('#skill-tip');
+//   						 $('#skill-tip').html(tip[0].data || '');
+// }
+//  					 }
+// 			);
+			</script></td>
 		</tr>
 		<tr>
 			<td>Distanz</td>

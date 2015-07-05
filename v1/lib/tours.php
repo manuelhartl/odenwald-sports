@@ -4,11 +4,11 @@ require_once __DIR__ . '/mail.php';
 function getStars($number, $id, $readonly = true) {
 	$result = ''; // '<div>';
 	$disabled = $readonly ? 'disabled' : '';
-	for($i = 1; $i <= 5; $i ++) {
+	for($i = 1; $i <= 6; $i ++) {
 		if ($number == $i) {
-			$result = $result . '<input name="' . $id . '" type="radio" value="' . $i . '" class="star" ' . $disabled . ' checked/>';
+			$result = $result . '<input id="' . $id . '" name="' . $id . '" type="radio" value="' . $i . '" class="star" ' . $disabled . ' checked/>';
 		} else {
-			$result = $result . '<input name="' . $id . '" type="radio" value="' . $i . '" class="star" ' . $disabled . '/>';
+			$result = $result . '<input id="' . $id . '" name="' . $id . '" type="radio" value="' . $i . '" class="star" ' . $disabled . '/>';
 		}
 	}
 	return $result; // . '</div>';
@@ -38,8 +38,8 @@ function getMailText($tour, $attendees = 0) {
 '<tr><td>Dauer:</td><td>' . formatMinutes ( $tour->duration ) . '</td></tr>' . //
 '<tr><td>Distanz:</td><td>' . formatMeters ( $tour->distance ) . '</td></tr>' . //
 '<tr><td>Bergauf:</td><td>' . formatMeters ( $tour->elevation ) . '</td></tr>' . //
-'<tr><td>Technik:</td><td>' . $tour->skill . '/5</td></tr>' . //
-'<tr><td>Pace:</td><td>' . $tour->speed . '/5</td></tr>' . //
+'<tr><td>Technik:</td><td>' . $tour->skill . '/6</td></tr>' . //
+'<tr><td>Pace:</td><td>' . $tour->speed . '/6</td></tr>' . //
 '<tr><td>Beschreibung:</td><td>' . $tour->description . '</td></tr>' . //
 '</table>' . //
 '<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a></body><html>'; //
