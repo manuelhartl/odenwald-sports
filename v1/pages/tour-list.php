@@ -72,7 +72,7 @@ $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_
 ' WHERE true ' . //
 (! hasAuth () ? ' AND t.status = "active"' : '') . //
 (getInVa ( 'showcanceled' ) == 'true' ? '' : ' AND (t.status = "active")') . //
-(getInVa ( 'showold' ) == 'true' ? ' AND startdate<now() ORDER BY startdate DESC' : ' AND startdate>=now() ORDER BY startdate ASC') . //
+(getInVa ( 'showold' ) == 'true' ? ' AND startdate<now() ORDER BY startdate DESC LIMIT 100' : ' AND startdate>=now() ORDER BY startdate ASC') . //
 '' ); //
 ex2er ( $stmt, array (
 		$reference->gps->lat,
@@ -82,7 +82,17 @@ ex2er ( $stmt, array (
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
 	$tour = getTourObject ( $row );
-	echo '<tr class=' . ($tour->canceled ? 'canceled' : '') . '>';
+	$joinedTour = false;
+	$attendeeString = '';
+	$authuserid = hasAuth () ? authUser ()->id : '';
+	$users = getAttendees ( $pdo, $tour->id );
+	foreach ( $users as $user ) {
+		$attendeeString = $attendeeString . $user ['username'] . " ";
+		if ($user ['id'] == $authuserid) {
+			$joinedTour = true;
+		}
+	}
+	echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour ? 'joined' : '')) . '">';
 	$startdate = $tour->startDateTime;
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
 		echo '<td></td>';
@@ -104,21 +114,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo "<td style='width: 110px;'>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>";
 	echo "<td style='width: 110px;'>" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>";
 	
-	$users = getAttendees ( $pdo, $tour->id );
 	if (hasAuth ()) {
 		// guide
 		echo "<td>" . $tour->guide->username . "</td>";
 		// attendees
-		$authuserid = authUser ()->id;
-		echo "<td>";
-		$joinedTour = false;
-		foreach ( $users as $user ) {
-			echo $user ['username'] . " ";
-			if ($user ['id'] == $authuserid) {
-				$joinedTour = true;
-			}
-		}
-		echo "</td>";
+		echo '<td>' . $attendeeString . '</td>';
 		// functions
 		echo '<td>';
 		if ($tour->startDateTime >= new DateTime ()) {

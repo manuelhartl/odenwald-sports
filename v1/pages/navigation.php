@@ -74,8 +74,8 @@ if (hasAuth ()) {
 </form>
 <?php
 }
-echo '<div style="width: 100px;"/></div>';
+echo '<div style="width: 100px;"></div>';
 echo getBreadCrumbText ();
-echo '<div style="width: 100px;"/></div>';
+echo '<div style="width: 100px;"></div>';
 echo '<div id="message">' . $_SESSION ['message'] . '</div>';
 ?>
