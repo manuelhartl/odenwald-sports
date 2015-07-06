@@ -66,9 +66,11 @@
             $(function () {
                 $('#startdate').datetimepicker({
 						format: 'DD.MM.YYYY HH:mm',
-                		showTodayButton: true,
-                		sideBySide: true,
-						minDate: moment().add(15,'minute')
+						defaultDate: moment().add(60,'minute'),
+						minDate: moment().add(15,'minute'),
+						showTodayButton: true,
+						useCurrent: false,
+                		sideBySide: true
                 		}
                       );
             });

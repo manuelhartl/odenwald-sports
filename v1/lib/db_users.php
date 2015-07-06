@@ -8,6 +8,7 @@ class UserExtra {
 	public $address_lat;
 	public $address_long;
 	public $mailing;
+	public $phone;
 }
 function getUserObject($user) {
 	$userObj = new User ();
@@ -32,6 +33,7 @@ function getUserExtraObject($row) {
 		$userextra->address_long = $row ['address_long'];
 	}
 	$userextra->mailing = $row ['mailing'];
+	$userextra->phone = $row ['phone'];
 	return $userextra;
 }
 function checkAuth($pdo, $username, $password) {
@@ -94,7 +96,7 @@ function addUserExtra($pdo, $id) {
 	return $pdo->lastInsertId ();
 }
 function updateUserExtra($pdo, UserExtra $userextra) {
-	$stmt = $pdo->prepare ( "update user_extra set realname = ?, birthdate = ? , address= ? , address_coord = PointFromText(?), mailing = ? where fk_user_id = ?" );
+	$stmt = $pdo->prepare ( "update user_extra set realname = ?, birthdate = ? , address= ? , address_coord = PointFromText(?), mailing = ?, phone = ? where fk_user_id = ?" );
 	$point = 'POINT(' . $userextra->address_lat . " " . $userextra->address_long . ')';
 	$date = toDbmsDate ( $userextra->birtdate );
 	if (! ex2er ( $stmt, array (
@@ -103,7 +105,8 @@ function updateUserExtra($pdo, UserExtra $userextra) {
 			$userextra->address,
 			$point,
 			$userextra->mailing,
-			$userextra->id 
+			$userextra->phone,
+			$userextra->id
 	) )) {
 		return false;
 	}

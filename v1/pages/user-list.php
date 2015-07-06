@@ -18,6 +18,7 @@
 	<tr>
 		<th>Benutzer</th>
 		<th>Echter Name</th>
+		<th>Telefon</th>
 		<th>Entfernung zu mir</th>
 		<th>Geburtsjahr</th>
 	</tr>
@@ -32,7 +33,7 @@ if (isset ( $userextra->address_lat )) {
 	$reference->long = $userextra->address_long;
 }
 
-$stmt = $pdo->prepare ( 'select username,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, mailing ' . //
+$stmt = $pdo->prepare ( 'select username,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, mailing, phone ' . //
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
@@ -53,6 +54,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo "<td>" . $user->username . "</td>";
 	if ($hasExtra) {
 		echo "<td>" . $userextra->realname . "</td>";
+		echo "<td>" . $userextra->phone . "</td>";
 		echo "<td>" . (isset ( $userextra ) ? formatMeters ( $row ['dist'] ) : '') . "</td>";
 		echo "<td>" . $userextra->birtdate->format ( 'Y' ) . "</td>";
 	} else {

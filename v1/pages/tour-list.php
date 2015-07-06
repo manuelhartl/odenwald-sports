@@ -1,22 +1,30 @@
-<form name="tour-list-update" action="" method="post">
-	<input name="action" type="hidden" value="tour-list-canceled" />
-	<?php
-	if (hasAuth ()) {
-		if (getInVa ( 'showcanceled' ) == 'true') {
-			echo '<input name="showcanceled" type="hidden" value="false" />';
-			echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
-		} else {
-			echo '<input name="showcanceled" type="hidden" value="true" />';
-			echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
-		}
-	}
-	?>
-</form>
 <?php
 if (hasAuth ()) {
-	echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>';
+	echo '<form name="tour-list-update" action="" method="post">';
+	echo '<input name="action" type="hidden" value="tour-list-canceled" />';
+	echo '<input name="showold" type="hidden" value="'.getInVa('showold').'" />';
+	if (getInVa ( 'showcanceled' ) == 'true') {
+		echo '<input name="showcanceled" type="hidden" value="false" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
+	} else {
+		echo '<input name="showcanceled" type="hidden" value="true" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
+	}
+	echo '</form>';
+	echo '<form name="tour-list-update" action="" method="post">';
+	echo '<input name="action" type="hidden" value="tour-list-old" />';
+	echo '<input name="showcanceled" type="hidden" value="'.getInVa('showold').'" />';
+	if (getInVa ( 'showold' ) == 'true') {
+		echo '<input name="showold" type="hidden" value="false" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Aktuelle Touren" />';
+	} else {
+		echo '<input name="showold" type="hidden" value="true" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Alte Touren" />';
+	}
+	echo '</form>';
 }
 ?>
+<?php echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>'; ?>
 <table>
 	<tr>
 		<th></th>
@@ -61,7 +69,7 @@ $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_
 ' left join user g ON (t.fk_guide_id=g.id) ' . //
 ' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
 ' left join sport s ON (ss.fk_sport_id=s.id) ' . //
-' WHERE startdate>now()' . //
+(getInVa ( 'showold' ) == 'true' ? ' WHERE startdate<now()' : ' WHERE startdate>=now()') . //
 (getInVa ( 'showcanceled' ) == 'true' ? '' : ' AND (t.status = "active")') . //
 (! hasAuth () ? ' AND t.status = "active"' : '') . //
 ' order by startdate ASC' ); //

@@ -150,7 +150,12 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			} else {
 				switch ($_REQUEST ['action']) {
 					case 'tour-list-canceled' :
-						$input ['showcanceled'] = $_REQUEST ['showcanceled']; // == 'true' ? 'false' : 'true';
+						$input ['showcanceled'] = $_REQUEST ['showcanceled'];
+						$input ['showold'] = $_REQUEST ['showold'];
+						break;
+					case 'tour-list-old' :
+						$input ['showcanceled'] = $_REQUEST ['showcanceled'];
+						$input ['showold'] = $_REQUEST ['showold'];
 						break;
 					case 'tour-list' :
 						break;
@@ -213,15 +218,19 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['duration'] = $_REQUEST ['duration'];
 						$input ['skill'] = $_REQUEST ['skill'];
 						$input ['speed'] = $_REQUEST ['speed'];
+						$input ['elevation'] = $_REQUEST ['elevation'];
+						$input ['distance'] = $_REQUEST ['distance'];
 						if (isset ( $_REQUEST ['sport'] )) {
 							$input ['sport'] = $_REQUEST ['sport'];
 						}
 						if (isset ( $_REQUEST ['startdate'] )) {
 							$input ['startdate'] = $_REQUEST ['startdate'];
 						}
-						if (strlen ( $_REQUEST ['description'] ) < 10) {
-							setMessage ( 'Beschreibung zu kurz' );
-						} else if (strlen ( $_REQUEST ['meetingpoint'] ) < 5) {
+						// if (strlen ( $_REQUEST ['description'] ) < 10) {
+						// setMessage ( 'Beschreibung zu kurz' );
+						// } else
+						// TODO: check that startdate is 15mins in future
+						if (strlen ( $_REQUEST ['meetingpoint'] ) < 5) {
 							setMessage ( 'Treffpunkt angeben' );
 						} else if (strlen ( $_REQUEST ['duration'] ) < 1) {
 							setMessage ( 'Dauer angeben' );
@@ -316,6 +325,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$input ['birthdate'] = $userextra->birtdate;
 							$input ['address'] = $userextra->address;
 							$input ['mailing'] = $userextra->mailing;
+							$input ['phone'] = $userextra->phone;
 						} else {
 							$input ['realname'] = '';
 							$input ['birthdate'] = DateTime::createFromFormat ( 'Y', '0000' );
@@ -344,6 +354,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								addUserExtra ( $pdo, $userextra->id );
 							}
 							$userextra->mailing = isset ( $_REQUEST ['mailing'] ) ? $_REQUEST ['mailing'] == 'true' : false;
+							$userextra->phone = $_REQUEST ['phone'];
 							updateUserExtra ( $pdo, $userextra );
 							setMessage ( 'Profil aktualisiert' );
 							setPage ( 'home' );
@@ -418,6 +429,8 @@ echo '<div id="version">Version: ' . $config ['version'] . '</div>';
  * echo "</pre>";
  */
 ?>
+
+
 
 
 

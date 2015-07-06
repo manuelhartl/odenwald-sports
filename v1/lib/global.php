@@ -52,13 +52,9 @@ function get_current_url($strip = true) {
 function getUrlPrefix() {
 	return dirname ( get_current_url () );
 }
-function printInVa($index, $default) {
+function getInVa($index, $default = '') {
 	global $input;
-	echo isset ( $input [$index] ) ? $input [$index] : $default;
-}
-function getInVa($index) {
-	global $input;
-	return isset ( $input [$index] ) ? $input [$index] : '';
+	return isset ( $input [$index] ) ? $input [$index] : $default;
 }
 function validatePassword($input) {
 	// TODO: check for character classes
