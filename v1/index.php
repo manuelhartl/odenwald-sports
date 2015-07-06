@@ -290,7 +290,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 					case 'tour-join' :
 						$tourid = $_POST ['tourid'];
 						$tour = getTourById ( $pdo, $tourid );
-						if (! $tour->canceled) {
+						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourJoin ( $pdo, authUser ()->id, $tourid );
 							setMessage ( 'tour joined' );
 						}
@@ -298,21 +298,19 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 					case 'tour-leave' :
 						$tourid = $_POST ['tourid'];
 						$tour = getTourById ( $pdo, $tourid );
-						if ($tour->canceled) {
-							die (); // hack
+						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
+							tourLeave ( $pdo, authUser ()->id, $tourid );
+							setMessage ( 'left tour' );
 						}
-						tourLeave ( $pdo, authUser ()->id, $tourid );
-						setMessage ( 'left tour' );
 						break;
 					case 'tour-cancel' :
 						$tourid = $_POST ['tourid'];
 						$tour = getTourById ( $pdo, $tourid );
-						if (authUser ()->id != $tour->guide->id) {
-							die ();
+						if ((authUser ()->id == $tour->guide->id) && ($tour->startDateTime >= new DateTime ())) {
+							tourCancel ( $pdo, $tourid );
+							mailCancelTour ( $pdo, $tour );
+							setMessage ( 'tour abgesagt' );
 						}
-						tourCancel ( $pdo, $tourid );
-						mailCancelTour ( $pdo, $tour );
-						setMessage ( 'tour abgesagt' );
 						break;
 					case 'user-list' :
 						setPage ( 'user-list' );
@@ -429,6 +427,14 @@ echo '<div id="version">Version: ' . $config ['version'] . '</div>';
  * echo "</pre>";
  */
 ?>
+
+
+
+
+
+
+
+
 
 
 
