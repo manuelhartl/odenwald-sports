@@ -126,6 +126,13 @@ function getPlaceById($pdo, $id) {
 	) );
 	return getPlaceObject ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
 }
+function getPlaces($pdo) {
+	$stmt = $pdo->prepare ( "SELECT id,name,X(coord) as lat,Y(coord) lon FROM place ORDER BY name ASC" );
+	if (! ex2er ( $stmt, array () )) {
+		return false;
+	}
+	return $stmt->fetchAll ( PDO::FETCH_OBJ );
+}
 function getAttendees($pdo, $tourid) {
 	$stmt = $pdo->prepare ( "select user.id as id, user.username as username, user.email as email from tour_attendee left join user ON (fk_user_id=user.id) where fk_tour_id = ?" );
 	if (! ex2er ( $stmt, array (

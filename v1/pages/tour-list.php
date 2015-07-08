@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../lib/global.php';
+require_once __DIR__ . '/../lib/tours.php';
+
 if (hasAuth ()) {
 	echo '<form name="tour-list-update" action="" method="post">';
 	echo '<input name="action" type="hidden" value="tour-list-canceled" />';
@@ -53,9 +56,6 @@ if (hasAuth ()) {
 		?>
 	</tr>
 <?php
-require_once 'lib/global.php';
-require_once 'lib/tours.php';
-
 $reference = getPlaceById ( $pdo, 1 );
 if (hasAuth ()) {
 	$userextra = getUserExtraById ( $pdo, authUser ()->id );
