@@ -1,9 +1,10 @@
 <div id="navigation-top">
 <?php
-echo '<div id="message">' . $_SESSION ['message'] . '</div><div id="logo"></div>';
+echo '<div id="message">' . $_SESSION ['message'] . '</div><div id="logo"><img src="img/logo.png"></div>';
 ?>
 </div>
 <div id="navigation-bottom">
+<p>
 	<div id="navigation-buttons">
 		<form name="home" action="" method="post">
 			<input name="action" type="hidden" value="home" /> <input id="submit" name="submit" type="submit" value="Start" />
