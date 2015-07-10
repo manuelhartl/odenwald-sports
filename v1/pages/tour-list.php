@@ -27,7 +27,15 @@ if (hasAuth ()) {
 	echo '</form>';
 }
 ?>
-<?php echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>'; ?>
+<?php
+
+
+echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>';
+if (hasAuth ()) {
+	echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
+}
+
+?>
 <table>
 	<tr>
 		<th></th>
@@ -40,7 +48,8 @@ if (hasAuth ()) {
 		}
 		?>
 		<th>Beschreibung</th>
-		<th>Dauer</th>
+		<th>Dauer<br>(hh:mm)
+		</th>
 		<th>Distanz</th>
 		<th>Bergauf</th>
 		<th>Pace</th>
@@ -49,7 +58,7 @@ if (hasAuth ()) {
 		if (hasAuth ()) {
 			echo '<th>Guide</th>';
 			echo '<th>Teilnehmer</th>';
-			echo '<th><form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form></th>';
+			echo '<th></th>';
 		} else {
 			echo '<th>Teilnehmer</th>';
 		}
@@ -92,7 +101,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$joinedTour = true;
 		}
 	}
-	echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour ? 'joined' : '')) . '">';
+	echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour || ($tour->guide->id == $authuserid) ? 'joined' : 'notjoined')) . '">';
 	$startdate = $tour->startDateTime;
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
 		echo '<td></td>';

@@ -78,6 +78,8 @@ tr, td, th, table {
 	margin: 3px;
 	vertical-align: top;
 	margin: 3px;
+	background-color: #f3f3f3;
+	opacity: 0.9;
 }
 
 form {
@@ -85,26 +87,32 @@ form {
 }
 
 .canceled {
-	color: #dddddd;
+	color: #cccccc;
 	text-decoration: line-through;
 }
 
 .joined {
-	background-color: #F0FFF0;
+	background-color: #C2FFAD;
 }
 
-#message {
+.notjoined {
+	background-color: #f3f3f3;
+}
+
+#messageOFF {
 	color: red;
 	display: inline-block;
 }
 
-#version {
+#versionOFF {
 	position: fixed;
 	vertical-align: bottom;
 	text-align: right;
 	font-size: xx-small;
 	width: 100%;
 	height: 100%;
+	right: 100px;
+	top: 10px;
 }
 
 /* input[type=text], input[type=password], textarea { */

@@ -1,0 +1,127 @@
+html, body {
+	background: url('../img/O.S.T.Hintergrund2000.png') no-repeat center
+		center fixed;
+	background-size: 100% 100%;
+	background-color: #f3f3f3;
+	font: 'Open Sans', Arial;
+	font-weight: 600;
+	color: #37607c;
+	margin: 0;
+	margin-top: 15px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.background .header {
+	margin-top: 40px;
+	margin-left: 60px;
+	margin-right: 60px;
+	border: 1px solid #ff7200;
+}
+
+.background .header .subheader {
+	font-size: 10px;
+	font-weight: 600;
+	clear: both;
+}
+
+#navigation {
+	min-height: 80px;
+	max-height: 80px;
+	margin-bottom: 30px;
+}
+
+#main {
+	min-height: 80vH;
+	max-height: 80vH;
+	overflow: auto;
+}
+
+#version {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	min-height: 10px;
+	max-height: 10px;
+	float: right;
+	color: #999999;
+}
+
+#message {
+	font-size: 14px;
+	font-weight: 600;
+	height: 42px;
+	width: 80%;
+	border-bottom: solid 2px #37607c;
+	float: left;
+	display: inline-block;
+}
+
+#logo {
+	background-image: url('../img/logo.png');
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	width: 250px;
+	height: 44px;
+	float: right;
+	display: inline-block;
+}
+
+#navigation-buttons {
+	float: left;
+	display: inline-block;
+	margin-top: 10px;
+}
+
+#navigation-buttons-logout {
+	float: right;
+	display: inline-block;
+	margin-top: 10px;
+}
+
+
+.background .header .subheader .link {
+	float: right;
+	display: inline-block;
+}
+
+.background .content {
+	border: 1px solid #ff7200;
+	height: 420px;
+	margin-top: 60px;
+	margin-left: 60px;
+	margin-right: 60px;
+}
+
+.background .task {
+	border: 1px solid #ff7200;
+	height: 60px;
+	margin-top: 60px;
+	margin-left: 60px;
+	margin-right: 60px;
+}
+
+.background .footer {
+	font-size: 12px;
+	font-weight: 600;
+	border: 1px solid #ff7200;
+	height: 20px;
+	margin-top: 60px;
+	margin-left: 60px;
+	margin-right: 60px;
+	clear: both;
+}
+
+.background .footer .info {
+	display: inline-block;
+	float: left;
+}
+
+.background .footer .version {
+	display: inline-block;
+	float: right;
+}
+
+.background .footer .link {
+	display: inline-block;
+	float: right;
+}

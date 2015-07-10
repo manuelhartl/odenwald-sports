@@ -6,12 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Tours">
 <meta name="author" content="Manuel Hartl">
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
 <title>Touren</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
 <link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
 <link href="css/default.css" rel="stylesheet" type="text/css">
+<link href="css/ost.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
@@ -376,13 +378,13 @@ if (! hasAuth () && //
 	setPage ( 'home' );
 }
 echo '<div class="row">';
-echo '<div class="col-xs-12">';
+echo '<div class="col-xs-12" id="navigation">';
 require_once 'pages/navigation.php';
 echo '</div>';
 echo '</div>';
 
 echo '<div class="row">';
-echo '<div class="col-xs-12">';
+echo '<div class="col-xs-12" id="main">';
 switch (getPage ()) {
 	case 'login' :
 		require_once 'pages/login.php';
@@ -418,8 +420,9 @@ switch (getPage ()) {
 }
 echo '</div>';
 echo '</div>';
+echo '<div id="version"><a href="html/disclaimer.php" target="_blank">Regeln</a> <a href="html/impressum.php" target="_blank">Impressum</a> Version: ' . $config ['version'] . '</div>';
 echo '</div>';
-echo '<div id="version">Version: ' . $config ['version'] . '</div>';
+
 /*
  * echo "<pre>";
  * print_r ( $_SESSION );

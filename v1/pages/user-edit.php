@@ -19,8 +19,8 @@
 		<tr>
 			<td>Echter Name</td>
 			<td><input type="text" style="width: 100%" name="realname"
-				value="<?php echo isset($input['realname']) ? $input['realname'] : '';?>" /><br> (Dies ist f&uuml;r alle angemeldeten
-				Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
+				value="<?php echo isset($input['realname']) ? $input['realname'] : '';?>" /><br> (Dies ist f&uuml;r alle
+				angemeldeten Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
 		</tr>
 		<tr>
 			<td>Telefon</td>
@@ -34,8 +34,10 @@
 			?>
 				<div class="row">
 					<div class='col-sm-6'>
-						<input type="text" class="form-control" style="width: 150px;" id="birthdate" maxlength="10" name="birthdate" />
+						<input type="text" class="form-control" style="width: 150px;" id="birthdate" maxlength="10" name="birthdate"
+							value="<?php echo $input ['birthdate']->format ( 'Y' );?>" />
 					</div>
+					<!-- 
 					<script type="text/javascript">
             $(function () {
                 $('#birthdate').datetimepicker({
@@ -49,7 +51,7 @@
 // 				minDate: moment().subtract(90,'years').format('YYYY'),
 //   			maxDate: moment().subtract(16,'years').format('YYYY'),
             
-        </script>
+        </script> -->
 				</div> (Dies ist f&uuml;r alle angemeldeten Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
 		</tr>
 		<td>Treffpunktreferenz bzw. Wohnanschrift)</td>
