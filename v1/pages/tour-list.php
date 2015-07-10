@@ -114,12 +114,12 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo "<td>" . $tour->sport->sportsubname . "</td>";
 	if (hasAuth ()) {
 		echo "<td>" . $tour->meetingPoint . "</td>";
-		echo "<td>" . formatMeters ( $row ['refm'] ) . "</td>";
+		echo "<td style='text-align: right;'>" . formatMeters ( $row ['refm'] ) . "</td>";
 	}
 	echo "<td>" . $tour->description . "</td>";
-	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
-	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
-	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";
+	echo "<td style='text-align: right;'>" . formatMinutes ( $tour->duration ) . "</td>";
+	echo "<td style='text-align: right;'>" . formatMeters ( $tour->distance ) . "</td>";
+	echo "<td style='text-align: right;'>" . formatMeters ( $tour->elevation ) . "</td>";
 	echo "<td style='width: 110px;'>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>";
 	echo "<td style='width: 110px;'>" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>";
 	

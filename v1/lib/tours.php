@@ -19,7 +19,7 @@ function formatMinutes($minutes) {
 	// } else {
 	// return round ( $minutes / 60, 1 ) . 'h';
 	// }
-	return sprintf ( "%02d", $minutes % 60 ) . ':' . sprintf ( "%02d", $minutes / 60 );
+	return sprintf ( "%02d", $minutes / 60 ) . ':' . sprintf ( "%02d", $minutes % 60 );
 }
 function formatMeters($meters) {
 	if ($meters < 2000) {
