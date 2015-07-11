@@ -93,7 +93,11 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			}
 			break;
 		case 'register' :
-			setPage ( "register" );
+			if (!hasAuth()) {
+				setPage ( "register" );
+			} else {
+				setPage ( "home" );
+			}
 			break;
 		case 'register-save' :
 			setPage ( "register" );
@@ -146,6 +150,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$input ['username'] = $username;
 			$input ['email'] = $email;
 			setPage ( "home" );
+			setMessage ( 'Aktivierungsmail wurde versendet' );
 			break;
 		default :
 			if (! hasAuth ()) {
