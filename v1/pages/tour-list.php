@@ -19,10 +19,10 @@ if (hasAuth ()) {
 	echo '<input name="showcanceled" type="hidden" value="' . getInVa ( 'showold' ) . '" />';
 	if (getInVa ( 'showold' ) == 'true') {
 		echo '<input name="showold" type="hidden" value="false" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Aktuelle Touren" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Aktuelle Touren anzeigen" />';
 	} else {
 		echo '<input name="showold" type="hidden" value="true" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Alte Touren" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Alte Touren anzeigen" />';
 	}
 	echo '</form>';
 }

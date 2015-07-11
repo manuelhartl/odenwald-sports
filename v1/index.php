@@ -125,12 +125,12 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			}
 			// check if email already registered
 			if (userExists ( $pdo, $username )) {
-				setMessage ( $username . ' already registered' );
+				setMessage ( $username . ' ist schon registriert' );
 				break;
 			}
 			// check if name is already registered
 			if (emailExists ( $pdo, $email )) {
-				setMessage ( $email . ' is already registered' );
+				setMessage ( $email . ' is schon registriert' );
 				break;
 			}
 			// register
@@ -138,13 +138,14 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$token = bin2hex ( openssl_random_pseudo_bytes ( 16 ) );
 			$userId = registerUser ( $pdo, $username, $hashedPassword, $email );
 			if (! $userId) {
-				setMessage ( 'registering not successful' );
+				setMessage ( 'Registrierung nicht erfolgreich' );
+				break;
 			}
 			addActivationToken ( $pdo, $userId, $token );
 			sendActivationMail ( $username, $token, $email );
 			$input ['username'] = $username;
 			$input ['email'] = $email;
-			setPage ( "register-save" );
+			setPage ( "home" );
 			break;
 		default :
 			if (! hasAuth ()) {
