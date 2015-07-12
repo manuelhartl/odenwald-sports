@@ -383,10 +383,8 @@ if (! hasAuth () && //
 {
 	setPage ( 'home' );
 }
-echo '<div class="row">';
-echo '<div class="col-xs-12" id="navigation">';
+echo '<div id="navigation">';
 require_once 'pages/navigation.php';
-echo '</div>';
 echo '</div>';
 
 echo '<div class="row">';
