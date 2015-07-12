@@ -29,7 +29,6 @@ if (hasAuth ()) {
 ?>
 <?php
 
-
 echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>';
 if (hasAuth ()) {
 	echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
@@ -113,7 +112,10 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	echo "<td>" . $tour->sport->sportsubname . "</td>";
 	if (hasAuth ()) {
-		echo "<td>" . $tour->meetingPoint . "</td>";
+		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
+		$meetingpoint_long = $tour->meetingPoint;
+		// echo '<td class="tooltip">' . $meetingpoint_short . '<span class="info">' . $meetingpoint_long . '</span></td>';
+		echo '<td title="' . $meetingpoint_long . '">' . $meetingpoint_short . '</td>';
 		echo "<td style='text-align: right;'>" . formatMeters ( $row ['refm'] ) . "</td>";
 	}
 	echo "<td>" . $tour->description . "</td>";

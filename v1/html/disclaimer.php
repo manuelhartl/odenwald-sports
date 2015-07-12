@@ -38,7 +38,7 @@ Auch eine nicht ausreichende gesundheitliche Verfassung, mangelnde Kondition sow
 Die Mitfahrer und der Guide verpflichten sich die DIMB Trails-Rules einzuhalten.
  
  
-Die DIMB-TrailRules als pdf gibt es hier zum Download!
+Die DIMB-TrailRules als pdf gibt es zum Download!
 
 In fast allen Bundesl&auml;ndern gibt es per Gesetz oder Verordnung Einschr&auml;nkungen und Verbote f&uuml;r MountainbikerInnen. Leider wird dabei vorwiegend auf die vermeintliche Eignung von Wegen Bezug genommen, statt auf das vern&uuml;nftige Verhalten der Einzelnen abzuzielen. Nicht zuletzt waren Fehltritte von ein paar wenigen BikerInnen der Grund f&uuml;r pauschale Verbote.
 Die Beachtung der DIMB-TrailRules f&uuml;hrt zu umwelt- und sozialvertr&auml;glichem Mountainbiking und hilft, weitere pauschale Einschr&auml;nkungen unserer Sportart zu vermeiden.

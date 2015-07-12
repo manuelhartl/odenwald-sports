@@ -33,10 +33,16 @@ require_once __DIR__ . '/../lib/db_tours.php';
 			</td>
 		</tr>
 		<td>Treffpunkt</td>
-		<td nowrap="nowrap">Vordefiniert: <select id="place"
-			onchange="var lat = document.getElementById('meetingpoint-lat'); lat.value=this.value.split(';')[0].replace(',','.');
+		<td>
+			<table style="width: 100%">
+				<tr>
+					<td>Vordefiniert:</td>
+					<td><select id="place"
+						onchange="var lat = document.getElementById('meetingpoint-lat'); lat.value=this.value.split(';')[0].replace(',','.');
 		var lon = document.getElementById('meetingpoint-lon'); lon.value=this.value.split(';')[1].replace(',','.'); 
-		lat.dispatchEvent(new Event('change'));lon.dispatchEvent(new Event('change'));">
+		lat.dispatchEvent(new Event('change'));lon.dispatchEvent(new Event('change'));
+		var mp_desc = document.getElementById('meetingpoint_desc');
+		mp_desc.value=this.options[this.selectedIndex].text;">
 		<?php
 		$pdo = db_open ();
 		$places = getPlaces ( $pdo );
@@ -44,15 +50,21 @@ require_once __DIR__ . '/../lib/db_tours.php';
 		foreach ( $places as $place ) {
 			echo '<option value="' . $place->lat . ';' . $place->lon . '">' . $place->name . '</option>';
 		}
-		echo '</select>	';
-		?><br>
-				<input type="text" id="meetingpoint" style="width: 100%" name="meetingpoint"
-				value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" />
-				<input type="hidden" id="meetingpoint-radius" />
-				<input type="hidden" id="meetingpoint-lat" name="meetingpoint-lat" />
-				<input type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
-				<div id="meetingpoint-map" style="width: 100%; height: 400px;"></div>
-				<script>$('#meetingpoint-map').locationpicker({
+		echo '</select></td></tr>';
+		?><tr>
+								<td>Beschreibung</td>
+								<td><input type="text" id="meetingpoint_desc" style="width: 100%" name="meetingpoint_desc"
+									value="<?php echo isset($input['meetingpoint_desc']) ? $input['meetingpoint_desc'] : '';?>" /></td>
+							</tr>
+							<tr>
+								<td>Adresse</td>
+								<td><input type="text" id="meetingpoint" style="width: 100%" name="meetingpoint"
+									value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" /></td>
+							</tr>
+			
+			</table> <input type="hidden" id="meetingpoint-radius" /> <input type="hidden" id="meetingpoint-lat"
+			name="meetingpoint-lat" /> <input type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
+			<div id="meetingpoint-map" style="width: 100%; height: 400px;"></div> <script>$('#meetingpoint-map').locationpicker({
 	location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
 	radius: 50,
 	inputBinding: {
@@ -67,7 +79,8 @@ require_once __DIR__ . '/../lib/db_tours.php';
     },
 	enableAutocomplete: true
 	});
-</script></td>
+</script>
+		</td>
 		</tr>
 		<tr>
 			<td>Beschreibung</td>

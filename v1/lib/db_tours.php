@@ -6,6 +6,7 @@ class Tour {
 	public $duration;
 	public $sport;
 	public $meetingPoint;
+	public $meetingPoint_desc;
 	public $description;
 	public /*User */$guide;
 	public $attendees;
@@ -41,6 +42,7 @@ function getTourObject($row) {
 	// $tourObj->sport->sportsubid = $row ['sportsubid'];
 	$tourObj->sport->sportsubname = $row ['sportsubname'];
 	$tourObj->meetingPoint = $row ['meetingpoint'];
+	$tourObj->meetingPoint_desc = $row ['meetingpoint_desc'];
 	if (isset ( $row ['meetingpoint_lat'] )) {
 		$tourObj->meetingPoint_lat = $row ['meetingpoint_lat'];
 	}
@@ -70,7 +72,7 @@ function getPlaceObject($row) {
 	return $place;
 }
 function insertTour($pdo, Tour $tour) {
-	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id, skill, speed, distance, elevation) VALUES(?,?,?,?,?,PointFromText(?),?,?,?,?,?)" );
+	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id, skill, speed, distance, elevation, meetingpoint_desc) VALUES(?,?,?,?,?,PointFromText(?),?,?,?,?,?,?)" );
 	$stmt->bindParam ( 1, $tour->guide->id );
 	$date = toDbmsDate ( $tour->startDateTime );
 	$stmt->bindParam ( 2, $date );
@@ -84,17 +86,19 @@ function insertTour($pdo, Tour $tour) {
 	$stmt->bindParam ( 9, $tour->speed );
 	$stmt->bindParam ( 10, $tour->distance );
 	$stmt->bindParam ( 11, $tour->elevation );
+	$stmt->bindParam ( 12, $tour->meetingPoint_desc );
 	if (! ex2er ( $stmt )) {
 		return false;
 	}
 	return true;
 }
 function updateTour($pdo, Tour $tour) {
-	$stmt = $pdo->prepare ( "update tour set duration=?, meetingpoint=?, meetingpoint_coord = PointFromText(?), description=?, skill = ? , speed = ? , distance = ?, elevation = ? where id=? and status='active'" );
+	$stmt = $pdo->prepare ( "update tour set duration=?, meetingpoint=?, meetingpoint_desc=? , meetingpoint_coord = PointFromText(?), description=?, skill = ? , speed = ? , distance = ?, elevation = ? where id=? and status='active'" );
 	$point = 'POINT(' . $tour->meetingPoint_lat . " " . $tour->meetingPoint_long . ')';
 	if (! ex2er ( $stmt, array (
 			$tour->duration,
 			$tour->meetingPoint,
+			$tour->meetingPoint_desc,
 			$point,
 			$tour->description,
 			$tour->skill,

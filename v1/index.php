@@ -93,7 +93,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			}
 			break;
 		case 'register' :
-			if (!hasAuth()) {
+			if (! hasAuth ()) {
 				setPage ( "register" );
 			} else {
 				setPage ( "home" );
@@ -105,26 +105,30 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$password = $_POST ['password'];
 			$password2 = $_POST ['password2'];
 			$email = $_POST ['email'];
+			$acceptrules = isset ( $_REQUEST ['acceptrules'] ) ? $_REQUEST ['acceptrules'] == 'true' : false;
+			
+			$input ['username'] = $username;
+			$input ['email'] = $email;
+			$input ['acceptrules'] = $acceptrules;
 			// validate
 			if (! preg_match ( "/^[a-zA-Z][0-9a-zA-Z]*$/", $username )) {
-				setMessage ( 'username must only consist of A-Z and 0-9 and start with a character' );
+				setMessage ( 'Der Benutzername darf nur A-Z und 9-9 enthalten und mu&szlig; mit einem Buchstaben beginnen' );
 				break;
 			}
 			if (strlen ( $username ) < 2) {
-				setMessage ( 'username must be at least 2 characters' );
+				setMessage ( 'Der Benutzername mu&szlig; mindestens aus 2 Zeichen bestehen' );
 				break;
 			}
-			
 			if (! validatePassword ( $password )) {
-				setMessage ( 'password must be at least 6 characters' );
+				setMessage ( 'Das Passwort mu&szlig; mindestens 6 Zeichen lang sein' );
 				break;
 			}
 			if ($password != $password2) {
-				setMessage ( 'passwords do not match' );
+				setMessage ( 'Die Passw&ouml;rter stimmen nicht &uuml;berein' );
 				break;
 			}
 			if (! validateEmail ( $email )) {
-				setMessage ( 'email not valid' );
+				setMessage ( 'Die E-Mail Adresse ist nicht g&uuml;ltig' );
 				break;
 			}
 			// check if email already registered
@@ -137,6 +141,11 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				setMessage ( $email . ' is schon registriert' );
 				break;
 			}
+			if (! $acceptrules) {
+				setMessage ( 'Bitte die Regeln der Seite akzeptieren' );
+				break;
+			}
+			
 			// register
 			$hashedPassword = password_hash ( $password, PASSWORD_BCRYPT );
 			$token = bin2hex ( openssl_random_pseudo_bytes ( 16 ) );
@@ -203,6 +212,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['tourid'] = $tourid;
 						$input ['sport'] = $tour->sport->sportsubid;
 						$input ['meetingpoint'] = $tour->meetingPoint;
+						$input ['meetingpoint_desc'] = $tour->meetingPoint_desc;
 						$input ['meetingpoint-lat'] = $tour->meetingPoint_lat;
 						$input ['meetingpoint-lon'] = $tour->meetingPoint_long;
 						$input ['description'] = $tour->description;
@@ -220,6 +230,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$input ['tourid'] = $_REQUEST ['tourid'];
 						}
 						$input ['meetingpoint'] = $_REQUEST ['meetingpoint'];
+						$input ['meetingpoint_desc'] = $_REQUEST ['meetingpoint_desc'];
 						$input ['meetingpoint-lat'] = $_REQUEST ['meetingpoint-lat'];
 						$input ['meetingpoint-lon'] = $_REQUEST ['meetingpoint-lon'];
 						$input ['description'] = $_REQUEST ['description'];
@@ -252,6 +263,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$tour->description = $_REQUEST ['description'];
 							$tour->duration = $_REQUEST ['duration'];
 							$tour->meetingPoint = $_REQUEST ['meetingpoint'];
+							$tour->meetingPoint_desc = $_REQUEST ['meetingpoint_desc'];
 							$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
 							$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];
 							$tour->skill = $_REQUEST ['skill'];
@@ -277,6 +289,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$tour->duration = $_REQUEST ['duration'];
 								$tour->sport = getSport ( $pdo, $_REQUEST ['sport'] );
 								$tour->meetingPoint = $_REQUEST ['meetingpoint'];
+								$tour->meetingPoint_desc = $_REQUEST ['meetingpoint_desc'];
 								$tour->meetingPoint_lat = $_REQUEST ['meetingpoint-lat'];
 								$tour->meetingPoint_long = $_REQUEST ['meetingpoint-lon'];
 								$tour->startDateTime = $date;
@@ -424,7 +437,9 @@ switch (getPage ()) {
 }
 echo '</div>';
 echo '</div>';
-echo '<div id="version"><a href="html/disclaimer.php" target="_blank">Regeln</a> <a href="html/impressum.php" target="_blank">Impressum</a> Version: ' . $config ['version'] . '</div>';
+
+echo '<div id="version">';
+require_once 'pages/footer.php';
 echo '</div>';
 
 /*
@@ -434,5 +449,21 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html>
