@@ -47,10 +47,10 @@ if (hasAuth ()) {
 		}
 		?>
 		<th>Beschreibung</th>
-		<th>Dauer<br>(hh:mm)
+		<th style='text-align: right;'>Dauer<br>(hh:mm)
 		</th>
-		<th>Distanz</th>
-		<th>Bergauf</th>
+		<th style='text-align: right;'>Distanz</th>
+		<th style='text-align: right;'>Bergauf</th>
 		<th>Pace</th>
 		<th>Technik</th>
 		<?php
@@ -115,7 +115,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		// echo '<td class="tooltip">' . $meetingpoint_short . '<span class="info">' . $meetingpoint_long . '</span></td>';
-		echo '<td title="' . $meetingpoint_long . '">' . $meetingpoint_short . '</td>';
+		echo '<td title="' . $meetingpoint_long . '"><a href="?action=tour-view&tourid=' . $tour->id . '">' . $meetingpoint_short . '</a></td>';
 		echo "<td style='text-align: right;'>" . formatMeters ( $row ['refm'] ) . "</td>";
 	}
 	echo "<td>" . $tour->description . "</td>";
@@ -153,7 +153,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				}
 			}
 		}
-		echo "<td>";
+		echo "</td>";
 	} else {
 		echo "<td>" . count ( $users ) . "</td>";
 	}

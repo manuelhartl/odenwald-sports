@@ -333,6 +333,11 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							setMessage ( 'tour abgesagt' );
 						}
 						break;
+					case 'tour-view' :
+						$tourid = $_REQUEST ['tourid'];
+						$tour = getTourById ( $pdo, $tourid );
+						setPage ( 'tour-view' );
+						break;
 					case 'user-list' :
 						setPage ( 'user-list' );
 						break;
@@ -428,6 +433,9 @@ switch (getPage ()) {
 	case 'tour-new' :
 		require_once 'pages/tour-new-edit.php';
 		break;
+	case 'tour-view' :
+		require_once 'pages/tour-view.php';
+		break;
 	case 'user-list' :
 		require_once 'pages/user-list.php';
 		break;
@@ -450,5 +458,9 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
+
+
+
+
 </body>
 </html>
