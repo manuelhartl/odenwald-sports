@@ -37,7 +37,7 @@ $stmt = $pdo->prepare ( 'select username,realname,birthdate,fk_user_id,111195 * 
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
-' ORDER BY u.username ASC' ); //
+' ORDER BY lower(u.username) ASC' ); //
 ex2er ( $stmt, array (
 		$reference->lat,
 		$reference->long 

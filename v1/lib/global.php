@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/../config/settings.php';
+$cookielifetime = 60 * 60;
+session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '.' . $_SERVER ['SERVER_NAME'] );
 session_start ();
+// reset cookie parameters because of a quirk in php - if you dont do this the cookie lifetime wont be updated on subsequent page requests
+setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '.' . $_SERVER ['SERVER_NAME'] );
 date_default_timezone_set ( "Europe/Berlin" );
 class User {
 	public $id;

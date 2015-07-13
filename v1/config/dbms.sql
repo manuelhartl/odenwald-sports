@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 02, 2015 at 11:35 PM
+-- Generation Time: Jul 13, 2015 at 06:17 PM
 -- Server version: 5.6.24
 -- PHP Version: 5.6.8
 
@@ -81,12 +81,17 @@ CREATE TABLE IF NOT EXISTS `tour` (
   `startdate` datetime NOT NULL,
   `duration` smallint(6) NOT NULL,
   `meetingpoint` varchar(250) COLLATE utf8_bin NOT NULL,
+  `meetingpoint_desc` varchar(100) COLLATE utf8_bin NOT NULL,
   `meetingpoint_coord` point NOT NULL,
   `description` text COLLATE utf8_bin NOT NULL,
   `adddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` enum('active','canceled') COLLATE utf8_bin NOT NULL DEFAULT 'active'
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  `status` enum('active','canceled') COLLATE utf8_bin NOT NULL DEFAULT 'active',
+  `skill` enum('1','2','3','4','5','6') COLLATE utf8_bin NOT NULL,
+  `speed` enum('1','2','3','4','5','6') COLLATE utf8_bin NOT NULL,
+  `distance` int(11) NOT NULL,
+  `elevation` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -114,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `status` enum('registered','verified') COLLATE utf8_bin NOT NULL,
   `register_date` datetime NOT NULL,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
 
@@ -127,7 +132,9 @@ CREATE TABLE IF NOT EXISTS `user_extra` (
   `realname` varchar(200) COLLATE utf8_bin DEFAULT NULL,
   `birthdate` datetime DEFAULT NULL,
   `address` varchar(200) COLLATE utf8_bin DEFAULT NULL,
-  `address_coord` point DEFAULT NULL
+  `address_coord` point DEFAULT NULL,
+  `mailing` tinyint(1) NOT NULL DEFAULT '1',
+  `phone` varchar(50) COLLATE utf8_bin DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
@@ -205,12 +212,12 @@ ALTER TABLE `sport_subtype`
 -- AUTO_INCREMENT for table `tour`
 --
 ALTER TABLE `tour`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=77;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=109;
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
+  MODIFY `id` mediumint(9) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=20;
 --
 -- Constraints for dumped tables
 --

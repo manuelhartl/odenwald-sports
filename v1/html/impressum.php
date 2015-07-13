@@ -19,5 +19,8 @@
 		<td>Gerald.Wischnewski_AT_web.de</td>
 	</tr>
 </table>
-<p></p>
+<p>Hier dargestellte Informationen erfolgen ohne Gew&auml;hr für die Aktualit&auml;t, Korrektheit, Vollst&auml;ndigkeit
+	oder Qualit&auml;t. Es bleibt ausdr&uuml;cklich vorbehalten, Teile des Informationsangebotes oder den gesamten
+	dargestellten Inhalt ohne weitere Ank&uuml;ndigung zu verändern, zu ergänzen, zu l&ouml;schen oder die
+	Ver&ouml;ffentlichung zeitweise oder endg&uuml;ltig einzustellen.</p>
 </html>

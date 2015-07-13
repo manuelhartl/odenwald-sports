@@ -442,6 +442,7 @@ echo '<div id="version">';
 require_once 'pages/footer.php';
 echo '</div>';
 
+// print_r ( session_get_cookie_params () );
 /*
  * echo "<pre>";
  * print_r ( $_SESSION );
@@ -449,21 +450,5 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </body>
 </html>
