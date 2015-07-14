@@ -35,7 +35,7 @@ if (hasAuth ()) {
 }
 
 ?>
-<table>
+<table style='width: 100%;'>
 	<tr>
 		<th></th>
 		<th>Datum</th>
@@ -115,10 +115,10 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		// echo '<td class="tooltip">' . $meetingpoint_short . '<span class="info">' . $meetingpoint_long . '</span></td>';
-		echo '<td title="' . $meetingpoint_long . '"><a href="?action=tour-view&tourid=' . $tour->id . '">' . $meetingpoint_short . '</a></td>';
+		echo '<td title="' . htmlentities($meetingpoint_long) . '"><a href="?action=tour-view&tourid=' . $tour->id . '">' . htmlentities($meetingpoint_short) . '</a></td>';
 		echo "<td style='text-align: right;'>" . formatMeters ( $row ['refm'] ) . "</td>";
 	}
-	echo "<td>" . $tour->description . "</td>";
+	echo "<td style='max-width: 300px; word-wrap: break-word;'>" . nl2br(htmlentities($tour->description)) . "</td>";
 	echo "<td style='text-align: right;'>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td style='text-align: right;'>" . formatMeters ( $tour->distance ) . "</td>";
 	echo "<td style='text-align: right;'>" . formatMeters ( $tour->elevation ) . "</td>";

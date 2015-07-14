@@ -54,7 +54,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo "<td>" . $user->username . "</td>";
 	if ($hasExtra) {
 		echo "<td>" . $userextra->realname . "</td>";
-		echo "<td>" . $userextra->phone . "</td>";
+		echo "<td>" . htmlentities($userextra->phone) . "</td>";
 		echo "<td>" . (isset ( $userextra ) ? formatMeters ( $row ['dist'] ) : '') . "</td>";
 		echo "<td>" . $userextra->birtdate->format ( 'Y' ) . "</td>";
 	} else {

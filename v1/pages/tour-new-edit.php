@@ -37,7 +37,7 @@ require_once __DIR__ . '/../lib/db_tours.php';
 			<table style="width: 100%">
 				<tr>
 					<td>Vordefiniert:</td>
-					<td><select id="place"
+					<td style="width: 100%"><select id="place"
 						onchange="var lat = document.getElementById('meetingpoint-lat'); lat.value=this.value.split(';')[0].replace(',','.');
 		var lon = document.getElementById('meetingpoint-lon'); lon.value=this.value.split(';')[1].replace(',','.'); 
 		lat.dispatchEvent(new Event('change'));lon.dispatchEvent(new Event('change'));
@@ -89,10 +89,8 @@ require_once __DIR__ . '/../lib/db_tours.php';
 		<tr>
 			<td>Datum/Uhrzeit</td>
 			<td><?php
-			if ($update) {
-				echo $input ['startdate']->format ( 'd.m.Y H:i' );
-			} else {
-				?>
+			// echo $input ['startdate']->format ( 'd.m.Y H:i' );
+			?>
 				<div class="row">
 					<div class='col-sm-6'>
 						<input type="text" class="form-control" style="width: 150px;" id="startdate" maxlength="16" name="startdate"
@@ -111,11 +109,7 @@ require_once __DIR__ . '/../lib/db_tours.php';
                       );
             });
         </script>
-				</div>
-				<?php
-			}
-			?>
-			</td>
+				</div></td>
 		</tr>
 		<tr>
 			<td>Geschwindigkeit</td>

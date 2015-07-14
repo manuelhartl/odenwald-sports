@@ -216,7 +216,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['meetingpoint-lat'] = $tour->meetingPoint_lat;
 						$input ['meetingpoint-lon'] = $tour->meetingPoint_long;
 						$input ['description'] = $tour->description;
-						$input ['startdate'] = $tour->startDateTime;
+						$input ['startdate'] = $tour->startDateTime->format ( 'd.m.Y H:i' );
 						$input ['duration'] = $tour->duration;
 						$input ['skill'] = $tour->skill;
 						$input ['speed'] = $tour->speed;
@@ -245,14 +245,13 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						if (isset ( $_REQUEST ['startdate'] )) {
 							$input ['startdate'] = $_REQUEST ['startdate'];
 						}
-						// if (strlen ( $_REQUEST ['description'] ) < 10) {
-						// setMessage ( 'Beschreibung zu kurz' );
-						// } else
-						// TODO: check that startdate is 15mins in future
+						$date = DateTime::createFromFormat ( 'd.m.Y H:i', $_REQUEST ['startdate'] );
 						if (strlen ( $_REQUEST ['meetingpoint'] ) < 5) {
 							setMessage ( 'Treffpunkt angeben' );
 						} else if (strlen ( $_REQUEST ['duration'] ) < 1) {
 							setMessage ( 'Dauer angeben' );
+						} else if ($date < date ( 'Y-m-d H:i:s' )) {
+							setMessage ( 'Datum muss in der Zukunft liegen' );
 						} else if (isset ( $_POST ['tourid'] )) {
 							// edit
 							$tour = getTourById ( $pdo, $_POST ['tourid'] );
@@ -260,6 +259,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								// at the moment only the guide may edit a tour
 								die ();
 							}
+							$tour->startDateTime = $date;
 							$tour->description = $_REQUEST ['description'];
 							$tour->duration = $_REQUEST ['duration'];
 							$tour->meetingPoint = $_REQUEST ['meetingpoint'];
@@ -458,6 +458,10 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
+
+
+
+
 
 
 
