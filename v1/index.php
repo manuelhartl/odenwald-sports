@@ -111,8 +111,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$input ['email'] = $email;
 			$input ['acceptrules'] = $acceptrules;
 			// validate
-			if (! preg_match ( "/^[a-zA-Z][0-9a-zA-Z]*$/", $username )) {
-				setMessage ( 'Der Benutzername darf nur A-Z und 9-9 enthalten und mu&szlig; mit einem Buchstaben beginnen' );
+			if (! preg_match ( "/^[0-9a-zA-Z]*$/", $username )) {
+				setMessage ( 'Der Benutzername darf nur A-Z und 9-9 enthalten' );
 				break;
 			}
 			if (strlen ( $username ) < 2) {

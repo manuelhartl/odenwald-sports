@@ -140,7 +140,7 @@ function getPlaces($pdo) {
 	return $stmt->fetchAll ( PDO::FETCH_OBJ );
 }
 function getAttendees($pdo, $tourid) {
-	$stmt = $pdo->prepare ( "select user.id as id, user.username as username, user.email as email from tour_attendee left join user ON (fk_user_id=user.id) where fk_tour_id = ?" );
+	$stmt = $pdo->prepare ( "select user.id as id, user.username as username, user.email as email from tour_attendee ta left join user ON (ta.fk_user_id=user.id) where ta.fk_tour_id = ? ORDER BY ta.adddate ASC" );
 	if (! ex2er ( $stmt, array (
 			$tourid 
 	) )) {
