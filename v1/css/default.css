@@ -91,21 +91,21 @@ form {
 	text-decoration: line-through;
 }
 
-.evenDayFirst {
+.evenFirst {
 	background-color: #f3f3f3;
 }
 
-.evenDay {
+.even {
 	border-top: 1px solid #111111;
 
 	background-color: #f3f3f3;
 }
 
-.oddDayFirst {
+.oddFirst {
 	background-color: #47B224;
 }
 
-.oddDay {
+.odd {
 	border-top: 1px solid #111111;
 	
 	background-color: #47B224;
