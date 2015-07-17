@@ -15,6 +15,7 @@ function getUserObject($user) {
 	$userObj->id = isset ( $user ['id'] ) ? $user ['id'] : false;
 	$userObj->username = isset ( $user ['username'] ) ? $user ['username'] : false;
 	$userObj->email = isset ( $user ['email'] ) ? $user ['email'] : false;
+	$userObj->register_date = isset ( $user ['register_date'] ) ?  date_create($user ['register_date']) : false;
 	return $userObj;
 }
 function getUserExtraObject($row) {

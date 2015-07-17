@@ -16,11 +16,13 @@
 ?>
 <table>
 	<tr>
+		<th>Nr.</th>
 		<th>Benutzer</th>
 		<th>Echter Name</th>
 		<th>Telefon</th>
 		<th>Entfernung zu mir</th>
 		<th>Geburtsjahr</th>
+		<th>Registration</th>
 	</tr>
 <?php
 require_once 'lib/global.php';
@@ -33,7 +35,7 @@ if (isset ( $userextra->address_lat )) {
 	$reference->long = $userextra->address_long;
 }
 
-$stmt = $pdo->prepare ( 'select username,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, mailing, phone ' . //
+$stmt = $pdo->prepare ( 'select username,register_date,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, mailing, phone ' . //
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
@@ -42,7 +44,7 @@ ex2er ( $stmt, array (
 		$reference->lat,
 		$reference->long 
 ) );
-
+$no = 1;
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	unset ( $userextra );
 	$user = getUserObject ( $row );
@@ -50,19 +52,23 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	if ($hasExtra) {
 		$userextra = getUserExtraObject ( $row );
 	}
-	echo '<tr>';
+	echo '<tr class="' .  ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . '">';
+    echo "<td>" . $no . "</td>";
 	echo "<td>" . $user->username . "</td>";
 	if ($hasExtra) {
 		echo "<td>" . $userextra->realname . "</td>";
 		echo "<td>" . htmlentities($userextra->phone) . "</td>";
 		echo "<td>" . (isset ( $userextra ) ? formatMeters ( $row ['dist'] ) : '') . "</td>";
-		echo "<td>" . $userextra->birtdate->format ( 'Y' ) . "</td>";
+		echo "<td>" . $userextra->birthdate->format ( 'Y' ) . "</td>";
 	} else {
 		echo "<td>-</td>";
 		echo "<td>-</td>";
 		echo "<td>-</td>";
+		echo "<td>-</td>";
 	}
+	echo "<td>" . $user->register_date->format('M Y') . "</td>";
 	echo "</tr>";
+	$no =$no+1;
 }
 ?>
 </table>
