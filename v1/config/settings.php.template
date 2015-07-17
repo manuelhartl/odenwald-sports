@@ -4,7 +4,8 @@ $config['dbUsername']='';
 $config['dbPassword']='';
 $config['dbDatabase']='';
 $config['emailFrom']='';
-$config ['version'] = '';
-#$config ['debug'] = true;
+$config['version'] = '';
+$config['beta'] = false;
+#$config['debug'] = true;
 
 ?>
