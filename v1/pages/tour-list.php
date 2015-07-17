@@ -87,6 +87,7 @@ ex2er ( $stmt, array (
 		$reference->gps->long 
 ) );
 
+$daystyle = 'evenDayFirst';
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
 	$tour = getTourObject ( $row );
@@ -100,8 +101,24 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$joinedTour = true;
 		}
 	}
-	echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour || ($tour->guide->id == $authuserid) ? 'joined' : 'notjoined')) . '">';
+	//	echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour || ($tour->guide->id == $authuserid) ? 'joined' : 'notjoined')) . '">';
 	$startdate = $tour->startDateTime;
+	if(!isset($lastdate) || $lastdate->format ( 'ymd' ) != $startdate->format ( 'ymd' )){
+		if($daystyle == 'evenDayFirst'||$daystyle == 'evenDay'){
+			$daystyle = 'oddDayFirst';
+		}else if($daystyle == 'oddDayFirst'||$daystyle == 'oddDay'){
+			$daystyle = 'evenDayFirst';
+		}		
+	}else{
+		if($daystyle == 'evenDayFirst'){
+			$daystyle = 'evenDay';
+		}
+		if($daystyle == 'oddDayFirst'){
+			$daystyle = 'oddDay';
+		}
+	}
+	echo '<tr class="'.$daystyle . '">';
+	
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
 		echo '<td></td>';
 		echo "<td style='text-align: right;'>" . $startdate->format ( 'H:i' ) . "</td>";
