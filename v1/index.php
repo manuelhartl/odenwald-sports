@@ -10,7 +10,8 @@
 <title>Touren</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
-<link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
+<link href="css/bootstrap-datetimepicker.css" rel="stylesheet"
+	type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
 <link href="css/default.css" rel="stylesheet" type="text/css">
 <link href="css/ost.css" rel="stylesheet" type="text/css">
@@ -18,7 +19,8 @@
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script type="text/javascript"
+	src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script type="text/javascript" src="js/locationpicker.jquery.js"></script>
 <script type="text/javascript" src="js/jquery.rating.pack.js"></script>
 </head>
@@ -342,8 +344,11 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						setPage ( 'user-list' );
 						break;
 					case 'user-edit' :
-						$input ['userid'] = authUser ()->id;
+					case 'user-view' :
+						$input ['userid'] = ($_REQUEST ['action'] == 'user-edit') ? authUser ()->id : $_REQUEST ['userid'];
+						$user=  getUserObject(getUserById( $pdo, $input ['userid']));
 						$userextra = getUserExtraById ( $pdo, $input ['userid'] );
+						$input ['username'] = $user->username;
 						if ($userextra) {
 							$input ['realname'] = $userextra->realname;
 							$input ['birthdate'] = $userextra->birtdate;
@@ -362,7 +367,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						if (isset ( $userextra->address_long )) {
 							$input ['address-lon'] = $userextra->address_long;
 						}
-						setPage ( "user-edit" );
+						setPage ( $_REQUEST ['action']  );
 						break;
 					case 'user-save' :
 						if (isset ( $_REQUEST ['userid'] )) {
@@ -442,6 +447,9 @@ switch (getPage ()) {
 	case 'user-edit' :
 		require_once 'pages/user-edit.php';
 		break;
+	case 'user-view' :
+		require_once 'pages/user-view.php';
+		break;
 }
 echo '</div>';
 echo '</div>';
@@ -458,6 +466,8 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
+
+
 
 
 

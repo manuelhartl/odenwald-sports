@@ -145,9 +145,16 @@ function addPasswordresetToken($pdo, $userid, $token) {
 	)) );
 }
 function getUserByName($pdo, $username) {
-	$stmt = $pdo->prepare ( "select id,username,email from user where LOWER(username) = LOWER(?)" );
+	$stmt = $pdo->prepare ( "select id,username,email,register_date from user where LOWER(username) = LOWER(?)" );
 	$stmt->execute ( array (
 			$username 
+	) );
+	return $stmt->fetch ( PDO::FETCH_ASSOC );
+}
+function getUserById($pdo, $userId) {
+	$stmt = $pdo->prepare ( "select id,username,email,register_date from user where id = ?" );
+	$stmt->execute ( array (
+			$userId 
 	) );
 	return $stmt->fetch ( PDO::FETCH_ASSOC );
 }

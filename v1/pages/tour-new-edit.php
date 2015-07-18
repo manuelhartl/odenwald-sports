@@ -99,10 +99,11 @@ require_once __DIR__ . '/../lib/db_tours.php';
 					<script type="text/javascript">
             $(function () {
                 $('#startdate').datetimepicker({
-						format: 'DD.MM.YYYY HH:mm',
+    					format: 'DD.MM.YYYY HH:mm',
 						defaultDate: moment().add(60,'minute'),
 						minDate: moment().add(15,'minute'),
 						showTodayButton: true,
+						calendarWeeks: true,
 						useCurrent: false,
                 		sideBySide: true
                 		}

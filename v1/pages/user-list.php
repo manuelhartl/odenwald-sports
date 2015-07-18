@@ -1,18 +1,15 @@
 <?php
-/*
- * <form name="tour-list-update" action="" method="post">
- * <input name="action" type="hidden" value="tour-list-canceled" />
- * <?php
- * if (getInVa ( 'showcanceled' ) == 'true') {
- * echo '<input name="showcanceled" type="hidden" value="false" />';
- * echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
- * } else {
- * echo '<input name="showcanceled" type="hidden" value="true" />';
- * echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
- * }
- * ?>
- * </form>
- */
+require_once 'lib/global.php';
+require_once 'lib/users.php';
+
+$reference = new Gps ();
+$hasAdress = false;
+$userextra = getUserExtraById ( $pdo, authUser ()->id );
+if (isset ( $userextra->address_lat )) {
+	$hasAdress = true;
+	$reference->lat = $userextra->address_lat;
+	$reference->long = $userextra->address_long;
+}
 ?>
 <table>
 	<tr>
@@ -20,22 +17,26 @@
 		<th>Benutzer</th>
 		<th>Echter Name</th>
 		<th>Telefon</th>
-		<th>Entfernung zu mir</th>
+<?php
+if ($hasAdress) {
+	echo ("		<th>Entfernung zu " . authUser ()->username . "</th>");
+}
+?>		
 		<th>Geburtsjahr</th>
 		<th>Registration</th>
 	</tr>
 <?php
-require_once 'lib/global.php';
-require_once 'lib/users.php';
 
-$reference = new Gps ();
-$userextra = getUserExtraById ( $pdo, authUser ()->id );
-if (isset ( $userextra->address_lat )) {
-	$reference->lat = $userextra->address_lat;
-	$reference->long = $userextra->address_long;
-}
+// dump actual user
+$user = getUserObject ( getUserByName ( $pdo, authUser ()->username ) );
+showUser ( "", $user, $userextra, null, $hasAdress,  $hasAdress, true );
+// space
+echo ("	<tr>");
+echo ("		<td>.");
+echo ("		</td>");
+echo ("	</tr>");
 
-$stmt = $pdo->prepare ( 'select username,register_date,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, mailing, phone ' . //
+$stmt = $pdo->prepare ( 'select username,id,register_date,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, mailing, phone ' . //
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
@@ -44,31 +45,66 @@ ex2er ( $stmt, array (
 		$reference->lat,
 		$reference->long 
 ) );
+
+//
+
 $no = 1;
+$showAdress = $hasAdress; // only if actual user has an adress
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	unset ( $userextra );
+	$hasAdress = false;
 	$user = getUserObject ( $row );
 	$hasExtra = ! is_null ( $row ['fk_user_id'] );
 	if ($hasExtra) {
 		$userextra = getUserExtraObject ( $row );
+		if (isset ( $userextra->address_lat )) {
+			$hasAdress = true;
+		}
 	}
-	echo '<tr class="' .  ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . '">';
-    echo "<td>" . $no . "</td>";
-	echo "<td>" . $user->username . "</td>";
-	if ($hasExtra) {
-		echo "<td>" . $userextra->realname . "</td>";
-		echo "<td>" . htmlentities($userextra->phone) . "</td>";
-		echo "<td>" . (isset ( $userextra ) ? formatMeters ( $row ['dist'] ) : '') . "</td>";
-		echo "<td>" . $userextra->birthdate->format ( 'Y' ) . "</td>";
+	showUser ( $no, $user, (isset ( $userextra ) ? $userextra : null), $row ['dist'], $hasAdress, $showAdress, false );
+	$no = $no + 1;
+}
+function makeUserDescription($user, $userextra) {
+	$userInfo = "";
+	if (isset ( $userextra )) {
+		if (isset ( $userextra->address ) && strlen ( $userextra->address ) > 1) {
+			$userInfo = $userextra->address;
+			$userInfo="Adresse";
+		}
+		if (isset ( $userextra->phone ) && strlen ( $userextra->phone ) > 1) {
+			$userInfo = (isset ( $userInfo ) && strlen ( $userInfo ) > 1 ? $userInfo . ", " : "") . $userextra->phone;
+		}
+	}
+	
+	return ('	<td title="' . $userInfo . '">' . '<a href="?action=user-view&userid=' . $user->id . '">' . $user->username . '</a>' . "</td>");
+}
+function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $isActualUser) {
+	echo '	<tr class="' . ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . '">';
+	echo "		<td>" . $no . "</td>";
+	echo makeUserDescription ( $user, $userextra );
+	if (isset ( $userextra )) {
+		echo "		<td>" . $userextra->realname . "</td>";
+		echo "		<td>" . htmlentities ( $userextra->phone ) . "</td>";
+		if ($showAdress) {
+			if ($hasAdress) {
+				if ($isActualUser) {
+					echo "		<td>" . ($userextra->address) . "</td>";
+				} else {
+					echo "		<td>" . (isset ( $distance ) ? formatMeters ( $distance ) : '') . "</td>";
+				}
+			}
+		}
+		echo "		<td>" . $userextra->birtdate->format ( 'Y' ) . "</td>";
 	} else {
-		echo "<td>-</td>";
-		echo "<td>-</td>";
-		echo "<td>-</td>";
-		echo "<td>-</td>";
+		echo "		<td>-</td>";
+		echo "		<td>-</td>";
+		if ($showAdress) {
+			echo "		<td>-</td>";
+		}
+		echo "		<td>-</td>";
 	}
-	echo "<td>" . $user->register_date->format('M Y') . "</td>";
-	echo "</tr>";
-	$no =$no+1;
+	echo "<td>" . ($user->register_date ? $user->register_date->format ( 'D M Y' ) : "") . "</td>";
+	echo "	</tr>";
 }
 ?>
 </table>
