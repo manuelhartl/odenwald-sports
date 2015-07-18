@@ -32,11 +32,10 @@ $user = getUserObject ( getUserByName ( $pdo, authUser ()->username ) );
 showUser ( "", $user, $userextra, null, $hasAdress,  $hasAdress, true );
 // space
 echo ("	<tr>");
-echo ("		<td>.");
-echo ("		</td>");
+echo ("		<td>&nbsp;</td>");
 echo ("	</tr>");
 
-$stmt = $pdo->prepare ( 'select username,id,register_date,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, mailing, phone ' . //
+$stmt = $pdo->prepare ( 'select username,id,register_date,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, address, mailing, phone ' . //
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
@@ -57,22 +56,21 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$hasExtra = ! is_null ( $row ['fk_user_id'] );
 	if ($hasExtra) {
 		$userextra = getUserExtraObject ( $row );
-		if (isset ( $userextra->address_lat )) {
+		if (isset ( $row ['dist'] )) {
 			$hasAdress = true;
 		}
 	}
-	showUser ( $no, $user, (isset ( $userextra ) ? $userextra : null), $row ['dist'], $hasAdress, $showAdress, false );
+	showUser ( $no, $user, $userextra, $row ['dist'], $hasAdress, $showAdress, false );
 	$no = $no + 1;
 }
 function makeUserDescription($user, $userextra) {
 	$userInfo = "";
 	if (isset ( $userextra )) {
 		if (isset ( $userextra->address ) && strlen ( $userextra->address ) > 1) {
-			$userInfo = $userextra->address;
-			$userInfo="Adresse";
+			$userInfo = "Adresse: " .$userextra->address;
 		}
 		if (isset ( $userextra->phone ) && strlen ( $userextra->phone ) > 1) {
-			$userInfo = (isset ( $userInfo ) && strlen ( $userInfo ) > 1 ? $userInfo . ", " : "") . $userextra->phone;
+			$userInfo = (isset ( $userInfo ) && strlen ( $userInfo ) > 1 ? $userInfo . ", " : "") . "Telefon: " . $userextra->phone;
 		}
 	}
 	
