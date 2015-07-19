@@ -355,18 +355,21 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$input ['address'] = $userextra->address;
 							$input ['mailing'] = $userextra->mailing;
 							$input ['phone'] = $userextra->phone;
+							$input ['address-lat'] = $userextra->address_lat;
+							$input ['address-lon'] = $userextra->address_long;
 						} else {
 							$input ['realname'] = '';
-							$input ['birthdate'] = DateTime::createFromFormat ( 'Y', '0000' );
+							$input ['birthdate'] = '';
 							$input ['address'] = '';
+							// default value true
 							$input ['mailing'] = true;
+							$input ['phone'] = '';
+							$input ['address-lat'] = false;
+							$input ['address-lon'] = false;
 						}
-						if (isset ( $userextra->address_lat )) {
-							$input ['address-lat'] = $userextra->address_lat;
-						}
-						if (isset ( $userextra->address_long )) {
-							$input ['address-lon'] = $userextra->address_long;
-						}
+						
+							
+						
 						setPage ( $_REQUEST ['action']  );
 						break;
 					case 'user-save' :

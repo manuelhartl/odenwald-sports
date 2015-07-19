@@ -29,7 +29,7 @@ if ($hasAdress) {
 
 // dump actual user
 $user = getUserObject ( getUserByName ( $pdo, authUser ()->username ) );
-showUser ( "", $user, $userextra, null, $hasAdress,  $hasAdress, true );
+showUser ( "", $user, $userextra, null, $hasAdress, $hasAdress, true );
 // space
 echo ("	<tr>");
 echo ("		<td>&nbsp;</td>");
@@ -66,10 +66,10 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 function makeUserDescription($user, $userextra) {
 	$userInfo = "";
 	if (isset ( $userextra )) {
-		if (isset ( $userextra->address ) && strlen ( $userextra->address ) > 1) {
-			$userInfo = "Adresse: " .$userextra->address;
+		if (isset ( $userextra->address )) {
+			$userInfo = "Adresse: " . $userextra->address;
 		}
-		if (isset ( $userextra->phone ) && strlen ( $userextra->phone ) > 1) {
+		if (isset ( $userextra->phone )) {
 			$userInfo = (isset ( $userInfo ) && strlen ( $userInfo ) > 1 ? $userInfo . ", " : "") . "Telefon: " . $userextra->phone;
 		}
 	}
@@ -82,17 +82,17 @@ function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $i
 	echo makeUserDescription ( $user, $userextra );
 	if (isset ( $userextra )) {
 		echo "		<td>" . $userextra->realname . "</td>";
-		echo "		<td>" . htmlentities ( $userextra->phone ) . "</td>";
+		echo "		<td>" . (isset ( $userextra->phone ) ? htmlentities ( $userextra->phone ) : "") . "</td>";
 		if ($showAdress) {
 			if ($hasAdress) {
 				if ($isActualUser) {
-					echo "		<td>" . ($userextra->address) . "</td>";
+					echo "		<td>" . (isset ( $userextra->address ) ? ($userextra->address) : "") . "</td>";
 				} else {
 					echo "		<td>" . (isset ( $distance ) ? formatMeters ( $distance ) : '') . "</td>";
 				}
 			}
 		}
-		echo "		<td>" . $userextra->birtdate->format ( 'Y' ) . "</td>";
+		echo "		<td>" . (isset ( $userextra->birtdate ) ? $userextra->birtdate->format ( 'Y' ) : "") . "</td>";
 	} else {
 		echo "		<td>-</td>";
 		echo "		<td>-</td>";
@@ -101,7 +101,7 @@ function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $i
 		}
 		echo "		<td>-</td>";
 	}
-	echo "<td>" . ($user->register_date ? $user->register_date->format ( 'D M Y' ) : "") . "</td>";
+	echo "<td>" . (isset ( $user->register_date ) ? $user->register_date->format ( 'D M Y' ) : "") . "</td>";
 	echo "	</tr>";
 }
 ?>

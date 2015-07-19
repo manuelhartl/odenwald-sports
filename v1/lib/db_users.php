@@ -15,7 +15,7 @@ function getUserObject($user) {
 	$userObj->id = isset ( $user ['id'] ) ? $user ['id'] : false;
 	$userObj->username = isset ( $user ['username'] ) ? $user ['username'] : false;
 	$userObj->email = isset ( $user ['email'] ) ? $user ['email'] : false;
-	$userObj->register_date = isset ( $user ['register_date'] ) ?  date_create($user ['register_date']) : false;
+	$userObj->register_date = isset ( $user ['register_date'] ) ? date_create ( $user ['register_date'] ) : false;
 	return $userObj;
 }
 function getUserExtraObject($row) {
@@ -24,17 +24,14 @@ function getUserExtraObject($row) {
 	}
 	$userextra = new UserExtra ();
 	$userextra->id = isset ( $row ['fk_user_id'] ) ? $row ['fk_user_id'] : false;
-	$userextra->realname = $row ['realname'];
-	$userextra->birtdate = date_create ( $row ['birthdate'] );
+	$userextra->realname = isset ( $row ['realname'] ) ? $row ['realname'] : false;
+	$userextra->birtdate = isset ( $row ['birthdate'] ) ? date_create ( $row ['birthdate'] ) : false;
 	$userextra->address = isset ( $row ['address'] ) ? $row ['address'] : false;
-	if (isset ( $row ['address_lat'] )) {
-		$userextra->address_lat = $row ['address_lat'];
-	}
-	if (isset ( $row ['address_long'] )) {
-		$userextra->address_long = $row ['address_long'];
-	}
-	$userextra->mailing = $row ['mailing'];
-	$userextra->phone = $row ['phone'];
+	$userextra->address_lat = isset ( $row ['address_lat'] ) ? $row ['address_lat'] : false;
+	$userextra->address_long = isset ( $row ['address_long'] ) ? $row ['address_long'] : false;
+	// boolean, default: true
+	$userextra->mailing = isset ( $row ['mailing'] ) ? $row ['mailing'] : true;
+	$userextra->phone = isset ( $row ['phone'] ) ? $row ['phone'] : false;
 	return $userextra;
 }
 function checkAuth($pdo, $username, $password) {
@@ -107,7 +104,7 @@ function updateUserExtra($pdo, UserExtra $userextra) {
 			$point,
 			$userextra->mailing,
 			$userextra->phone,
-			$userextra->id
+			$userextra->id 
 	) )) {
 		return false;
 	}
