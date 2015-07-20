@@ -52,7 +52,7 @@ html, body {
 	border-bottom: solid 2px #37607c;
 }
 
-#navigation-bottom  {
+#navigation-bottom {
 	width: 100%;
 	min-width: 100%;
 	margin-top: 10px;
@@ -67,3 +67,12 @@ html, body {
 	float: right;
 	display: inline-block;
 }
+
+ span {
+        display: inline-block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
+        -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
+  		width: 100%;
+    }
