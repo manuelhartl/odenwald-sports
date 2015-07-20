@@ -35,26 +35,30 @@ if (hasAuth ()) {
 }
 
 ?>
-<table style='width: 100%;table-layout:fixed;text-align: right;'>
+<table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr>
-		<th>Tag<br>Sport</th>
-		<th>Datum</th>
+		<th style='width: 5em;'>Tag<br>Sport
+		</th>
+		<th style='width: 10em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th>Guide</th>';
-			echo "<th style='width: 20%;'>Treffpunkt</th>";
+			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
-		<th style='width: 30%;'>Beschreibung</th>
-		<th style='text-align: right;'>Dauer<br>(hh:mm)</th>
-		<th style='text-align: right;'>Distanz<br>km</th>
-		<th style='text-align: right;'>Bergauf<br>Hm</th>
+		<th style='width: 25%;'>Beschreibung</th>
+		<th style='text-align: right;'>Dauer<br>(hh:mm)
+		</th>
+		<th style='text-align: right;'>Distanz<br>km
+		</th>
+		<th style='text-align: right;'>Bergauf<br>Hm
+		</th>
 		<th>Pace</th>
 		<th>Technik</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th>Teilnehmer</th>';
-			echo '<th></th>';
+			echo "<th></th>";
 		} else {
 			echo '<th>Teilnehmer</th>';
 		}
@@ -98,29 +102,29 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$joinedTour = true;
 		}
 	}
-	//	echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour || ($tour->guide->id == $authuserid) ? 'joined' : 'notjoined')) . '">';
+	// echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour || ($tour->guide->id == $authuserid) ? 'joined' : 'notjoined')) . '">';
 	$startdate = $tour->startDateTime;
-	if(!isset($lastdate) || $lastdate->format ( 'ymd' ) != $startdate->format ( 'ymd' )){
-		if($daystyle == 'evenFirst'||$daystyle == 'even'){
+	if (! isset ( $lastdate ) || $lastdate->format ( 'ymd' ) != $startdate->format ( 'ymd' )) {
+		if ($daystyle == 'evenFirst' || $daystyle == 'even') {
 			$daystyle = 'oddFirst';
-		}else if($daystyle == 'oddFirst'||$daystyle == 'odd'){
+		} else if ($daystyle == 'oddFirst' || $daystyle == 'odd') {
 			$daystyle = 'evenFirst';
-		}		
-	}else{
-		if($daystyle == 'evenFirst'){
+		}
+	} else {
+		if ($daystyle == 'evenFirst') {
 			$daystyle = 'even';
 		}
-		if($daystyle == 'oddFirst'){
+		if ($daystyle == 'oddFirst') {
 			$daystyle = 'odd';
 		}
 	}
-	echo '<tr class="'.$daystyle . '">';
+	echo '<tr class="' . $daystyle . '">';
 	
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
 		echo "<td style='text-align: left;'>" . $tour->sport->sportsubname . "</td>";
 		echo "<td>" . $startdate->format ( 'H:i' ) . "</td>";
 	} else {
-		echo "<td style='text-align: left;'>" . getWeekDay ( $startdate ) ."<br>" . $tour->sport->sportsubname . "</td>";
+		echo "<td style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . $tour->sport->sportsubname . "</td>";
 		echo "<td>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
 	}
 	
@@ -129,9 +133,15 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		echo "<td>" . $tour->guide->username . "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
-		echo "<td style='text-align: left;' title='" . htmlentities($meetingpoint_long. ", ".formatMeters ( $row ['refm'] ) ) . "'><a href='?action=tour-view&tourid=" . $tour->id . "'><span style='min-width: 20em;max-width: 20em;'>" . htmlentities($meetingpoint_short) . "</span></a></td>";
+		
+		if (isset ( $row ['refm'] )) {
+			$dist = ", Tourstart ist in " . formatMeters ( $row ['refm'] ) . " Entfernung";
+		} else {
+			$dist = "";
+		}
+		echo "<td style='text-align: left; title=" . htmlentities ( $meetingpoint_long . $dist ) . "'><span><a href='?action=tour-view&tourid=" . $tour->id .  "'>". htmlentities ( $meetingpoint_short ) . "</a></span></td>";
 	}
-	echo "<td style='text-align: left;'><span>" . htmlentities($tour->description) . "</span></td>";
+	echo "<td style='text-align: left;'><span>" . htmlentities ( $tour->description ) . "</span></td>";
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";
@@ -140,9 +150,9 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	if (hasAuth ()) {
 		// attendees
-		echo '<td>' . $attendeeString . '</td>';
+		echo "<td style='text-align: left;'>" . $attendeeString . '</td>';
 		// functions
-		echo '<td>';
+		echo "<td style='text-align: left;'>";
 		if ($tour->startDateTime >= new DateTime ()) {
 			if (($tour->guide->id == $authuserid)) {
 				// edit

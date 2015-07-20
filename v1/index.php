@@ -43,7 +43,7 @@ function getPage() {
 }
 $_SESSION ['message'] = '';
 function setMessage($msg) {
-	$_SESSION ['message'] = $msg;
+	$_SESSION ['message'] =  ( $msg );
 }
 
 $pdo = db_open ();
@@ -60,21 +60,21 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			if (checkAuth ( $pdo, $username, $password )) {
 				login ( $pdo, $username );
 				setPage ( "home" );
-				setMessage ( 'logged in' );
+				setMessage ( $username . ', danke für das Anmelden' );
 			} else {
 				setPage ( "login" );
 				$input ['username'] = $username;
-				setMessage ( 'login failed' );
+				setMessage ( $username . ', leider hat das Anmelden nicht geklappt' );
 			}
 			break;
 		case 'logout' :
 			session_destroy ();
 			unset ( $_SESSION );
-			setMessage ( 'logged out' );
+			setMessage ( "Auf Wiedersehen" );
 			setPage ( "home" );
 			break;
 		case 'password-reset' :
-			setPage ( "password-reset" );
+			setPage ( "Ihr Passwort wurde zurückgesetzt" );
 			break;
 		case 'password-reset-save' :
 			$email = $_POST ['email'];
@@ -274,7 +274,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$tour->elevation = $_REQUEST ['elevation'];
 							updateTour ( $pdo, $tour );
 							mailUpdateTour ( $pdo, $tour );
-							setMessage ( 'tour updated' );
+							setMessage ( 'Die Tour wurde erfolgreich geändert' );
 							setPage ( 'home' );
 						} else {
 							// new
@@ -301,10 +301,10 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$tour->elevation = $_REQUEST ['elevation'];
 								if (insertTour ( $pdo, $tour )) {
 									mailNewTour ( $pdo, $tour );
-									setMessage ( 'tour saved' );
+									setMessage ( 'Die Tour wurde erfolgreich gespeichert' );
 								} else {
 									// mail admin?
-									setMessage ( 'internal error - mail admin' );
+									setMessage ( 'Interner Fehler' );
 								}
 								setPage ( 'home' );
 							}
@@ -315,7 +315,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$tour = getTourById ( $pdo, $tourid );
 						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourJoin ( $pdo, authUser ()->id, $tourid );
-							setMessage ( 'tour joined' );
+							setMessage ( 'Danke für das Anmelden an der Tour' );
 						}
 						break;
 					case 'tour-leave' :
@@ -323,7 +323,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$tour = getTourById ( $pdo, $tourid );
 						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourLeave ( $pdo, authUser ()->id, $tourid );
-							setMessage ( 'left tour' );
+							setMessage ( 'Schade, das nächste mal klappt es wieder mit dem Mitfahren' );
 						}
 						break;
 					case 'tour-cancel' :
@@ -332,7 +332,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						if ((authUser ()->id == $tour->guide->id) && ($tour->startDateTime >= new DateTime ())) {
 							tourCancel ( $pdo, $tourid );
 							mailCancelTour ( $pdo, $tour );
-							setMessage ( 'tour abgesagt' );
+							setMessage ( 'Schade, das Du die Tour abgesagt werden musstest' );
 						}
 						break;
 					case 'tour-view' :
@@ -346,7 +346,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 					case 'user-edit' :
 					case 'user-view' :
 						$input ['userid'] = ($_REQUEST ['action'] == 'user-edit') ? authUser ()->id : $_REQUEST ['userid'];
-						$user=  getUserObject(getUserById( $pdo, $input ['userid']));
+						$user = getUserObject ( getUserById ( $pdo, $input ['userid'] ) );
 						$userextra = getUserExtraById ( $pdo, $input ['userid'] );
 						$input ['username'] = $user->username;
 						if ($userextra) {
@@ -368,9 +368,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$input ['address-lon'] = false;
 						}
 						
-							
-						
-						setPage ( $_REQUEST ['action']  );
+						setPage ( $_REQUEST ['action'] );
 						break;
 					case 'user-save' :
 						if (isset ( $_REQUEST ['userid'] )) {
@@ -469,6 +467,8 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
+
+
 
 
 
