@@ -39,7 +39,7 @@ function getTourObject($row) {
 	$tourObj->duration = $row ['duration'];
 	$tourObj->sport = new Sport ();
 	$tourObj->sport->sportname = $row ['sportname'];
-	// $tourObj->sport->sportsubid = $row ['sportsubid'];
+	//$tourObj->sport->sportsubid = $row ['sportsubid'];
 	$tourObj->sport->sportsubname = $row ['sportsubname'];
 	$tourObj->meetingPoint = $row ['meetingpoint'];
 	$tourObj->meetingPoint_desc = $row ['meetingpoint_desc'];

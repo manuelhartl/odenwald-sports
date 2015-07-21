@@ -1,5 +1,5 @@
 html, body {
-	background: url('../img/O.S.T.Hintergrund2000.png') no-repeat center
+	: url('../img/O.S.T.Hintergrund2000.png') no-repeat center
 		center fixed;
 	background-size: 100% 100%;
 	background-color: #f3f3f3;
@@ -76,16 +76,4 @@ span {
 	/** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
 	-o-text-overflow: ellipsis; /** Opera 9 & 10 **/
 	width: 100%;
-}
-icon2lon{
-	background: url('../img/2lon.png') no-repeat center
-	center fixed;
-	background-size: 100% 100%;
-	background-color: #f3f3f3;
-}
-#iconmtb{
-	background: url('../img/mtb.png') left no-repeat center
-	//center fixed;
-	//background-size: 100% 100%;
-	background-color: #f3f3f3;
 }

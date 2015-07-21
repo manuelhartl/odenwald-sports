@@ -38,7 +38,6 @@ if (hasAuth ()) {
 ?>
 <?php
 
-
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr>
@@ -126,11 +125,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '<tr class="' . $daystyle . '">';
 	
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
-		echo "<td  style='text-align: left;'>";
-		echo "<div style='background: url(\"../img/mtb.png\") left no-repeat center;'>" . $tour->sport->sportsubname . "</div></td>";
+		echo "<td  style='text-align: left; '>";
+		echo makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
 		echo "<td>" . $startdate->format ( 'H:i' ) . "</td>";
 	} else {
-		echo "<td style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . $tour->sport->sportsubname . "</td>";
+		echo "<td style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
 		echo "<td>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
 	}
 	
@@ -147,7 +146,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		}
 		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . "><span>" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
 	}
-	// http://jsfiddle.net/qEsQf/   multi line ellipses
+	// http://jsfiddle.net/qEsQf/ multi line ellipses
 	echo "<td style='text-align: left;'><span>" . htmlentities ( $tour->description ) . "</span></td>";
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
@@ -187,6 +186,54 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	}
 	echo "</tr>";
 	$lastdate = $startdate;
+}
+function makeSportSubnameIconTag($sportsubname) {
+	// (1, 1, 'MTB'),
+	// (3, 1, 'Rennrad'),
+	// (4, 1, 'Crosser'),
+	// (5, 2, 'Lauf'),
+	// (6, 2, 'Trail-Running'),
+	// (7, 3, 'Schwimmen'),
+	// (8, 4, 'Triathlon'),
+	// (9, 4, 'Duathlon'),
+	// (10, 4, 'Swim & Bike'),
+	// (11, 5, 'Langlauf');
+	switch ($sportsubname) {
+		case 'MTB' :
+			$icon = "mtb";
+			break;
+		case 'Rennrad' :
+			$icon = "rr";
+			break;
+		case 'Crosser' :
+			$icon = "crosser";
+			break;
+		case 'Lauf' :
+			$icon = "run";
+			break;
+		case 'Trail-Running' :
+			$icon = "trailrun";
+			break;
+		case 'Schwimmen' :
+			$icon = "swim";
+			break;
+		case 'Triathlon' :
+			$icon = "3lon";
+			break;
+		case 'Duathlon' :
+			$icon = "2lon";
+			break;
+		case 'Swim & Bike' :
+			$icon = "mtb";
+			break;
+		case 'Langlauf' :
+			$icon = "mtb";
+			break;
+		default :
+			$icon = "mtb";
+	}
+	
+	return ("<img src='img/" . $icon . ".png' align='middle' border='0' height='40px' width='40px'>");
 }
 ?>
 </table>
