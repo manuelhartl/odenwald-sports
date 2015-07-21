@@ -3,17 +3,10 @@ require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
 
 if (hasAuth ()) {
-	echo '<form name="tour-list-update" action="" method="post">';
-	echo '<input name="action" type="hidden" value="tour-list-canceled" />';
-	echo '<input name="showold" type="hidden" value="' . getInVa ( 'showold' ) . '" />';
-	if (getInVa ( 'showcanceled' ) == 'true') {
-		echo '<input name="showcanceled" type="hidden" value="false" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
-	} else {
-		echo '<input name="showcanceled" type="hidden" value="true" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
-	}
-	echo '</form>';
+	// new tour
+	echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
+	
+	// show actual/old tours
 	echo '<form name="tour-list-update" action="" method="post">';
 	echo '<input name="action" type="hidden" value="tour-list-old" />';
 	echo '<input name="showcanceled" type="hidden" value="' . getInVa ( 'showold' ) . '" />';
@@ -25,14 +18,26 @@ if (hasAuth ()) {
 		echo '<input name="submit-tour-list-update" type="submit" value="Alte Touren anzeigen" />';
 	}
 	echo '</form>';
+	
+	// show hidden tours
+	echo '<form name="tour-list-update" action="" method="post">';
+	echo '<input name="action" type="hidden" value="tour-list-canceled" />';
+	echo '<input name="showold" type="hidden" value="' . getInVa ( 'showold' ) . '" />';
+	if (getInVa ( 'showcanceled' ) == 'true') {
+		echo '<input name="showcanceled" type="hidden" value="false" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
+	} else {
+		echo '<input name="showcanceled" type="hidden" value="true" />';
+		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
+	}
+	echo '</form>';
+	
+	// show RSS-feed
+	echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>';
 }
 ?>
 <?php
 
-echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>';
-if (hasAuth ()) {
-	echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
-}
 
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
