@@ -83,9 +83,9 @@ icon2lon{
 	background-size: 100% 100%;
 	background-color: #f3f3f3;
 }
-iconmtb{
-	background: url('../img/mtb.png') no-repeat center
-	center fixed;
-	background-size: 100% 100%;
+#iconmtb{
+	background: url('../img/mtb.png') left no-repeat center
+	//center fixed;
+	//background-size: 100% 100%;
 	background-color: #f3f3f3;
 }

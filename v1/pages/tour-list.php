@@ -37,20 +37,21 @@ if (hasAuth ()) {
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr>
-		<th style='width: 3em;'>Tag<br>Sport</th>
+		<th style='width: 3em;'>Tag<br>Sport
+		</th>
 		<th style='width: 6em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo '<th>Guide</th>';
+			echo "<th style='width: 6em;'>Guide</th>";
 			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
-		<th style='text-align: right;'>Dauer<br>hh:mm
+		<th style='text-align: right; width: 6em;'>Dauer<br>hh:mm
 		</th>
-		<th style='text-align: right;'>Distanz<br>km
+		<th style='text-align: right; width: 6em;'>Distanz<br>km
 		</th>
-		<th style='text-align: right;'>Bergauf<br>Hm
+		<th style='text-align: right; width: 6em;'>Bergauf<br>Hm
 		</th>
 		<th>Pace</th>
 		<th>Technik</th>
@@ -120,7 +121,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '<tr class="' . $daystyle . '">';
 	
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
-		echo "<td  style='text-align: left;'><div class='iconmtb'>" . $tour->sport->sportsubname . "</div></td>";
+		echo "<td  style='text-align: left;'>";
+		echo "<div style='background: url(\"../img/mtb.png\") left no-repeat center;'>" . $tour->sport->sportsubname . "</div></td>";
 		echo "<td>" . $startdate->format ( 'H:i' ) . "</td>";
 	} else {
 		echo "<td style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . $tour->sport->sportsubname . "</td>";
@@ -138,8 +140,9 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		} else {
 			$dist = "";
 		}
-		echo "<td style='text-align: left; title=" . htmlentities ( $meetingpoint_long . $dist ) . "'><span><a href='?action=tour-view&tourid=" . $tour->id .  "'>". htmlentities ( $meetingpoint_short ) . "</a></span></td>";
+		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . "><span>" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
 	}
+	// http://jsfiddle.net/qEsQf/   multi line ellipses
 	echo "<td style='text-align: left;'><span>" . htmlentities ( $tour->description ) . "</span></td>";
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
