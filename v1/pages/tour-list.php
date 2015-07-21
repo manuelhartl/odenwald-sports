@@ -37,9 +37,8 @@ if (hasAuth ()) {
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr>
-		<th style='width: 5em;'>Tag<br>Sport
-		</th>
-		<th style='width: 10em;'>Datum</th>
+		<th style='width: 3em;'>Tag<br>Sport</th>
+		<th style='width: 6em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th>Guide</th>';
@@ -47,7 +46,7 @@ if (hasAuth ()) {
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
-		<th style='text-align: right;'>Dauer<br>(hh:mm)
+		<th style='text-align: right;'>Dauer<br>hh:mm
 		</th>
 		<th style='text-align: right;'>Distanz<br>km
 		</th>
@@ -121,7 +120,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '<tr class="' . $daystyle . '">';
 	
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
-		echo "<td style='text-align: left;'>" . $tour->sport->sportsubname . "</td>";
+		echo "<td  style='text-align: left;'><div class='iconmtb'>" . $tour->sport->sportsubname . "</div></td>";
 		echo "<td>" . $startdate->format ( 'H:i' ) . "</td>";
 	} else {
 		echo "<td style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . $tour->sport->sportsubname . "</td>";

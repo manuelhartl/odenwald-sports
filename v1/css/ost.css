@@ -68,11 +68,24 @@ html, body {
 	display: inline-block;
 }
 
- span {
-        display: inline-block;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;     /** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
-        -o-text-overflow: ellipsis;  /** Opera 9 & 10 **/
-  		width: 100%;
-    }
+span {
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
+	-o-text-overflow: ellipsis; /** Opera 9 & 10 **/
+	width: 100%;
+}
+icon2lon{
+	background: url('../img/2lon.png') no-repeat center
+	center fixed;
+	background-size: 100% 100%;
+	background-color: #f3f3f3;
+}
+iconmtb{
+	background: url('../img/mtb.png') no-repeat center
+	center fixed;
+	background-size: 100% 100%;
+	background-color: #f3f3f3;
+}
