@@ -51,6 +51,7 @@ $no = 1;
 $showAdress = $hasAdress; // only if actual user has an adress
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	unset ( $userextra );
+	$userextra = false;
 	$hasAdress = false;
 	$user = getUserObject ( $row );
 	$hasExtra = ! is_null ( $row ['fk_user_id'] );
@@ -63,25 +64,12 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	showUser ( $no, $user, $userextra, $row ['dist'], $hasAdress, $showAdress, false );
 	$no = $no + 1;
 }
-function makeUserDescription($user, $userextra) {
-	$userInfo = "";
-	if (isset ( $userextra )) {
-		if (isset ( $userextra->address )) {
-			$userInfo = "Adresse: " . $userextra->address;
-		}
-		if (isset ( $userextra->phone )) {
-			$userInfo = (isset ( $userInfo ) && strlen ( $userInfo ) > 1 ? $userInfo . ", " : "") . "Telefon: " . $userextra->phone;
-		}
-	}
-	
-	return ('	<td title="' . $userInfo . '">' . '<a href="?action=user-view&userid=' . $user->id . '">' . $user->username . '</a>' . "</td>");
-}
 function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $isActualUser) {
-	echo '	<tr class="' . ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . '">';
+	echo "	<tr class='" . ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . "'>";
 	echo "		<td>" . $no . "</td>";
-	echo makeUserDescription ( $user, $userextra );
+	echo '		<td title="' . createUserInfo ( $user, $userextra ) . '">' . createUserProfilLink ( $user ) . "</td>";
 	if (isset ( $userextra )) {
-		echo "		<td>" . $userextra->realname . "</td>";
+		echo "		<td>" .( isset ( $userextra->realname ) ? $userextra->realname : "") . "</td>";
 		echo "		<td>" . (isset ( $userextra->phone ) ? htmlentities ( $userextra->phone ) : "") . "</td>";
 		if ($showAdress) {
 			if ($hasAdress) {
@@ -90,6 +78,8 @@ function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $i
 				} else {
 					echo "		<td>" . (isset ( $distance ) ? formatMeters ( $distance ) : '') . "</td>";
 				}
+			}else{
+				echo "		<td></td>";
 			}
 		}
 		echo "		<td>" . (isset ( $userextra->birtdate ) ? $userextra->birtdate->format ( 'Y' ) : "") . "</td>";

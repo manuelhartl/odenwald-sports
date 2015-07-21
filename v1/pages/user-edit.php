@@ -35,13 +35,13 @@
 				<div class="row">
 					<div class='col-sm-6'>
 						<input type="text" class="form-control" style="width: 150px;" id="birthdate" maxlength="10" name="birthdate"
-							value="<?php echo $input ['birthdate']->format ( 'Y' );?>" />
+							value="<?php echo (isValidDate($input ['birthdate'],"2000-1-1")->format ( 'Y' ));?>" />
 					</div>
 					<!-- 
 					<script type="text/javascript">
             $(function () {
                 $('#birthdate').datetimepicker({
-                		defaultDate: moment('<?php echo $input ['birthdate']->format ( 'Y' );?>','YYYY'),
+                		defaultDate: moment('<?php echo (isValidDate($input ['birthdate'],"2000-1-1")->format ( 'Y' ));?>','YYYY'),
                 		format: 'YYYY',
                 		sideBySide: true,
                 		showClose: true

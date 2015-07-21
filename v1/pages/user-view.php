@@ -15,7 +15,7 @@
 	</tr>
 	<tr>
 		<td>Geburtsjahr</td>
-		<td><?php echo (isset($input['birthdate'])) ?$input ['birthdate']->format ( 'Y' ):'unbekannt';?></td>
+		<td><?php echo (is_int($input['birthdate'])) ?$input ['birthdate']->format ( 'Y' ):'unbekannt';?></td>
 	</tr>
 	<tr>
 		<td>Treffpunktreferenz bzw. Wohnanschrift)</td>

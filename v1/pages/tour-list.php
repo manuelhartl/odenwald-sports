@@ -101,7 +101,12 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$authuserid = hasAuth () ? authUser ()->id : '';
 	$users = getAttendees ( $pdo, $tour->id );
 	foreach ( $users as $user ) {
-		$attendeeString = $attendeeString . $user ['username'] . " ";
+		$u = new User();
+		$u->id = $user['id'];
+		$u->email = $user['email'];
+		$u->username = $user['username'];
+		
+		$attendeeString = $attendeeString . '<span title="' . createUserInfo( $u, $userextra) . '">' . createUserProfilLink($u) . "</span>".  " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
