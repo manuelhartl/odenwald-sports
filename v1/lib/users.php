@@ -12,31 +12,29 @@ function sendPasswordresetMail($username, $token, $email) {
 	$subject = 'Passwortreset angefoedert des Touren-Kontos von ' . $username;
 	sendmail ( $email, $subject, $text );
 }
-function createUserProfilLink($user){
-	//var_dump($user);
-	return('<a href="?action=user-view&userid=' . $user->id . '">' . $user->username . '</a>');
+function createUserProfilLink($user) {
+	// var_dump($user);
+	return ('<a href="?action=user-view&userid=' . $user->id . '">' . $user->username . '</a>');
 }
-function createUserInfo($user, $userextra){
-	$userinfo="";
+function createUserInfo($user, $userextra) {
+	$userinfo = "";
 	if (isset ( $userextra )) {
-		if (isset ( $userextra->address )) {
+		if (isset ( $userextra->address ) && strlen ( $userextra->address ) > 0) {
 			$userinfo = "Adresse: " . $userextra->address;
 		}
-		if (isset ( $userextra->phone )) {
-			$userinfo = getVal( $userinfo , ", ") . "Telefon: " . $userextra->phone;
+		if (isset ( $userextra->phone ) && strlen ( $userextra->phone ) > 0) {
+			$userinfo = (isset ( $userinfo ) ? $userinfo . ", " : "") . "Telefon: " . $userextra->phone;
 		}
 	}
-	return($userinfo);
+	return ($userinfo);
 }
-
-function getVal($value, $defaultValue){
-	return(isset($value)?$value: $defaultValue);
+function getVal($value, $defaultValue) {
+	return (isset ( $value ) ? $value : $defaultValue);
 }
-
-function isValidDate($value, $defaultValue){
-	if (is_a($value, 'DateTime')) {
-		return($value);
+function isValidDate($value, $defaultValue) {
+	if (is_a ( $value, 'DateTime' )) {
+		return ($value);
 	}
-	return(new DateTime($defaultValue));
+	return (new DateTime ( $defaultValue ));
 }
 ?>

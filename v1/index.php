@@ -43,7 +43,7 @@ function getPage() {
 }
 $_SESSION ['message'] = '';
 function setMessage($msg) {
-	$_SESSION ['message'] =  ( $msg );
+	$_SESSION ['message'] = ($msg);
 }
 
 $pdo = db_open ();
@@ -274,7 +274,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$tour->elevation = $_REQUEST ['elevation'];
 							updateTour ( $pdo, $tour );
 							mailUpdateTour ( $pdo, $tour );
-							setMessage ( 'Die Tour wurde erfolgreich geändert' );
+							setMessage ( 'Die Tour wurde erfolgreich ge&auml;ndert' );
 							setPage ( 'home' );
 						} else {
 							// new
@@ -323,7 +323,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$tour = getTourById ( $pdo, $tourid );
 						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourLeave ( $pdo, authUser ()->id, $tourid );
-							setMessage ( 'Schade, das nächste mal klappt es wieder mit dem Mitfahren' );
+							setMessage ( 'Schade, das n&auml;chste mal klappt es wieder mit dem Mitfahren' );
 						}
 						break;
 					case 'tour-cancel' :
@@ -467,6 +467,8 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
+
+
 
 
 
