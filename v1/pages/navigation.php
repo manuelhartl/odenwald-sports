@@ -1,6 +1,6 @@
 <div id="navigation-top">
 <?php
-echo '<div id="message">' . $_SESSION ['message'] . '</div><div id="logo"><img src="img/logo.png"></div>';
+echo '<div id="message">' . $_SESSION ['message'] . '</div><div id="logo"><img src="img/logo, einfach.png"></div>';
 ?>
 </div>
 <div id="navigation-bottom">
