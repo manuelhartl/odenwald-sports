@@ -60,7 +60,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			if (checkAuth ( $pdo, $username, $password )) {
 				login ( $pdo, $username );
 				setPage ( "home" );
-				setMessage ( $username . ', danke für das Anmelden' );
+				setMessage ( $username . ', danke f&uuml;r das Anmelden' );
 			} else {
 				setPage ( "login" );
 				$input ['username'] = $username;
@@ -74,7 +74,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			setPage ( "home" );
 			break;
 		case 'password-reset' :
-			setPage ( "Ihr Passwort wurde zurückgesetzt" );
+			setPage ( "Ihr Passwort wurde zur&uuml;ckgesetzt" );
 			break;
 		case 'password-reset-save' :
 			$email = $_POST ['email'];
@@ -114,7 +114,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$input ['acceptrules'] = $acceptrules;
 			// validate
 			if (! preg_match ( "/^[0-9a-zA-Z]*$/", $username )) {
-				setMessage ( 'Der Benutzername darf nur A-Z und 9-9 enthalten' );
+				setMessage ( 'Der Benutzername darf nur A-Z und 0-9 enthalten' );
 				break;
 			}
 			if (strlen ( $username ) < 2) {
@@ -315,7 +315,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$tour = getTourById ( $pdo, $tourid );
 						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourJoin ( $pdo, authUser ()->id, $tourid );
-							setMessage ( 'Danke für das Anmelden an der Tour' );
+							setMessage ( 'Danke fï¿½r das Anmelden an der Tour' );
 						}
 						break;
 					case 'tour-leave' :
