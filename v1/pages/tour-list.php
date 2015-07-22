@@ -101,12 +101,12 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$authuserid = hasAuth () ? authUser ()->id : '';
 	$users = getAttendees ( $pdo, $tour->id );
 	foreach ( $users as $user ) {
-		$u = new User();
-		$u->id = $user['id'];
-		$u->email = $user['email'];
-		$u->username = $user['username'];
+		$u = new User ();
+		$u->id = $user ['id'];
+		$u->email = $user ['email'];
+		$u->username = $user ['username'];
 		
-		$attendeeString = $attendeeString . '<span title="' . createUserInfo( $u, $userextra) . '">' . createUserProfilLink($u) . "</span>".  " ";
+		$attendeeString = $attendeeString . '<span title="' . createUserInfo ( $u, $userextra ) . '">' . createUserProfilLink ( $u ) . "</span>" . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
@@ -168,8 +168,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			if (($tour->guide->id == $authuserid)) {
 				// edit
 				if (! $tour->canceled) {
-					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Edit"/></form>';
-					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" value="Absagen"/></form>';
+					$tooltipdate = getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
+					$tooltip = 'Die Tour  am ' . $tooltipdate . ' bearbeiten';
+					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-edit" value="" title="' . $tooltip . '"/></form>';
+					$tooltip = 'Die Tour  am ' . $tooltipdate . ' absagen';
+					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-cancel" value="" title="' . $tooltip . '"/></form>';
 				}
 			} else {
 				// Join/leave
@@ -177,10 +180,10 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 					$tooltipdate = getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
 					if ($joinedTour) {
 						$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' abmelden';
-						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" value="-" title="' . $tooltip . '"/></form>';
+						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" value="" title="' . $tooltip . '"/></form>';
 					} else {
 						$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' anmelden';
-						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-join" value="+" title="' . $tooltip . '"/></form>';
+						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-join" value="" title="' . $tooltip . '"/></form>';
 					}
 				}
 			}
@@ -229,16 +232,16 @@ function makeSportSubnameIconTag($sportsubname) {
 			$icon = "2lon";
 			break;
 		case 'Swim & Bike' :
-			$icon = "mtb";
+			$icon = "edit";
 			break;
 		case 'Langlauf' :
-			$icon = "mtb";
+			$icon = "ski";
 			break;
 		default :
 			$icon = "mtb";
 	}
 	
-	return ("<img src='img/" . $icon . ".png' align='middle' border='0' height='40px' width='40px'>");
+	return ("<img src='img/big/" . $icon . ".png' align='middle' border='0' height='40px' width='40px'>");
 }
 ?>
 </table>

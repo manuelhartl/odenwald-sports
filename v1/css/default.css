@@ -57,11 +57,46 @@ input[type=submit], a {
 }
 
 input[id=tour-join] {
-	background-color: #00bb00;
+	background: #ccc url('../img/big/plus.png') no-repeat top left;
+	padding-left: 16px;
+	height: 40px;
+	width: 40px;
+	border: none;
+	background-size: 25px;
+	background-color : transparent;
+	//background-color: #00bb00;
 }
 
 input[id=tour-leave] {
-	background-color: #bb0000;
+	background: #ccc url('../img/big/minus.png') no-repeat top left;
+	padding-left: 16px;
+	height: 40px;
+	width: 40px;
+	border: none;
+	background-size: 25px;
+	background-color : transparent;
+	//background-color: #bb0000;
+}
+input[id=tour-edit] {
+	background: #ccc url('../img/big/edit.png') no-repeat top left;
+	padding-left: 16px;
+	height: 40px;
+	width: 40px;
+	border: none;
+	background-size: 25px;
+	background-color : transparent;
+	//background-color: #00bb00;
+}
+
+input[id=tour-cancel] {
+	background: #ccc url('../img/big/cancel.png') no-repeat top left;
+	padding-left: 16px;
+	height: 40px;
+	width: 40px;
+	border: none;
+	background-size: 25px;
+	background-color : transparent;
+	//background-color: #bb0000;
 }
 
 input[value=Logout] {
@@ -97,7 +132,6 @@ form {
 
 .even {
 	border-top: 1px solid #111111;
-
 	background-color: #f3f3f3;
 }
 
@@ -107,7 +141,6 @@ form {
 
 .odd {
 	border-top: 1px solid #111111;
-	
 	background-color: #47B224;
 }
 
