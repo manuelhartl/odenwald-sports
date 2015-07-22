@@ -315,7 +315,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$tour = getTourById ( $pdo, $tourid );
 						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourJoin ( $pdo, authUser ()->id, $tourid );
-							setMessage ( 'Danke f�r das Anmelden an der Tour' );
+							setMessage ( 'Danke f&uuml;r das Anmelden an der Tour' );
 						}
 						break;
 					case 'tour-leave' :
@@ -467,6 +467,8 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
+
+
 
 
 
