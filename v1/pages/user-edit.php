@@ -69,7 +69,7 @@
     },
 	enableAutocomplete: true
 	});
-</script></td>
+</script><br> (Dies ist f&uuml;r alle angemeldeten Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
 		</tr>
 		<tr>
 			<td>Tour Mailings</td>

@@ -2,7 +2,7 @@
 
 <table style="width: 100%">
 	<tr>
-		<td>UserName</td>
+		<td style="width: 150px";>UserName</td>
 		<td><?php echo $input['username']; ?></td>
 	</tr>
 	<tr>
@@ -18,7 +18,7 @@
 		<td><?php echo (is_int($input['birthdate'])) ?$input ['birthdate']->format ( 'Y' ):'unbekannt';?></td>
 	</tr>
 	<tr>
-		<td>Treffpunktreferenz bzw. Wohnanschrift)</td>
+		<td>Wohnanschrift)</td>
 		<td><?php echo (isset($input['address'])&&strlen($input['address'])>0) ?$input['address']: 'unbekannt';?>"</td>
 	</tr>
 

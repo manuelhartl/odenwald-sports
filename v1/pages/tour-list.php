@@ -105,6 +105,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->id = $user ['id'];
 		$u->email = $user ['email'];
 		$u->username = $user ['username'];
+		$ue = getUserExtraById ( $pdo, $u->id );
 		
 		$attendeeString = $attendeeString . '<span title="' . createUserInfo ( $u, $userextra ) . '">' . createUserProfilLink ( $u ) . "</span>" . " ";
 		if ($user ['id'] == $authuserid) {
@@ -140,7 +141,13 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	if (hasAuth ()) {
 		// guide
-		echo "<td>" . $tour->guide->username . "</td>";
+		$u = new User();
+		$u->id = $tour->guide->id;
+		$u->email =$tour->guide->email;
+		$u->username =$tour->guide->username;
+		$ue = getUserExtraById ( $pdo, $u->id );
+		
+		echo "<td>" .'<span title="' . createUserInfo( $u, $ue) . '">' . createUserProfilLink($u) . "</span>". "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		
