@@ -91,7 +91,7 @@ function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $i
 		}
 		echo "		<td>-</td>";
 	}
-	echo "<td>" . (isset ( $user->register_date ) ? $user->register_date->format ( 'D M Y' ) : "") . "</td>";
+	echo "<td>" . (isset ( $user->register_date ) ? $user->register_date->format ( 'd M Y' ) : "") . "</td>";
 	echo "	</tr>";
 }
 ?>
