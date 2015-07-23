@@ -107,7 +107,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $user ['username'];
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		$attendeeString = $attendeeString . '<span title="' . createUserInfo ( $u, $userextra ) . '">' . createUserProfilLink ( $u ) . "</span>" . " ";
+		$attendeeString = $attendeeString . '<span title="' . createUserInfo ( $u, $ue ) . '">' . createUserProfilLink ( $u ) . "</span>" . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
