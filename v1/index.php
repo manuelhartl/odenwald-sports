@@ -10,8 +10,7 @@
 <title>Touren</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
-<link href="css/bootstrap-datetimepicker.css" rel="stylesheet"
-	type="text/css">
+<link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
 <link href="css/default.css" rel="stylesheet" type="text/css">
 <link href="css/ost.css" rel="stylesheet" type="text/css">
@@ -19,8 +18,7 @@
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript"
-	src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script type="text/javascript" src="js/locationpicker.jquery.js"></script>
 <script type="text/javascript" src="js/jquery.rating.pack.js"></script>
 </head>
@@ -407,10 +405,10 @@ if (! hasAuth () && //
 	setPage ( 'home' );
 }
 
-if($config ['beta']){
+if (isset ( $config ['beta'] ) && $config ['beta']) {
 	echo '<div id="beta">';
 	echo 'Beta ';
-	echo  $config ['version'];	
+	echo $config ['version'];
 	echo '</div>';
 }
 echo '<div class="container-fluid">';

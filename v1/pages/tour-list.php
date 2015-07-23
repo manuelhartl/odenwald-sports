@@ -33,7 +33,7 @@ if (hasAuth ()) {
 	echo '</form>';
 	
 	// show RSS-feed
-	echo '<a href="' . dirname ( get_current_url () ) . '/rss/">Subscribe to RSS-feed</a>';
+	echo '<a href="rss/">Subscribe to RSS-feed</a>';
 }
 ?>
 <?php
