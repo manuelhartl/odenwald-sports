@@ -79,3 +79,14 @@ span {
 	-o-text-overflow: ellipsis; /** Opera 9 & 10 **/
 	width: 100%;
 }
+#beta {
+   position: absolute;
+   top: 0;
+   left: 0;
+   bottom: 0;
+   right: 0;
+   z-index: -1;
+  height:10000px;
+  
+  background-image:url(../img/beta.jpg)
+}

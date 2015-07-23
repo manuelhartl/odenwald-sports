@@ -25,7 +25,6 @@
 <script type="text/javascript" src="js/jquery.rating.pack.js"></script>
 </head>
 <body>
-	<div class="container-fluid">
 <?php
 require_once __DIR__ . '/lib/global.php';
 require_once __DIR__ . '/lib/db_users.php';
@@ -407,6 +406,15 @@ if (! hasAuth () && //
 {
 	setPage ( 'home' );
 }
+
+if($config ['beta']){
+	echo '<div id="beta">';
+	echo 'Beta ';
+	echo  $config ['version'];	
+	echo '</div>';
+}
+echo '<div class="container-fluid">';
+
 echo '<div id="navigation">';
 require_once 'pages/navigation.php';
 echo '</div>';
@@ -467,21 +475,6 @@ echo '</div>';
  * echo "</pre>";
  */
 ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </body>
 </html>
