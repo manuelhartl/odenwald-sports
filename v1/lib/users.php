@@ -19,11 +19,13 @@ function createUserProfilLink($user) {
 function createUserInfo($user, $userextra) {
 	$userinfo = "";
 	if (isset ( $userextra )) {
-		if (isset ( $userextra->address ) && strlen ( $userextra->address ) > 0) {
-			$userinfo = "Adresse: " . $userextra->address;
-		}
+		
+		// ignore address
+		//if (isset ( $userextra->address ) && strlen ( $userextra->address ) > 0) {
+		//	$userinfo = "Adresse: " . $userextra->address;
+		//}
 		if (isset ( $userextra->phone ) && strlen ( $userextra->phone ) > 0) {
-			$userinfo = (isset ( $userinfo ) ? $userinfo . ", " : "") . "Telefon: " . $userextra->phone;
+			$userinfo = (strlen ( $userinfo )>0 ? $userinfo . ", " : "") . "Telefon: " . $userextra->phone;
 		}
 	}
 	return ($userinfo);
