@@ -169,7 +169,7 @@ ALTER TABLE `token`
 -- Indexes for table `tour`
 --
 ALTER TABLE `tour`
-  ADD PRIMARY KEY (`id`), ADD KEY `fk_guide_id` (`fk_guide_id`), ADD KEY `fk_sport_subtype_id` (`fk_sport_subtype_id`);
+  ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `fk_guide_id_2` (`fk_guide_id`,`startdate`), ADD KEY `fk_guide_id` (`fk_guide_id`), ADD KEY `fk_sport_subtype_id` (`fk_sport_subtype_id`);
 
 --
 -- Indexes for table `tour_attendee`
