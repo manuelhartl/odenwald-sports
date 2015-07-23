@@ -34,14 +34,14 @@ function getMailText($tour, $attendees = 0) {
 	return '<html><body><table>' . //
 '<tr><td>Sport:</td><td>' . $tour->sport->sportsubname . '</td></tr>' . //
 '<tr><td>Datum/Uhrzeit:</td><td>' . getWeekDay ( $tour->startDateTime ) . ', ' . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '</td></tr>' . //
-'<tr><td>Treffpunkt:</td><td>' . $tour->meetingPoint . '</td></tr>' . //
+'<tr><td>Treffpunkt:</td><td>' . htmlspecialchars ( $tour->meetingPoint ) . '</td></tr>' . //
 ($attendees == 0 ? '' : '<tr><td>Aktuell angemeldet:</td><td>' . $attendees . '</td></tr>') . //
 '<tr><td>Dauer:</td><td>' . formatMinutes ( $tour->duration ) . '</td></tr>' . //
 '<tr><td>Distanz:</td><td>' . formatMeters ( $tour->distance ) . '</td></tr>' . //
 '<tr><td>Bergauf:</td><td>' . formatMeters ( $tour->elevation ) . '</td></tr>' . //
 '<tr><td>Technik:</td><td>' . $tour->skill . '/6</td></tr>' . //
 '<tr><td>Pace:</td><td>' . $tour->speed . '/6</td></tr>' . //
-'<tr><td>Beschreibung:</td><td>' . $tour->description . '</td></tr>' . //
+'<tr><td>Beschreibung:</td><td>' . htmlspecialchars ( $tour->description ) . '</td></tr>' . //
 '</table>' . //
 '<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a></body><html>'; //
 }
