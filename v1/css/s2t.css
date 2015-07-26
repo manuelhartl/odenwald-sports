@@ -114,6 +114,32 @@ tr, td, th, table {
 	opacity: 0.9;
 }
 
+table a {
+	background-color: inherit;
+	color: #37607C;
+	padding: 1px 3px;
+	border-radius: 3px;
+	border-width: 2px;
+	border-color: #636B5F;
+}
+
+table a:HOVER {
+	background-color: #BDC3BA;
+	text-decoration: none;
+}
+
+#version a {
+	background-color: inherit;
+	color: #7F7F96;
+	padding: 3px 7px;
+	border-width: 0;
+}
+
+#version a:HOVER {
+	background-color: #BDC3BA;
+	text-decoration: none;
+}
+
 form {
 	display: inline-block;
 }
@@ -179,8 +205,8 @@ html, body {
 }
 
 #main {
-	min-height: 80vH;
-	max-height: 80vH;
+	min-height: calc(100vH - 200px);
+	max-height: calc(100vH - 200px);
 	overflow: auto;
 }
 

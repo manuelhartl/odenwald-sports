@@ -56,7 +56,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			if (checkAuth ( $pdo, $username, $password )) {
 				login ( $pdo, $username );
 				setPage ( "home" );
-				setMessage ( $username . ', danke f&uuml;r das Anmelden' );
+				setMessage ( $username . ', du bist jetzt angemeldet' );
 			} else {
 				setPage ( "login" );
 				$input ['username'] = $username;
@@ -460,9 +460,7 @@ switch (getPage ()) {
 echo '</div>';
 echo '</div>';
 
-echo '<div id="version">';
 require_once 'pages/footer.php';
-echo '</div>';
 
 // print_r ( session_get_cookie_params () );
 /*

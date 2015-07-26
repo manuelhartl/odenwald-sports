@@ -9,7 +9,7 @@ echo '<div id="message">' . $_SESSION ['message'] . '</div><div id="logo"><img s
 	
 	<div id="navigation-buttons">
 		<form name="home" action="" method="post">
-			<input name="action" type="hidden" value="home" /> <input id="submit" name="submit" type="submit" value="Start" />
+			<input name="action" type="hidden" value="home" /> <input id="submit" name="submit" type="submit" value="Touren" />
 		</form>
 
 <?php
