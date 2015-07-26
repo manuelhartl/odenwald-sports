@@ -3,9 +3,9 @@ echo '<div id="version">
 		<a href="html/disclaimer.php" target="_blank">Regeln</a>
 		<a href="html/impressum.php" target="_blank">Impressum</a>
 		Version: ';
-if($config ['beta']){
+if (isset ( $config ['beta'] ) && $config ['beta']) {
 	echo 'Beta ';
 }
-echo  $config ['version'];
-echo   '</div>';
+echo $config ['version'];
+echo '</div>';
 ?>

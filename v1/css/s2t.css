@@ -63,8 +63,7 @@ input[id=tour-join] {
 	width: 40px;
 	border: none;
 	background-size: 25px;
-	background-color : transparent;
-	//background-color: #00bb00;
+	background-color: transparent;
 }
 
 input[id=tour-leave] {
@@ -74,9 +73,9 @@ input[id=tour-leave] {
 	width: 40px;
 	border: none;
 	background-size: 25px;
-	background-color : transparent;
-	//background-color: #bb0000;
+	background-color: transparent;
 }
+
 input[id=tour-edit] {
 	background: #ccc url('../img/big/edit.png') no-repeat top left;
 	padding-left: 16px;
@@ -84,8 +83,7 @@ input[id=tour-edit] {
 	width: 40px;
 	border: none;
 	background-size: 25px;
-	background-color : transparent;
-	//background-color: #00bb00;
+	background-color: transparent;
 }
 
 input[id=tour-cancel] {
@@ -95,8 +93,7 @@ input[id=tour-cancel] {
 	width: 40px;
 	border: none;
 	background-size: 25px;
-	background-color : transparent;
-	//background-color: #bb0000;
+	background-color: transparent;
 }
 
 input[value=Logout] {
@@ -160,4 +157,96 @@ td.tooltip {
 	position: absolute;
 	color: #000000;
 	background-color: #ffff80;
+}
+
+html, body {
+	background: url('../img/background.png') no-repeat center center fixed;
+	background-size: 100% 100%;
+	background-color: #f3f3f3;
+	font: 'Open Sans', Arial;
+	font-weight: 600;
+	color: #37607c;
+	margin: 0;
+	margin-top: 15px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+#navigation {
+	min-height: 80px;
+	max-height: 80px;
+	margin-bottom: 30px;
+}
+
+#main {
+	min-height: 80vH;
+	max-height: 80vH;
+	overflow: auto;
+}
+
+#version {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	min-height: 10px;
+	max-height: 10px;
+	float: right;
+	color: #999999;
+}
+
+#message {
+	font-size: 14px;
+	font-weight: 600;
+	height: 42px;
+	width: 80vH;
+	float: left;
+	display: inline-block;
+}
+
+#logo {
+	text-align: right;
+	width: auto;
+	height: 50px;
+}
+
+#navigation-top {
+	width: 100%;
+	min-width: 100%;
+	border-bottom: solid 2px #37607c;
+}
+
+#navigation-bottom {
+	width: 100%;
+	min-width: 100%;
+	margin-top: 10px;
+}
+
+#navigation-buttons {
+	float: left;
+	display: inline-block;
+}
+
+#navigation-buttons-logout {
+	float: right;
+	display: inline-block;
+}
+
+span {
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
+	-o-text-overflow: ellipsis; /** Opera 9 & 10 **/
+	width: 100%;
+}
+
+#beta {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: -1;
+	height: 10000px;
+	background-image: url(../img/background_beta.jpg)
 }

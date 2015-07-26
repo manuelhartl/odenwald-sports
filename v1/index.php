@@ -12,8 +12,7 @@
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
 <link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
-<link href="css/default.css" rel="stylesheet" type="text/css">
-<link href="css/ost.css" rel="stylesheet" type="text/css">
+<link href="css/s2t.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
