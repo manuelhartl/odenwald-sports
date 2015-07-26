@@ -4,7 +4,9 @@ echo '<div id="message">' . $_SESSION ['message'] . '</div><div id="logo"><img s
 ?>
 </div>
 <div id="navigation-bottom">
-<p>
+	<p>
+	
+	
 	<div id="navigation-buttons">
 		<form name="home" action="" method="post">
 			<input name="action" type="hidden" value="home" /> <input id="submit" name="submit" type="submit" value="Start" />
@@ -39,15 +41,11 @@ if (hasAuth ()) {
 		<form name="user-list" action="index.php" method="post">
 			<input name="action" type="hidden" value="user-list" /> <input name="submit" type="submit" value="Benutzerliste" />
 		</form>
+	</div>
+	<div id="navigation-buttons-logout">
 		<form name="user-edit" action="index.php" method="post">
 			<input name="action" type="hidden" value="user-edit" /> <input name="submit" type="submit" value="Mein Profil" />
 		</form>
-		<form name="password-change" action="index.php" method="post">
-			<input name="action" type="hidden" value="password-change" /> <input id="submit-password-change" name="submit"
-				type="submit" value="Passwort &auml;ndern" />
-		</form>
-	</div>
-	<div id="navigation-buttons-logout">
 		<form name="logout" action="index.php" method="post">
 			<input name="action" type="hidden" value="logout" /> <input id="submit-logout" name="submit" type="submit"
 				value="Logout" />
@@ -58,15 +56,15 @@ if (hasAuth ()) {
 } else {
 	?>
 	</div>
-<div id="navigation-buttons-logout">
-	<form name="register" action="index.php" method="post">
-		<input name="action" type="hidden" value="register" /> <input name="register" type="submit" value="Register" />
-	</form>
-	<form name="login" action="index.php" method="post">
-		<input name="action" type="hidden" value="goto-login" /> <input id="submit-login" name="submit" type="submit"
-			value="Login" />
-	</form>
-</div>
+	<div id="navigation-buttons-logout">
+		<form name="register" action="index.php" method="post">
+			<input name="action" type="hidden" value="register" /> <input name="register" type="submit" value="Register" />
+		</form>
+		<form name="login" action="index.php" method="post">
+			<input name="action" type="hidden" value="goto-login" /> <input id="submit-login" name="submit" type="submit"
+				value="Login" />
+		</form>
+	</div>
 <?php
 }
 ?>

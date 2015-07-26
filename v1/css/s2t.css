@@ -197,7 +197,8 @@ html, body {
 	font-size: 14px;
 	font-weight: 600;
 	height: 42px;
-	width: 80vH;
+	min-width: 20vH;
+	max-width: 80vH;
 	float: left;
 	display: inline-block;
 }
@@ -230,7 +231,7 @@ html, body {
 	display: inline-block;
 }
 
-span {
+.flex {
 	display: inline-block;
 	white-space: nowrap;
 	overflow: hidden;

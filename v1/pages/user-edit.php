@@ -83,4 +83,13 @@
 					<input name="action" type="hidden" value="home" /> <input name="submit" type="submit" value="Abbrechen" />
 				</form></td>
 		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<form name="password-change" action="index.php" method="post">
+					<input name="action" type="hidden" value="password-change" /> <input id="submit-password-change" name="submit"
+						type="submit" value="Passwort &auml;ndern" />
+				</form>
+			</td>
+		</tr>
 	</table>
