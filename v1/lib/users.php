@@ -25,7 +25,7 @@ function createUserInfo($user, $userextra) {
 		// $userinfo = "Adresse: " . $userextra->address;
 		// }
 		if (isset ( $userextra->phone ) && strlen ( $userextra->phone ) > 0) {
-			$userinfo = (strlen ( $userinfo ) > 0 ? $userinfo . ", " : "") . "Telefon: " . $userextra->phone;
+			$userinfo =  $user->username . ": ". (strlen ( $userinfo ) > 0 ? $userinfo . ", " : "") . "Telefon: " . $userextra->phone;
 		}
 	}
 	return ($userinfo);
