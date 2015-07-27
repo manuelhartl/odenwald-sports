@@ -46,8 +46,8 @@ if (hasAuth ()) {
 		<th style='width: 6em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='min-width: 3em; width: 10%;'>Guide</th>";
-			echo "<th style='min-width: 15%;'>Treffpunkt</th>";
+			echo "<th style='min-width: 3em; width: 7%;'>Guide</th>";
+			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
@@ -109,7 +109,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $user ['username'];
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		$attendeeString = $attendeeString . '<span class="flex" title="' . createUserInfo ( $u, $ue ) . '">' . createUserProfilLink ( $u ) . "</span>" . " ";
+		$attendeeString = $attendeeString . createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
@@ -146,7 +146,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $tour->guide->username;
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		echo "<td>" . '<span class="flex" title="' . createUserInfo ( $u, $ue ) . '">' . createUserProfilLink ( $u ) . "</span>" . "</td>";
+		echo "<td>" .  createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		
@@ -155,7 +155,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		} else {
 			$dist = "";
 		}
-		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . "><span class='flex'>" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
+		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
 	}
 	// http://jsfiddle.net/qEsQf/ multi line ellipses
 	echo "<td style='text-align: left;'><span class='flex'>" . htmlentities ( $tour->description ) . "</span></td>";
