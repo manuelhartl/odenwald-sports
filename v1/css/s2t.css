@@ -1,3 +1,15 @@
+html, body {
+	background: url('../img/background.png') no-repeat center center fixed;
+	background-size: 100% 100%;
+	background-color: #f3f3f3;
+	font-weight: 600;
+	color: #37607c;
+	margin-bottom: 0px;
+	margin-top: 15px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
 input[id=submit-logout] {
 	right: 0px;
 }
@@ -100,27 +112,26 @@ input[value=Logout] {
 	background-color: #aa0000;
 }
 
-th {
-	background-color: #eeeeee;
-}
-
 tr, td, th, table {
-	margin: 0px;
+	background-color: #f3f3f3;
 	padding: 3px;
-	margin: 3px;
 	vertical-align: top;
 	margin: 3px;
-	background-color: #f3f3f3;
 	opacity: 0.9;
+}
+
+th {
+	background-color: #dddddd;
+	border-bottom-style: solid;
 }
 
 table a {
 	background-color: inherit;
 	color: #37607C;
-	padding: 1px 3px;
-	border-radius: 3px;
-	border-width: 2px;
+	padding: 1px 2px;
+	margin: 3px; border-width : 2px;
 	border-color: #636B5F;
+	border-width: 2px;
 }
 
 table a:HOVER {
@@ -145,7 +156,7 @@ form {
 }
 
 .canceled {
-	text-decoration:line-through;
+	text-decoration: line-through;
 	color: #cccccc;
 }
 
@@ -177,18 +188,6 @@ td.tooltip {
 	position: absolute;
 	color: #000000;
 	background-color: #ffff80;
-}
-
-html, body {
-	background: url('../img/background.png') no-repeat center center fixed;
-	background-size: 100% 100%;
-	background-color: #f3f3f3;
-	font-weight: 600;
-	color: #37607c;
-	margin: 0;
-	margin-top: 15px;
-	margin-left: 20px;
-	margin-right: 20px;
 }
 
 #navigation {
