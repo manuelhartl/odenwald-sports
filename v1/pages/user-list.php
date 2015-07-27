@@ -67,7 +67,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $isActualUser) {
 	echo "	<tr class='" . ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . "'>";
 	echo "		<td>" . $no . "</td>";
-	echo '		<td title="' . createUserInfo ( $user, $userextra ) . '">' . createUserProfilLink ( $user ) . "</td>";
+	echo '		<td">' . createUserProfilLink ( $user, createUserInfo ( $user, $userextra ) ) . "</td>";
 	if (isset ( $userextra )) {
 		echo "		<td>" .( isset ( $userextra->realname ) ? $userextra->realname : "") . "</td>";
 		echo "		<td>" . (isset ( $userextra->phone ) ? htmlentities ( $userextra->phone ) : "") . "</td>";
