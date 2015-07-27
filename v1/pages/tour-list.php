@@ -92,7 +92,9 @@ ex2er ( $stmt, array (
 		$reference->gps->long 
 ) );
 
-$daystyle = 'evenFirst';
+$daystyle = 'even';
+$linestyle = '';
+$cancelstyle = '';
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
 	$tour = getTourObject ( $row );
@@ -112,42 +114,39 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$joinedTour = true;
 		}
 	}
-	// echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour || ($tour->guide->id == $authuserid) ? 'joined' : 'notjoined')) . '">';
+	
 	$startdate = $tour->startDateTime;
+	
+	// has day changed?
 	if (! isset ( $lastdate ) || $lastdate->format ( 'ymd' ) != $startdate->format ( 'ymd' )) {
-		if ($daystyle == 'evenFirst' || $daystyle == 'even') {
-			$daystyle = 'oddFirst';
-		} else if ($daystyle == 'oddFirst' || $daystyle == 'odd') {
-			$daystyle = 'evenFirst';
-		}
+		$daystyle = ($daystyle == 'even') ? 'odd' : 'even';
+		$linestyle = '';
 	} else {
-		if ($daystyle == 'evenFirst') {
-			$daystyle = 'even';
-		}
-		if ($daystyle == 'oddFirst') {
-			$daystyle = 'odd';
-		}
+		$linestyle = 'line';
 	}
-	echo '<tr class="' . $daystyle . '">';
+	$cancelstyle = ($tour->canceled) ? 'canceled' : '';
+	$dstyle = $daystyle . (strlen ( $linestyle ) > 0 ? ' ' . $linestyle : "") . (strlen ( $cancelstyle ) > 0 ? ' ' . $cancelstyle : "");
+	
+	echo '<tr class="' . $dstyle . '">';
 	
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
-		echo "<td  style='text-align: left; '>";
+		echo "<td  title='" . $tour->sport->sportsubname . "' style='text-align: left; '>";
 		echo makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
 		echo "<td>" . $startdate->format ( 'H:i' ) . "</td>";
 	} else {
-		echo "<td style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
+		echo "<td title='" . $tour->sport->sportsubname . "'style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
 		echo "<td>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
 	}
 	
 	if (hasAuth ()) {
 		// guide
-		$u = new User();
+		$u = new User ();
 		$u->id = $tour->guide->id;
-		$u->email =$tour->guide->email;
-		$u->username =$tour->guide->username;
+		$u->email = $tour->guide->email;
+		$u->username = $tour->guide->username;
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		echo "<td>" .'<span class="flex" title="' . createUserInfo( $u, $ue) . '">' . createUserProfilLink($u) . "</span>". "</td>";
+		echo "<td>" . '<span class="flex" title="' . createUserInfo ( $u, $ue ) . '">' . createUserProfilLink ( $u ) . "</span>" . "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		
