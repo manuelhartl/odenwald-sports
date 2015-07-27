@@ -14,7 +14,7 @@ function sendPasswordresetMail($username, $token, $email) {
 }
 function createUserProfilLink($user) {
 	// var_dump($user);
-	return ('<a href="?action=user-view&userid=' . $user->id . '">' . $user->username . '</a>');
+	return ('<a style = "display: block;" href="?action=user-view&userid=' . $user->id . '">' . $user->username . '</a>');
 }
 function createUserInfo($user, $userextra) {
 	$userinfo = "";
