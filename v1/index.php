@@ -7,7 +7,7 @@
 <meta name="description" content="Tours">
 <meta name="author" content="Manuel Hartl">
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
-<title>Touren</title>
+<title>Tourportal sport2gether</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
 <link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">

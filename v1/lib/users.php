@@ -12,20 +12,20 @@ function sendPasswordresetMail($username, $token, $email) {
 	$subject = 'Passwortreset angefoedert des Touren-Kontos von ' . $username;
 	sendmail ( $email, $subject, $text );
 }
-function createUserProfilLink($user) {
+function createUserProfilLink($user, $tooltip) {
 	// var_dump($user);
-	return ('<a href="?action=user-view&userid=' . $user->id . '">' . $user->username . '</a>');
+	return ('<a style = "display: block;" href="?action=user-view&userid=' . $user->id . '">' . '<span class="flex" title="' . $tooltip . '">' . $user->username . '</span>' . '</a>');
 }
 function createUserInfo($user, $userextra) {
 	$userinfo = "";
 	if (isset ( $userextra )) {
 		
 		// ignore address
-		//if (isset ( $userextra->address ) && strlen ( $userextra->address ) > 0) {
-		//	$userinfo = "Adresse: " . $userextra->address;
-		//}
+		// if (isset ( $userextra->address ) && strlen ( $userextra->address ) > 0) {
+		// $userinfo = "Adresse: " . $userextra->address;
+		// }
 		if (isset ( $userextra->phone ) && strlen ( $userextra->phone ) > 0) {
-			$userinfo = (strlen ( $userinfo )>0 ? $userinfo . ", " : "") . "Telefon: " . $userextra->phone;
+			$userinfo = (strlen ( $userinfo ) > 0 ? $userinfo . ", " : "") . "Telefon: " . $userextra->phone;
 		}
 	}
 	return ($userinfo);

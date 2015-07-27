@@ -145,25 +145,19 @@ form {
 }
 
 .canceled {
+	text-decoration:line-through;
 	color: #cccccc;
-	text-decoration: line-through;
-}
-
-.evenFirst {
-	background-color: #f3f3f3;
 }
 
 .even {
-	border-top: 1px solid #111111;
 	background-color: #f3f3f3;
 }
 
-.oddFirst {
-	background-color: #47B224;
+.line {
+	border-top: 1px solid #111111;
 }
 
 .odd {
-	border-top: 1px solid #111111;
 	background-color: #47B224;
 }
 
