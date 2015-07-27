@@ -33,7 +33,7 @@ if (hasAuth ()) {
 	echo '</form>';
 	
 	// show RSS-feed
-	echo '<a href="rss/">Subscribe to RSS-feed</a>';
+	echo '<a href="rss/">RSS</a>';
 }
 ?>
 <?php
@@ -46,7 +46,7 @@ if (hasAuth ()) {
 		<th style='width: 6em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='width: 6em;'>Guide</th>";
+			echo "<th style='min-width: 3em; width: 7%;'>Guide</th>";
 			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
@@ -92,7 +92,9 @@ ex2er ( $stmt, array (
 		$reference->gps->long 
 ) );
 
-$daystyle = 'evenFirst';
+$daystyle = 'even';
+$linestyle = '';
+$cancelstyle = '';
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
 	$tour = getTourObject ( $row );
@@ -107,47 +109,44 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $user ['username'];
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		$attendeeString = $attendeeString . '<span title="' . createUserInfo ( $u, $ue ) . '">' . createUserProfilLink ( $u ) . "</span>" . " ";
+		$attendeeString = $attendeeString . createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
 	}
-	// echo '<tr class="' . ($tour->canceled ? 'canceled' : ($joinedTour || ($tour->guide->id == $authuserid) ? 'joined' : 'notjoined')) . '">';
+	
 	$startdate = $tour->startDateTime;
+	
+	// has day changed?
 	if (! isset ( $lastdate ) || $lastdate->format ( 'ymd' ) != $startdate->format ( 'ymd' )) {
-		if ($daystyle == 'evenFirst' || $daystyle == 'even') {
-			$daystyle = 'oddFirst';
-		} else if ($daystyle == 'oddFirst' || $daystyle == 'odd') {
-			$daystyle = 'evenFirst';
-		}
+		$daystyle = ($daystyle == 'even') ? 'odd' : 'even';
+		$linestyle = '';
 	} else {
-		if ($daystyle == 'evenFirst') {
-			$daystyle = 'even';
-		}
-		if ($daystyle == 'oddFirst') {
-			$daystyle = 'odd';
-		}
+		$linestyle = 'line';
 	}
-	echo '<tr class="' . $daystyle . '">';
+	$cancelstyle = ($tour->canceled) ? 'canceled' : '';
+	$dstyle = $daystyle . (strlen ( $linestyle ) > 0 ? ' ' . $linestyle : "") . (strlen ( $cancelstyle ) > 0 ? ' ' . $cancelstyle : "");
+	
+	echo '<tr class="' . $dstyle . '">';
 	
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
-		echo "<td  style='text-align: left; '>";
+		echo "<td  title='" . $tour->sport->sportsubname . "' style='text-align: left; '>";
 		echo makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
 		echo "<td>" . $startdate->format ( 'H:i' ) . "</td>";
 	} else {
-		echo "<td style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
+		echo "<td title='" . $tour->sport->sportsubname . "'style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
 		echo "<td>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
 	}
 	
 	if (hasAuth ()) {
 		// guide
-		$u = new User();
+		$u = new User ();
 		$u->id = $tour->guide->id;
-		$u->email =$tour->guide->email;
-		$u->username =$tour->guide->username;
+		$u->email = $tour->guide->email;
+		$u->username = $tour->guide->username;
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		echo "<td>" .'<span title="' . createUserInfo( $u, $ue) . '">' . createUserProfilLink($u) . "</span>". "</td>";
+		echo "<td>" .  createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		
@@ -156,10 +155,10 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		} else {
 			$dist = "";
 		}
-		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . "><span>" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
+		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
 	}
 	// http://jsfiddle.net/qEsQf/ multi line ellipses
-	echo "<td style='text-align: left;'><span>" . htmlentities ( $tour->description ) . "</span></td>";
+	echo "<td style='text-align: left;'><span class='flex'>" . htmlentities ( $tour->description ) . "</span></td>";
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";

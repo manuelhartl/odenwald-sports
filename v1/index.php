@@ -7,13 +7,12 @@
 <meta name="description" content="Tours">
 <meta name="author" content="Manuel Hartl">
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
-<title>Touren</title>
+<title>Tourportal sport2gether</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
 <link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
-<link href="css/default.css" rel="stylesheet" type="text/css">
-<link href="css/ost.css" rel="stylesheet" type="text/css">
+<link href="css/s2t.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
@@ -57,7 +56,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			if (checkAuth ( $pdo, $username, $password )) {
 				login ( $pdo, $username );
 				setPage ( "home" );
-				setMessage ( $username . ', danke f&uuml;r das Anmelden' );
+				setMessage ( $username . ', du bist jetzt angemeldet' );
 			} else {
 				setPage ( "login" );
 				$input ['username'] = $username;
@@ -461,9 +460,7 @@ switch (getPage ()) {
 echo '</div>';
 echo '</div>';
 
-echo '<div id="version">';
 require_once 'pages/footer.php';
-echo '</div>';
 
 // print_r ( session_get_cookie_params () );
 /*
