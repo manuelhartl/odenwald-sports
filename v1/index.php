@@ -164,6 +164,30 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				setPage ( 'login' );
 			} else {
 				switch ($_REQUEST ['action']) {
+					case 'mail-user' :
+						setPage ( 'mail' );
+						$toid = $_REQUEST ['toid'];
+						$touser = getUserById ( $pdo, $toid );
+						$input ['to'] = $touser ['username'];
+						break;
+					case 'mail-send' :
+						$to = $_REQUEST ['to'];
+						$subject = $_REQUEST ['subject'];
+						$body = $_REQUEST ['body'];
+						$input ['to'] = $_REQUEST ['to'];
+						$input ['subject'] = $_REQUEST ['subject'];
+						$input ['body'] = $_REQUEST ['body'];
+						if (empty ( $subject )) {
+							setMessage ( 'Bitte einen Betreff eingeben' );
+						} else if (empty ( $body )) {
+							setMessage ( 'Bitte eine Nachricht eingeben' );
+						} else {
+							$touser = getUserByName ( $pdo, $to );
+							sendmail ( $touser ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
+							setPage ( 'home' );
+							setMessage ( 'Mail an ' . $touser ['username'] . ' gesendet' );
+						}
+						break;
 					case 'tour-list-canceled' :
 						$input ['showcanceled'] = $_REQUEST ['showcanceled'];
 						$input ['showold'] = $_REQUEST ['showold'];
@@ -439,6 +463,9 @@ switch (getPage ()) {
 	default :
 	case 'home' :
 		require_once 'pages/tour-list.php';
+		break;
+	case 'mail' :
+		require_once 'pages/mail.php';
 		break;
 	case 'tour-edit' :
 	case 'tour-new' :

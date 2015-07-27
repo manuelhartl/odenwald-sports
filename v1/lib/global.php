@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/settings.php';
-$cookielifetime = 60 * 60;
+$cookielifetime = 60 * 60 * 24; // 24h
 if ($_SERVER ['SERVER_NAME'] == '127.0.0.1') {
 	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '127.0.0.1', false );
 	session_start ();
