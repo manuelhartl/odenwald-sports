@@ -46,7 +46,7 @@ if (hasAuth ()) {
 		<th style='width: 6em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='min-width: 3em; width: 7%;'>Guide</th>";
+			echo "<th style='width: 7%;'>Guide</th>";
 			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
