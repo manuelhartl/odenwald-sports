@@ -56,7 +56,7 @@ if (hasAuth ()) {
 	</div> <!-- Ende div navigation-buttons -->
 	<div id="navigation-buttons-logout">
 		<form name="register" action="index.php" method="post">
-			<input name="action" type="hidden" value="register" /> <i1nput name="register" type="submit" value="Register" />
+			<input name="action" type="hidden" value="register" /> <input name="register" type="submit" value="Register" />
 		</form>
 		<form name="login" action="index.php" method="post">
 			<input name="action" type="hidden" value="goto-login" /> <input id="submit-login" name="submit" type="submit"
