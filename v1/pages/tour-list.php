@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
 
+echo "<div id='content-navigation'>";
+echo "<div id='content-navigation-buttons'>";
 if (hasAuth ()) {
 	// new tour
 	echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
@@ -35,9 +37,10 @@ if (hasAuth ()) {
 	// show RSS-feed
 	echo '<a href="rss/">RSS</a>';
 }
+echo "</div>";
+echo "</div>";
 ?>
 <?php
-
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr>
