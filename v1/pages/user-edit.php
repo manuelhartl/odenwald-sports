@@ -54,6 +54,7 @@
         </script> -->
 				</div> (Dies ist f&uuml;r alle angemeldeten Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
 		</tr>
+		<tr>
 		<td>Wohnanschrift)</td>
 		<td><input type="text" id="address" style="width: 100%" name="address"
 			value="<?php echo isset($input['address']) ? $input['address'] : '';?>" /> <input type="hidden" id="address-radius" />
@@ -93,3 +94,4 @@
 			</td>
 		</tr>
 	</table>
+</form>
