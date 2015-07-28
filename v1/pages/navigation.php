@@ -1,10 +1,12 @@
 <div id="navigation-top">
 <?php
-echo '<div id="message">' . $_SESSION ['message'] . '</div> <!-- Ende div message -->';
-echo '<div id="logo"><img src="img/logo, einfach.png"></div> <!-- Ende div logo -->';
+echo '<div id="message">' . $_SESSION ['message'] . '</div><div id="logo"><img src="img/logo, einfach.png"></div>';
 ?>
-</div> <!-- Ende div navigation-top -->
+</div>
 <div id="navigation-bottom">
+	<p>
+	
+	
 	<div id="navigation-buttons">
 		<form name="home" action="" method="post">
 			<input name="action" type="hidden" value="home" /> <input id="submit" name="submit" type="submit" value="Touren" />
@@ -39,7 +41,7 @@ if (hasAuth ()) {
 		<form name="user-list" action="index.php" method="post">
 			<input name="action" type="hidden" value="user-list" /> <input name="submit" type="submit" value="Benutzerliste" />
 		</form>
-	</div> <!-- Ende div navigation-buttons -->
+	</div>
 	<div id="navigation-buttons-logout">
 		<form name="user-edit" action="index.php" method="post">
 			<input name="action" type="hidden" value="user-edit" /> <input name="submit" type="submit" value="Mein Profil" />
@@ -50,10 +52,10 @@ if (hasAuth ()) {
 		</form>
 <?php
 	echo 'Angemeldet als [' . authUser ()->username . ']';
-	echo '</div> <!-- Ende div navigation-buttons or navigation-buttons-logout --> ';
+	echo '</div>';
 } else {
 	?>
-	</div> <!-- Ende div navigation-buttons -->
+	</div>
 	<div id="navigation-buttons-logout">
 		<form name="register" action="index.php" method="post">
 			<input name="action" type="hidden" value="register" /> <input name="register" type="submit" value="Register" />
@@ -62,8 +64,8 @@ if (hasAuth ()) {
 			<input name="action" type="hidden" value="goto-login" /> <input id="submit-login" name="submit" type="submit"
 				value="Login" />
 		</form>
-	</div> <!-- Ende div navigation-buttons-logout -->
+	</div>
 <?php
 }
 ?>
-</div> <!-- Ende div navigation-top -->
+</div>

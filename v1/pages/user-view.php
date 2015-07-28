@@ -2,7 +2,7 @@
 
 <table style="width: 100%">
 	<tr>
-		<td style="width: 150px;">UserName</td>
+		<td style="width: 150px";>UserName</td>
 		<td><?php echo $input['username']; ?></td>
 	</tr>
 	<tr>
@@ -19,7 +19,7 @@
 	</tr>
 	<tr>
 		<td>Wohnanschrift)</td>
-		<td><?php echo (isset($input['address'])&&strlen($input['address'])>0) ?$input['address']: 'unbekannt';?></td>
+		<td><?php echo (isset($input['address'])&&strlen($input['address'])>0) ?$input['address']: 'unbekannt';?>"</td>
 	</tr>
 
 </table>

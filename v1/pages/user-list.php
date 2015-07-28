@@ -13,8 +13,9 @@ if (isset ( $userextra->address_lat )) {
 ?>
 <table>
 	<tr>
-		<th>Nr.</th>
+		<th>#</th>
 		<th>Benutzer</th>
+		<th>Mail</th>
 		<th>Echter Name</th>
 		<th>Telefon</th>
 <?php
@@ -39,10 +40,12 @@ $stmt = $pdo->prepare ( 'select username,id,register_date,realname,birthdate,fk_
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
+' AND u.id != ?' . //
 ' ORDER BY lower(u.username) ASC' ); //
 ex2er ( $stmt, array (
 		$reference->lat,
-		$reference->long 
+		$reference->long,
+		authUser ()->id 
 ) );
 
 //
@@ -67,11 +70,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $isActualUser) {
 	echo '<tr class="' . ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . '">';
 	echo '<td>' . $no . '</td>';
-	echo '<td>' . createUserProfilLink ( $user,  createUserInfo ( $user, $userextra ) ) . '</td>';
+	echo '<td title="' . createUserInfo ( $user, $userextra ) . '">' . createUserProfilLink ( $user ) . '</td>';
 	echo '<td><a style = "display: block;" href="?action=mail-user&toid=' . $user->id . '"><span class="flex">Mail</span></a></td>';
 	
 	if (isset ( $userextra )) {
-		echo "		<td>" .( isset ( $userextra->realname ) ? $userextra->realname : "") . "</td>";
+		echo "		<td>" . (isset ( $userextra->realname ) ? $userextra->realname : "") . "</td>";
 		echo "		<td>" . (isset ( $userextra->phone ) ? htmlentities ( $userextra->phone ) : "") . "</td>";
 		if ($showAdress) {
 			if ($hasAdress) {
@@ -80,7 +83,7 @@ function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $i
 				} else {
 					echo "		<td>" . (isset ( $distance ) ? formatMeters ( $distance ) : '') . "</td>";
 				}
-			}else{
+			} else {
 				echo "		<td></td>";
 			}
 		}

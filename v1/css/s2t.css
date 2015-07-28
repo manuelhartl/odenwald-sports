@@ -196,12 +196,6 @@ td.tooltip {
 	margin-bottom: 30px;
 }
 
-#content-navigation{
-	min-height: 30px;
-	max-height: 30px;
-	margin-bottom: 10px;
-}
-
 #main {
 	min-height: calc(100vH - 200px);
 	max-height: calc(100vH - 200px);
@@ -245,7 +239,7 @@ td.tooltip {
 	margin-top: 10px;
 }
 
-#navigation-buttons, #content-navigation-buttons {
+#navigation-buttons {
 	float: left;
 	display: inline-block;
 }

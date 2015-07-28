@@ -434,15 +434,14 @@ if (isset ( $config ['beta'] ) && $config ['beta']) {
 	echo $config ['version'];
 	echo '</div>';
 }
-//echo '<div class="container-fluid">';
+echo '<div class="container-fluid">';
 
 echo '<div id="navigation">';
 require_once 'pages/navigation.php';
 echo '</div>';
 
-//echo '<div class="row">';
-//echo '<div class="col-xs-12" id="main">';
-echo '<div id="main">';
+echo '<div class="row">';
+echo '<div class="col-xs-12" id="main">';
 switch (getPage ()) {
 	case 'login' :
 		require_once 'pages/login.php';
@@ -486,7 +485,7 @@ switch (getPage ()) {
 		break;
 }
 echo '</div>';
-//echo '</div>';
+echo '</div>';
 
 require_once 'pages/footer.php';
 

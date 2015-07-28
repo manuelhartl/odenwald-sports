@@ -2,8 +2,6 @@
 require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
 
-echo "<div id='content-navigation'>";
-echo "<div id='content-navigation-buttons'>";
 if (hasAuth ()) {
 	// new tour
 	echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
@@ -37,28 +35,27 @@ if (hasAuth ()) {
 	// show RSS-feed
 	echo '<a href="rss/">RSS</a>';
 }
-echo "</div>";
-echo "</div>";
 ?>
 <?php
+
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr>
-		<th style='width: 3em;'>Sport
+		<th style='width: 3em;'>Tag<br>Sport
 		</th>
 		<th style='width: 6em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='width: 7%;'>Guide</th>";
+			echo "<th style='min-width: 3em; width: 7%;'>Guide</th>";
 			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
-		<th style='text-align: right; width: 6em;'>Dauer
+		<th style='text-align: right; width: 6em;'>Dauer<br>hh:mm
 		</th>
-		<th style='text-align: right; width: 6em;'>Distanz<br>
+		<th style='text-align: right; width: 6em;'>Distanz<br>km
 		</th>
-		<th style='text-align: right; width: 6em;'>Bergauf<br>
+		<th style='text-align: right; width: 6em;'>Bergauf<br>Hm
 		</th>
 		<th>Pace</th>
 		<th>Technik</th>
@@ -135,10 +132,10 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
 		echo "<td  title='" . $tour->sport->sportsubname . "' style='text-align: left; '>";
 		echo makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
-		echo "<td style='text-align: right; color: black;'>" . $startdate->format ( 'H:i' ) . "</td>";
+		echo "<td>" . $startdate->format ( 'H:i' ) . "</td>";
 	} else {
-		echo "<td title='" . $tour->sport->sportsubname . "'style='text-align: left; color:black;'>" . getWeekDay ( $startdate ) . "<br>" . makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
-		echo "<td style='color: black;'>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
+		echo "<td title='" . $tour->sport->sportsubname . "'style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
+		echo "<td>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
 	}
 	
 	if (hasAuth ()) {
