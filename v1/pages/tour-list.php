@@ -160,7 +160,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
 	}
 	echo "<td style='text-align: left;'><span class='flex'>" . htmlentities ( $tour->description ) . "</span></td>";
-	echo "<td>" .  ( $tour->duration ) . "</td>";
+	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";
 	echo "<td>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>";
