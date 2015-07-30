@@ -32,13 +32,14 @@ require_once __DIR__ . '/../lib/db_tours.php';
 			?>
 			</td>
 		</tr>
-		<td>Treffpunkt</td>
-		<td>
-			<table style="width: 100%">
-				<tr>
-					<td>Vordefiniert:</td>
-					<td style="width: 100%"><select id="place"
-						onchange="var lat = document.getElementById('meetingpoint-lat'); lat.value=this.value.split(';')[0].replace(',','.');
+		<tr>
+			<td>Treffpunkt</td>
+			<td>
+				<table style="width: 100%">
+					<tr>
+						<td>Vordefiniert:</td>
+						<td style="width: 100%"><select id="place"
+							onchange="var lat = document.getElementById('meetingpoint-lat'); lat.value=this.value.split(';')[0].replace(',','.');
 		var lon = document.getElementById('meetingpoint-lon'); lon.value=this.value.split(';')[1].replace(',','.'); 
 		lat.dispatchEvent(new Event('change'));lon.dispatchEvent(new Event('change'));
 		var mp_desc = document.getElementById('meetingpoint_desc');
@@ -50,21 +51,27 @@ require_once __DIR__ . '/../lib/db_tours.php';
 		foreach ( $places as $place ) {
 			echo '<option value="' . $place->lat . ';' . $place->lon . '">' . $place->name . '</option>';
 		}
-		echo '</select></td></tr>';
-		?><tr>
-								<td>Beschreibung</td>
-								<td><input type="text" id="meetingpoint_desc" style="width: 100%" name="meetingpoint_desc"
-									value="<?php echo isset($input['meetingpoint_desc']) ? $input['meetingpoint_desc'] : '';?>" /></td>
-							</tr>
-							<tr>
-								<td>Adresse</td>
-								<td><input type="text" id="meetingpoint" style="width: 100%" name="meetingpoint"
-									value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" /></td>
-							</tr>
-			
-			</table> <input type="hidden" id="meetingpoint-radius" /> <input type="hidden" id="meetingpoint-lat"
-			name="meetingpoint-lat" /> <input type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
-			<div id="meetingpoint-map" style="width: 100%; height: 400px;"></div> <script>$('#meetingpoint-map').locationpicker({
+		?>
+		</select></td>
+					</tr>
+					<tr>
+						<td>Beschreibung</td>
+						<td><input type="text" id="meetingpoint_desc" style="width: 100%"
+							name="meetingpoint_desc"
+							value="<?php echo isset($input['meetingpoint_desc']) ? $input['meetingpoint_desc'] : '';?>" /></td>
+					</tr>
+					<tr>
+						<td>Adresse</td>
+						<td><input type="text" id="meetingpoint" style="width: 100%"
+							name="meetingpoint"
+							value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" /></td>
+					</tr>
+
+				</table> <input type="hidden" id="meetingpoint-radius" /> <input
+				type="hidden" id="meetingpoint-lat" name="meetingpoint-lat" /> <input
+				type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
+				<div id="meetingpoint-map" style="width: 100%; height: 400px;"></div>
+				<script>$('#meetingpoint-map').locationpicker({
 	location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
 	radius: 50,
 	inputBinding: {
@@ -80,11 +87,12 @@ require_once __DIR__ . '/../lib/db_tours.php';
 	enableAutocomplete: true
 	});
 </script>
-		</td>
+			</td>
 		</tr>
 		<tr>
 			<td>Beschreibung</td>
-			<td><textarea name="description" rows="10" cols="50" style="width: 100%"><?php echo isset($input['description']) ? $input['description'] : '';?></textarea></td>
+			<td><textarea name="description" rows="10" cols="50"
+					style="width: 100%"><?php echo isset($input['description']) ? $input['description'] : '';?></textarea></td>
 		</tr>
 		<tr>
 			<td>Datum/Uhrzeit</td>
@@ -93,7 +101,8 @@ require_once __DIR__ . '/../lib/db_tours.php';
 			?>
 				<div class="row">
 					<div class='col-sm-6'>
-						<input type="text" class="form-control" style="width: 150px;" id="startdate" maxlength="16" name="startdate"
+						<input type="text" class="form-control" style="width: 150px;"
+							id="startdate" maxlength="16" name="startdate"
 							value="<?php echo isset($input['startdate']) ? $input['startdate'] : '';?>" />
 					</div>
 					<script type="text/javascript">
@@ -118,36 +127,27 @@ require_once __DIR__ . '/../lib/db_tours.php';
 		</tr>
 		<tr>
 			<td>Technik</td>
-			<td><?php echo getStars($input['skill'], 'skill',false); ?><span id="skill-tip"></span> <a target="_blank"
-				href="http://www.singletrail-skala.de/">SingleTrail Skala 1-6 (S0-S5)</a> <script type="text/javascript">
-			
-// 			$('#skill').rating({
-// 						 focus: function(value, link) {
-// 						 var tip = $('#skill-tip');
-//  						 tip[0].data = tip[0].data || tip.html();
-//           				 tip.html(link.title || 'value: '+value);
-// 						  }
-//  					 , blur: function(value, link) {
-//  						 var tip = $('#skill-tip');
-//   						 $('#skill-tip').html(tip[0].data || '');
-// }
-//  					 }
-// 			);
-			</script></td>
+			<td><?php echo getStars($input['skill'], 'skill',false); ?><span
+				id="skill-tip"></span> <a target="_blank"
+				href="http://www.singletrail-skala.de/">SingleTrail Skala 1-6
+					(S0-S5)</a> <script type="text/javascript"></script></td>
 		</tr>
 		<tr>
 			<td>Distanz</td>
-			<td><input type="text" name="distance" value="<?php echo isset($input['distance']) ? $input['distance'] : '';?>" />
+			<td><input type="text" name="distance"
+				value="<?php echo isset($input['distance']) ? $input['distance'] : '';?>" />
 				Kilometer</td>
 		</tr>
 		<tr>
 			<td>H&ouml;henmeter</td>
-			<td><input type="text" name="elevation" value="<?php echo isset($input['elevation']) ? $input['elevation'] : '';?>" />
+			<td><input type="text" name="elevation"
+				value="<?php echo isset($input['elevation']) ? $input['elevation'] : '';?>" />
 				Meter</td>
 		</tr>
 		<tr>
 			<td>Dauer</td>
-			<td><input type="text" name="duration" value="<?php echo isset($input['duration']) ? $input['duration'] : '';?>" />
+			<td><input type="text" name="duration"
+				value="<?php echo isset($input['duration']) ? $input['duration'] : '';?>" />
 				Minuten</td>
 		</tr>
 		<tr>
@@ -155,7 +155,8 @@ require_once __DIR__ . '/../lib/db_tours.php';
 			<td><input type="submit" value="Speichern" />
 				</form>
 				<form name="login" action="index.php" method="post">
-					<input name="action" type="hidden" value="home" /> <input name="submit" type="submit" value="Abbrechen" />
+					<input name="action" type="hidden" value="home" /> <input
+						name="submit" type="submit" value="Abbrechen" />
 				</form></td>
 		</tr>
 	</table>
