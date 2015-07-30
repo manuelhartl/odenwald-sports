@@ -139,6 +139,10 @@ table a:HOVER {
 	text-decoration: none;
 }
 
+#tourheader{
+	height: 40px;
+}
+
 #version a {
 	background-color: inherit;
 	color: #7F7F96;
