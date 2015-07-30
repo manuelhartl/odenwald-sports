@@ -40,23 +40,19 @@ if (hasAuth ()) {
 
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
-	<tr>
-		<th style='width: 3em;'>Tag<br>Sport
-		</th>
+	<tr id="tourheader">
+		<th style='width: 3em;'>Sport</th>
 		<th style='width: 6em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='min-width: 3em; width: 7%;'>Guide</th>";
+			echo "<th style='width: 7%;'>Guide</th>";
 			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
-		<th style='text-align: right; width: 6em;'>Dauer<br>hh:mm
-		</th>
-		<th style='text-align: right; width: 6em;'>Distanz<br>km
-		</th>
-		<th style='text-align: right; width: 6em;'>Bergauf<br>Hm
-		</th>
+		<th style='text-align: right; width: 6em;'>Dauer</th>
+		<th style='text-align: right; width: 6em;'>Distanz</th>
+		<th style='text-align: right; width: 6em;'>Bergauf</th>
 		<th>Pace</th>
 		<th>Technik</th>
 		<?php
@@ -146,7 +142,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $tour->guide->username;
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		echo "<td>" .  createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . "</td>";
+		echo "<td>" . createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		
@@ -201,6 +197,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo "</tr>";
 	$lastdate = $startdate;
 }
+/**
+ *
+ * @param Strng $sportsubname        	
+ * @return the shortcut for the sport subnmae
+ */
 function makeSportSubnameIconTag($sportsubname) {
 	// (1, 1, 'MTB'),
 	// (3, 1, 'Rennrad'),
