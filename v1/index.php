@@ -434,14 +434,13 @@ if (isset ( $config ['beta'] ) && $config ['beta']) {
 	echo $config ['version'];
 	echo '</div>';
 }
-echo '<div class="container-fluid">';
 
+echo '<div class="total">';
 echo '<div id="navigation">';
 require_once 'pages/navigation.php';
-echo '</div>';
+echo '</div> <!--End div navigation -->';
 
-echo '<div class="row">';
-echo '<div class="col-xs-12" id="main">';
+echo '<div class="content" id="main">';
 switch (getPage ()) {
 	case 'login' :
 		require_once 'pages/login.php';
@@ -484,11 +483,11 @@ switch (getPage ()) {
 		require_once 'pages/user-view.php';
 		break;
 }
-echo '</div>';
-echo '</div>';
-
+echo '</div> <!--End div content -->';
+echo '<div id="footer">';
 require_once 'pages/footer.php';
-
+echo '</div> <!--End div footer -->';
+echo '</div> <!--End div total -->';
 // print_r ( session_get_cookie_params () );
 /*
  * echo "<pre>";
