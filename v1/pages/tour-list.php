@@ -41,8 +41,8 @@ if (hasAuth ()) {
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr id="tourheader">
-		<th style='width: 3em;'>Sport</th>
-		<th style='width: 6em;'>Datum</th>
+		<th style='width: 5em;'>Sport</th>
+		<th style='width: 4em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
 			echo "<th style='width: 7%;'>Guide</th>";
@@ -123,16 +123,22 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$cancelstyle = ($tour->canceled) ? 'canceled' : '';
 	$dstyle = $daystyle . (strlen ( $linestyle ) > 0 ? ' ' . $linestyle : "") . (strlen ( $cancelstyle ) > 0 ? ' ' . $cancelstyle : "");
 	
-	echo '<tr class="' . $dstyle . '">';
-	
-	if (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' )) {
-		echo "<td  title='" . $tour->sport->sportsubname . "' style='text-align: left; '>";
-		echo makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
-		echo "<td>" . $startdate->format ( 'H:i' ) . "</td>";
-	} else {
-		echo "<td title='" . $tour->sport->sportsubname . "'style='text-align: left;'>" . getWeekDay ( $startdate ) . "<br>" . makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>";
-		echo "<td>" . $startdate->format ( 'd.m.Y H:i' ) . "</td>";
+	$firsttableentry = ! (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' ));
+	echo '<tr class="' . $dstyle . '">', PHP_EOL;
+	echo '<td colspan="2">', PHP_EOL;
+	echo '<table style="width: 100%;" >', PHP_EOL;
+	if ($firsttableentry) {
+		echo '  <tr>', PHP_EOL;
+		echo '  <td colspan="2" style="color: black";>' . getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
+		echo '  </tr>', PHP_EOL;
 	}
+	echo '  <tr>', PHP_EOL;
+	echo '    <td title="' . $tour->sport->sportsubname . '">';
+	echo makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>", PHP_EOL;
+	echo '    <td style="color: black;">' . $startdate->format ( 'H:i' ) . '</td>', PHP_EOL;
+	echo '  </tr>', PHP_EOL;
+	echo '</table>', PHP_EOL;
+	echo '</td>', PHP_EOL;
 	
 	if (hasAuth ()) {
 		// guide
@@ -153,9 +159,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		}
 		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
 	}
-	// http://jsfiddle.net/qEsQf/ multi line ellipses
 	echo "<td style='text-align: left;'><span class='flex'>" . htmlentities ( $tour->description ) . "</span></td>";
-	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
+	echo "<td>" .  ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";
 	echo "<td>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>";

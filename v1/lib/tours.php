@@ -19,15 +19,15 @@ function formatMinutes($minutes) {
 	// } else {
 	// return round ( $minutes / 60, 1 ) . 'h';
 	// }
-	return sprintf ( "%02d", $minutes / 60 ) . ':' . sprintf ( "%02d", $minutes % 60 );
+	return sprintf ( "%d", $minutes / 60 ) . ':' . sprintf ( "%02d", $minutes % 60 ) . " h";
 }
 function formatMeters($meters) {
 	if ($meters < 2000) {
-		return round ( $meters, 0 ) . 'm';
+		return round ( $meters, 0 ) . ' m';
 	} else if ($meters < 5000) {
-		return round ( $meters, 0 ) . 'm';
+		return round ( $meters, 0 ) . ' m';
 	} else {
-		return round ( $meters / 1000, 1 ) . 'km';
+		return round ( $meters / 1000, 1 ) . ' km';
 	}
 }
 function getMailText($tour, $attendees = 0) {
