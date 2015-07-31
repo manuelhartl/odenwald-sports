@@ -129,7 +129,8 @@ table a {
 	background-color: inherit;
 	color: #37607C;
 	padding: 1px 2px;
-	margin: 3px; border-width : 2px;
+	margin: 3px;
+	border-width: 2px;
 	border-color: #636B5F;
 	border-width: 2px;
 }
@@ -139,7 +140,7 @@ table a:HOVER {
 	text-decoration: none;
 }
 
-#tourheader{
+#tourheader {
 	height: 40px;
 }
 
@@ -261,6 +262,17 @@ td.tooltip {
 	/** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
 	-o-text-overflow: ellipsis; /** Opera 9 & 10 **/
 	width: 100%;
+}
+
+.flex1 {
+	display: inline-block;
+	display: -webkit-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 60px;
+	width: 100%;;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
 }
 
 #beta {

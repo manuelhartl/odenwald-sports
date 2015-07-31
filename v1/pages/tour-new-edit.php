@@ -1,3 +1,8 @@
+<head>
+<script src="//cdn.ckeditor.com/4.5.1/standard/ckeditor.js"></script>
+</head>
+
+
 <?php
 require_once __DIR__ . '/../lib/db_tours.php';
 
@@ -55,7 +60,7 @@ require_once __DIR__ . '/../lib/db_tours.php';
 		</select></td>
 					</tr>
 					<tr>
-						<td>Beschreibung</td>
+						<td>Treffpunkt Info</td>
 						<td><input type="text" id="meetingpoint_desc" style="width: 100%"
 							name="meetingpoint_desc"
 							value="<?php echo isset($input['meetingpoint_desc']) ? $input['meetingpoint_desc'] : '';?>" /></td>
@@ -91,8 +96,32 @@ require_once __DIR__ . '/../lib/db_tours.php';
 		</tr>
 		<tr>
 			<td>Beschreibung</td>
-			<td><textarea name="description" rows="10" cols="50"
-					style="width: 100%"><?php echo isset($input['description']) ? $input['description'] : '';?></textarea></td>
+			<?php
+			if (isset ( $config ['HTMLEditor'] ) && $config ['HTMLEditor']) {
+				echo '', PHP_EOL;
+				echo '<td>', PHP_EOL;
+				echo '<textarea  id="editor" name="description" rows="10" cols="50" style="width: 100%">', PHP_EOL;
+				echo isset ( $input ['description'] ) ? $input ['description'] : '', PHP_EOL;
+				echo '', PHP_EOL;
+				echo '</textarea>', PHP_EOL;
+				echo '</td>', PHP_EOL;
+				
+				echo '<script>', PHP_EOL;
+				echo 'CKEDITOR.replace( "editor", {', PHP_EOL;
+				echo 'height: "300px",', PHP_EOL;
+				echo 'width: "100%"', PHP_EOL;
+				echo '} );', PHP_EOL;
+				echo '</script>', PHP_EOL;
+			} else {
+				echo '', PHP_EOL;
+				echo '<td>', PHP_EOL;
+				echo '<textarea name="description" rows="10" cols="50" style="width: 100%">', PHP_EOL;
+				echo isset ( $input ['description'] ) ? $input ['description'] : '', PHP_EOL;
+				echo '', PHP_EOL;
+				echo '</textarea>', PHP_EOL;
+				echo '</td>', PHP_EOL;
+			}
+			?>
 		</tr>
 		<tr>
 			<td>Datum/Uhrzeit</td>

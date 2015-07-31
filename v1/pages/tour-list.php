@@ -159,7 +159,12 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		}
 		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
 	}
-	echo "<td style='text-align: left;'><span class='flex'>" . htmlentities ( $tour->description ) . "</span></td>";
+	// support HTML Editor
+	if (isset ( $config ['HTMLEditor'] ) && $config ['HTMLEditor']) {
+		echo "<td style='text-align: left;'><span class='flex1'>" . $tour->description . "</span></td>";
+	} else {
+		echo "<td style='text-align: left;'><span class='flex'>" . htmlentities ( $tour->description ) . "</span></td>";
+	}
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";
