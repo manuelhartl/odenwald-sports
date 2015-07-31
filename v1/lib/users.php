@@ -28,6 +28,12 @@ function createUserInfo($user, $userextra) {
 			$userinfo = (strlen ( $userinfo ) > 0 ? $userinfo . ", " : "") . "Telefon: " . $userextra->phone;
 		}
 	}
+	if (strlen ( $userinfo ) > 0) {
+		$userinfo = $user->username . ": " . $userinfo;
+	} else {
+		$userinfo = $user->username;
+	}
+	
 	return ($userinfo);
 }
 function getVal($value, $defaultValue) {
