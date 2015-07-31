@@ -42,8 +42,8 @@ require_once __DIR__ . '/../lib/db_tours.php';
 			<td>
 				<table style="width: 100%">
 					<tr>
-						<td>Vordefiniert:</td>
-						<td style="width: 100%"><select id="place"
+						<td style="min-width: 125px;">Vordefiniert:</td>
+						<td style="width: 100%;"><select id="place"
 							onchange="var lat = document.getElementById('meetingpoint-lat'); lat.value=this.value.split(';')[0].replace(',','.');
 		var lon = document.getElementById('meetingpoint-lon'); lon.value=this.value.split(';')[1].replace(',','.'); 
 		lat.dispatchEvent(new Event('change'));lon.dispatchEvent(new Event('change'));
