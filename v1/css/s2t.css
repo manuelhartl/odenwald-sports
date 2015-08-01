@@ -285,3 +285,7 @@ td.tooltip {
 	height: 10000px;
 	background-image: url(../img/background_beta.jpg)
 }
+
+.hide {
+	display: none;
+}

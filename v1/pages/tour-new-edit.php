@@ -45,52 +45,68 @@ require_once __DIR__ . '/../lib/db_tours.php';
 						<td style="min-width: 125px;">Vordefiniert:</td>
 						<td style="width: 100%;"><select id="place"
 							onchange="
-							var lat = document.getElementById('meetingpoint-lat'); lat.value=this.value.split(';')[0].replace(',','.');
-		var lon = document.getElementById('meetingpoint-lon'); lon.value=this.value.split(';')[1].replace(',','.'); 
-		if(lon!=-1&&lat!=-1){
-			lat.dispatchEvent(new Event('change'));
-			lon.dispatchEvent(new Event('change'));
-		}else{
-			document.getElementById('meetingpoint').value='';
-		}
-		var mp_desc = document.getElementById('meetingpoint_desc');
-		mp_desc.value=this.options[this.selectedIndex].text;
-		var el = document.getElementById('meetingpoint-map');
-		if (mp_desc.value =='Karte') {
-				el.style.display='block';
-		} else {
-				el.style.display='none';
-		}
-		">
+							var lat = document.getElementById('meetingpoint-lat');
+							lat.value = this.value.split(';')[0].replace(',','.');
+							lat.dispatchEvent(new Event('change'));
+							
+							var lon = document.getElementById('meetingpoint-lon');
+							lon.value = this.value.split(';')[1].replace(',','.'); 
+							lon.dispatchEvent(new Event('change'));
+
+							var mp_desc = document.getElementById('meetingpoint_desc');
+							var mp_select = document.getElementById('meetingpoint-selection');
+							mp_desc.value = this.options[this.selectedIndex].text!='Karte'?this.options[this.selectedIndex].text:'';
+							mp_select.value = this.options[this.selectedIndex].text!='Karte'?this.options[this.selectedIndex].text:'';
+							
+							var el1 = document.getElementById('row_meetingpoint_desc');
+							var el2 = document.getElementById('row_meetingpoint');
+							var el3 = document.getElementById('meetingpoint-map');
+							if (this.options[this.selectedIndex].text =='Karte') {
+								el1.className = el1.className.replace( /(?:^|\s)hide(?!\S)/g , '' );
+								el2.className = el2.className.replace( /(?:^|\s)hide(?!\S)/g , '' );
+								el3.style.display = 'block';
+							} else {
+								if(!el1.className.match( /(?:^|\s)hide(?!\S)/g , '' )){
+									el1.className += 'hide';}
+								if(!el2.className.match( /(?:^|\s)hide(?!\S)/g , '' )){
+									el2.className += 'hide' ;}
+								el3.style.display = 'none';
+		}">
 		<?php
 		$pdo = db_open ();
 		$places = getPlaces ( $pdo );
 		// get preferred tour description
 		$hasptd = isset ( $config ['PTD'] ) && $config ['PTD'];
 		$ptd = $hasptd ? $config ['PTD'] : "Karte";
+		$lasttd = $ptd;
 		
-		echo '<option value="-1;-1"' . (($ptd == "Karte") ? " selected" : "") . '>Karte</option>', PHP_EOL;
+		// var_dump ( $input );
+		
+		echo '<option value="49.85212170040001;8.670546531677246"' . (($lasttd == "Karte") ? " selected" : "") . '>Karte</option>', PHP_EOL;
 		foreach ( $places as $place ) {
-			echo '<option value="' . $place->lat . ';' . $place->lon . '"' . (($ptd == $place->name) ? " selected" : "") . '>' . $place->name . '</option>', PHP_EOL;
+			echo '<option value="' . $place->lat . ';' . $place->lon . '"' . (($lasttd == $place->name) ? " selected" : "") . '>' . $place->name . '</option>', PHP_EOL;
 		}
+		
 		?>
 		</select></td>
 					</tr>
-					<tr>
+					<tr id="row_meetingpoint_desc" <?php echo(($lasttd=='Karte'?'':' class="hide"'));?>>
 						<td>Treffpunkt Info</td>
 						<td><input type="text" id="meetingpoint_desc" style="width: 100%" name="meetingpoint_desc"
 							value="<?php echo isset($input['meetingpoint_desc']) ? $input['meetingpoint_desc'] : '';?>" /></td>
 					</tr>
-					<tr>
+					<!-- end row row_meetingpoint_desc -->
+					<tr id="row_meetingpoint" <?php echo(($lasttd=='Karte'?'':'class="hide"'));?>>
 						<td>Adresse</td>
 						<td><input type="text" id="meetingpoint" style="width: 100%" name="meetingpoint"
 							value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" /></td>
 					</tr>
-
-				</table> <input type="hidden" id="meetingpoint-radius" /> <input type="hidden" id="meetingpoint-lat"
-				name="meetingpoint-lat" /> <input type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
-				<div id="meetingpoint-map" style="width: 100%; height: 400px;
-					<?php echo(' display: '.($ptd=='Karte'?'block;':'none;'));?>"></div> <script>$('#meetingpoint-map').locationpicker({
+					<!-- end row row_meetingpoint -->
+				</table>
+				<input type="hidden" id="meetingpoint-radius" /> <!--  --> <input type="hidden" id="meetingpoint-lat"
+				name="meetingpoint-lat" /> <!--  --> <input type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
+				<div id="meetingpoint-map" style="width: 100%; height: 400px; display: <?php echo($lasttd=="Karte"?'block':'none');?>;"></div>
+				<!-- END div "meetingpoint-map --> <script>$('#meetingpoint-map').locationpicker({
 	location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
 	radius: 50,
 	inputBinding: {
@@ -106,9 +122,9 @@ require_once __DIR__ . '/../lib/db_tours.php';
 	enableAutocomplete: true
 	});
 </script>
-
 			</td>
 		</tr>
+		<!-- end row row_meetingmap -->
 		<tr>
 			<td>Beschreibung</td>
 			<?php

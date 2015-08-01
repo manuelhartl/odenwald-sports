@@ -45,4 +45,11 @@ function isValidDate($value, $defaultValue) {
 	}
 	return (new DateTime ( $defaultValue ));
 }
+function alert($message) {
+	if (isset ( $message )) {
+		echo "<script language=\"Javascript\">";
+		echo "alert('" . $message . "');";
+		echo "</script>";
+	}
+}
 ?>
