@@ -163,7 +163,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	if (isset ( $config ['HTMLEditor'] ) && $config ['HTMLEditor']) {
 		echo "<td style='text-align: left;'><span class='flex1'>" . $tour->description . "</span></td>";
 	} else {
-		echo "<td style='text-align: left;'><span class='flex'>" . htmlentities ( $tour->description ) . "</span></td>";
+		echo "<td style='text-align: left;'><span class='flex'>" . strip_tags ( $tour->description, '<br><br/>' ) . "</span></td>";
 	}
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
