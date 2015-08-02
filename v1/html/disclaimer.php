@@ -10,17 +10,17 @@ das so offen lassen, weil wir auch andere Sportarten zulassen).
 4.Unsere Seite ist werbe- und kostenfrei.
  
 
-Mit der Anmeldung und/oder Teilnahme an einer gef&uuml;hrten Mountainbiketour des O-S-T erkl&auml;rt der/die Teilnehmer/in, dass er die nachfolgenden Teilnahmehinweise gelesen hat und damit einverstanden ist: 
+Mit der Anmeldung und/oder Teilnahme an einer gef&uuml;hrten Mountainbiketour der sport2gether erkl&auml;rt der/die Teilnehmer/in, dass er die nachfolgenden Teilnahmehinweise gelesen hat und damit einverstanden ist: 
 &sect; 1 Begriffsbestimmungen
-(1) O-S-T ist eine Plattform, die Tourenanbieter und Mitfahrer zusammenf&uuml;hren m&ouml;chte
+(1) sport2gether ist eine Plattform, die Tourenanbieter und Mitfahrer zusammenf&uuml;hren m&ouml;chte
 (2) Der individuelle Leiter einer der Touren wird im Weiteren als Guide bezeichnet.
 (3) Soweit nachfolgend m&auml;nnliche Begriffsbestimmungen verwendet werden schlie&szlig;en diese, soweit anwendbar, die weiblichen Begriffsbestimmungen mit ein. 
 &sect; 2 Verf&uuml;gbarkeit dieser Hinweise
 Sie k&ouml;nnen unter <?php echo get_current_url();?> nachgelesen und ausgedruckt werden. 
 &sect; 3 Absage oder Abbruch von Touren
-Es besteht kein Rechtsanspruch auf Teilnahme oder Durchf&uuml;hrung einer ausgeschriebenen Tour. Die O-S-T und/oder der Guide sind jederzeit - auch kurzfristig - berechtigt, die Tour ohne Angabe von Gr&uuml;nden abzusagen oder abzubrechen sowie Teilnehmer von der Teilnahme an der Tour auszuschlie&szlig;en. 
+Es besteht kein Rechtsanspruch auf Teilnahme oder Durchf&uuml;hrung einer ausgeschriebenen Tour. Die sport2gether und/oder der Guide sind jederzeit - auch kurzfristig - berechtigt, die Tour ohne Angabe von Gr&uuml;nden abzusagen oder abzubrechen sowie Teilnehmer von der Teilnahme an der Tour auszuschlie&szlig;en. 
 &sect; 4 Teilnahmevoraussetzungen
-(1) Die O-S-T und/oder der Guide sind berechtigt, die Teilnahme an einer Tour von der Erf&uuml;llung besonderer Bedingungen (wie beispielsweise das Vorliegen bestimmter fahrtechnischer F&auml;higkeiten) abh&auml;ngig zu machen. Hierauf wird im Einzelnen in der Ausschreibung zu einer Tour hingewiesen. Teilnehmer, die das 18. Lebensjahr noch nicht vollendet haben, m&uuml;ssen eine schriftliche Einverst&auml;ndniserkl&auml;rung ihrer Erziehungsberechtigten vorlegen.
+(1) Diesport2gether und/oder der Guide sind berechtigt, die Teilnahme an einer Tour von der Erf&uuml;llung besonderer Bedingungen (wie beispielsweise das Vorliegen bestimmter fahrtechnischer F&auml;higkeiten) abh&auml;ngig zu machen. Hierauf wird im Einzelnen in der Ausschreibung zu einer Tour hingewiesen. Teilnehmer, die das 18. Lebensjahr noch nicht vollendet haben, m&uuml;ssen eine schriftliche Einverst&auml;ndniserkl&auml;rung ihrer Erziehungsberechtigten vorlegen.
 (2) Voraussetzung f&uuml;r die Teilnahme an einer Tour sind, sofern nichts anderes angegeben ist, ein technisch einwandfreies Mountainbike sowie eine ausreichende Pannenausr&uuml;stung (u. a. Ersatzschlauch, Flickzeug, Luftpumpe, Werkzeug, etc.). Es ist nicht Aufgabe oder  Verpflichtung des Guides, den Teilnehmern im Pannenfall technische Unterst&uuml;tzung zu gew&auml;hren. Kann die Tour aufgrund einer Panne nicht zu Ende gefahren werden, so ist ein eventuell erforderlicher R&uuml;cktransport auf eigene Gefahr und Kosten des Teilnehmers durchzuf&uuml;hren.
 (3) Alle Teilnehmer haben f&uuml;r eine ausreichende Schutz- und Sicherheitsausr&uuml;stung zu sorgen. Hierzu geh&ouml;ren insbesondere ein Schutzhelm (Pflicht!), eine den Witterungsbedingungen entsprechende Kleidung und ggfs. angemessene Schutzausr&uuml;stung (z. B. Handschuhe, Protektoren). Alle Teilnehmer haben selbst f&uuml;r eine ausreichende Verpflegung und Getr&auml;nke zu sorgen. 
 &sect; 4 Aufgaben des Guides
@@ -34,7 +34,7 @@ Es besteht kein Rechtsanspruch auf Teilnahme oder Durchf&uuml;hrung einer ausges
 (2 ) Alle Teilnehmer haben ihre - vor allem konditionellen und fahrtechnischen - F&auml;higkeiten selbst einzusch&auml;tzen und ihre Fahrweise daran auszurichten. Die Teilnehmer m&uuml;ssen insbesondere selbst beurteilen, ob sie einen Wegabschnitt sicher und ohne sich oder andere zu gef&auml;hrden mit dem Mountainbike fahren k&ouml;nnen; im Zweifelsfall ist ein Wegabschnitt vorher zu besichtigen und/oder das Mountainbike zu schieben oder zu tragen.
 (3) Alle Teilnehmer haben auf &ouml;ffentlichen Stra&szlig;en und Wegen die Bestimmungen der Stra&szlig;enverkehrsordnung in eigener Verantwortung einzuhalten. Dar&uuml;ber hinaus sind die DIMB Trail Rules einzuhalten; die DIMB Trail Rules k&ouml;nnen unter www.dimb.de nachgelesen werden.
 (4) Die Teilnehmer sind sich dar&uuml;ber im Klaren, dass Mountainbiketouren mit gewissen Risiken und Gefahren verbunden sind und nehmen diese Risiken und Gefahren bewusst und mit vollem Einverst&auml;ndnis in Kauf. Die Teilnehmer sind sich dabei insbesondere dar&uuml;ber bewusst und nehmen es in Kauf, dass es zu St&uuml;rzen und daraus resultierenden - auch schwersten - Sach-, Personen- oder Verm&ouml;genssch&auml;den kommen kann. Gefahren und Risiken k&ouml;nnen sich insbesondere, aber nicht nur, aus den - h&auml;ufig auch wechselnden - Witterungs- und Wegebedingungen sowie dem Verhalten Dritter ergeben.
-Auch eine nicht ausreichende gesundheitliche Verfassung, mangelnde Kondition sowie Selbst&uuml;bersch&auml;tzung oder unzureichende fahrtechnische F&auml;higkeiten der Teilnehmer k&ouml;nnen zu einer Gef&auml;hrdung der eigenen Person oder Anderen f&uuml;hren. Weder die O_S-T noch der Guide sind verpflichtet, f&uuml;r eine Absicherung der Strecke zu sorgen oder auf Gefahren hinzuweisen. 
+Auch eine nicht ausreichende gesundheitliche Verfassung, mangelnde Kondition sowie Selbst&uuml;bersch&auml;tzung oder unzureichende fahrtechnische F&auml;higkeiten der Teilnehmer k&ouml;nnen zu einer Gef&auml;hrdung der eigenen Person oder Anderen f&uuml;hren. Weder die sport2gether noch der Guide sind verpflichtet, f&uuml;r eine Absicherung der Strecke zu sorgen oder auf Gefahren hinzuweisen. 
 Die Mitfahrer und der Guide verpflichten sich die DIMB Trails-Rules einzuhalten.
  
  
