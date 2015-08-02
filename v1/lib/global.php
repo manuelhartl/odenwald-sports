@@ -2,14 +2,14 @@
 require_once __DIR__ . '/../config/settings.php';
 $cookielifetime = 60 * 60 * 24; // 24h
 if ($_SERVER ['SERVER_NAME'] == '127.0.0.1') {
-	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '127.0.0.1', false );
+	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], '127.0.0.1', false );
 	session_start ();
-	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '127.0.0.1', false );
+	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], '127.0.0.1', false );
 } else {
-	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], $_SERVER ['SERVER_NAME'] );
+	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], $_SERVER ['SERVER_NAME'] );
 	session_start ();
 	// reset cookie parameters because of a quirk in php - if you dont do this the cookie lifetime wont be updated on subsequent page requests
-	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '.' . $_SERVER ['SERVER_NAME'] );
+	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], '.' . $_SERVER ['SERVER_NAME'] );
 }
 date_default_timezone_set ( "Europe/Berlin" );
 class User {
@@ -72,6 +72,38 @@ function validatePassword($input) {
 }
 function validateEmail($input) {
 	return filter_var ( $input, FILTER_VALIDATE_EMAIL );
+}
+/**
+ *
+ * @param Object[T] $value        	
+ * @param Object[T) $defaultValue        	
+ * @return if value is set return value,otherwise default
+ */
+function getVal($value, $defaultValue) {
+	return (isset ( $value ) ? $value : $defaultValue);
+}
+/**
+ *
+ * @param DateTime $value        	
+ * @param DateTime $defaultValue        	
+ * @return if value is set return value,otherwise default
+ */
+function isValidDate($value, $defaultValue) {
+	if (is_a ( $value, 'DateTime' )) {
+		return ($value);
+	}
+	return (new DateTime ( $defaultValue ));
+}
+/**
+ *
+ * @param String $message        	
+ */
+function alert($message) {
+	if (isset ( $message )) {
+		echo "<script language=\"Javascript\">";
+		echo "alert('" . $message . "');";
+		echo "</script>";
+	}
 }
 
 ?>

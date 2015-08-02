@@ -36,20 +36,4 @@ function createUserInfo($user, $userextra) {
 	
 	return ($userinfo);
 }
-function getVal($value, $defaultValue) {
-	return (isset ( $value ) ? $value : $defaultValue);
-}
-function isValidDate($value, $defaultValue) {
-	if (is_a ( $value, 'DateTime' )) {
-		return ($value);
-	}
-	return (new DateTime ( $defaultValue ));
-}
-function alert($message) {
-	if (isset ( $message )) {
-		echo "<script language=\"Javascript\">";
-		echo "alert('" . $message . "');";
-		echo "</script>";
-	}
-}
 ?>

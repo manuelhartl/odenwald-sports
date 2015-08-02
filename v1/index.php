@@ -430,7 +430,7 @@ if (! hasAuth () && //
 
 if (isset ( $config ['beta'] ) && $config ['beta']) {
 	echo '<div id="beta">';
-	echo 'Beta ';
+	echo 'Beta Sport2gether Beta sport2gether Beta sport2gether Beta sport2gether Beta sport2gether Beta sport2gether Beta sport2gether Beta sport2gether ';
 	echo $config ['version'];
 	echo '</div>';
 }
