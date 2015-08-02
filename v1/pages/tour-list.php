@@ -129,7 +129,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '<table style="width: 100%;" >', PHP_EOL;
 	if ($firsttableentry) {
 		echo '  <tr>', PHP_EOL;
-		echo '  <td colspan="2" style="color: black";>' . getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
+		echo '  <td colspan="2" style="color: black;">' . getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
 		echo '  </tr>', PHP_EOL;
 	}
 	echo '  <tr>', PHP_EOL;
