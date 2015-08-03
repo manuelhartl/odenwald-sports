@@ -40,8 +40,8 @@ class Member {
 	 */
 	public function __construct($id, $register_date, $modify_date) {
 		this . $id = $id;
-		this . $register_date = getValidatedDate ( $register_date );
-		this . $modify_date = getValidatedDate ( isset ( $modify_date ) ? $modify_date : $register_date );
+		this . $register_date = Utilities::getValidatedDate ( $register_date );
+		this . $modify_date = Utilities::getValidatedDate ( isset ( $modify_date ) ? $modify_date : $register_date );
 	}
 	public function getId() {
 		return $this->id;
@@ -49,62 +49,62 @@ class Member {
 	public function getUsername() {
 		return $this->username;
 	}
-	public function setUsername($username) {
+	public function setUsername(string $username) {
 		$this->username = $username;
 	}
 	public function getEmail() {
 		return $this->email;
 	}
-	public function setEmail($email) {
+	public function setEmailString(string $email) {
 		$this->email = $email;
 	}
 	public function getBirtdate() {
 		return $this->birtdate;
 	}
-	public function setBirtdate($birtdate) {
-		$this->birtdate = getValidatedDate ( $birtdate );
+	public function setBirtdate(DateTime $birtdate) {
+		$this->birtdate = Utilities::getValidatedDate ( $birtdate );
 	}
 	public function hasAdditionalInformation() {
 		return $this->hasAdditionalInformation;
 	}
-	public function hasAdditionalInformation($hasAdditionalInformation) {
-		$this->hasAdditionalInformation = getValue ( $hasAdditionalInformation, false );
+	public function hasAdditionalInformation(boolean $hasAdditionalInformation) {
+		$this->hasAdditionalInformation = Utilities::getValue ( $hasAdditionalInformation, false );
 	}
 	public function getRealname() {
 		return $this->realname;
 	}
-	public function setRealname($realname) {
-		$this->realname = getValue ( $realname, "" );
+	public function setRealname(string $realname) {
+		$this->realname = Utilities::getValue ( $realname, "" );
 	}
 	public function getAddress() {
 		return $this->address;
 	}
-	public function setAddress($address) {
-		$this->address = getValue ( $adress, "" );
+	public function setAddress(string $address) {
+		$this->address = Utilities::getValue ( $adress, "" );
 	}
 	public function getAddress_lat() {
 		return $this->address_lat;
 	}
-	public function setAddress_lat($address_lat) {
-		$this->address_lat = getValue ( $address_lat, 0 );
+	public function setAddress_lat(floatval $address_lat) {
+		$this->address_lat = Utilities::getValue ( $address_lat, 0 );
 	}
 	public function getAddress_long() {
 		return $this->address_long;
 	}
-	public function setAddress_long($address_long) {
-		$this->address_long = getValue ( $address_long, 0 );
+	public function setAddress_long(floatval $address_long) {
+		$this->address_long = Utilities::getValue ( $address_long, 0 );
 	}
 	public function getMailing() {
 		return $this->mailing;
 	}
-	public function setMailing($mailing) {
-		$this->mailing = getValue ( $mailing, true );
+	public function setMailing(boolean $mailing) {
+		$this->mailing = Utilities::getValue ( $mailing, true );
 	}
 	public function getPhone() {
 		return $this->phone;
 	}
-	public function setPhone($phone) {
-		$this->phone = getValue ( $phone, "" );
+	public function setPhone(string $phone) {
+		$this->phone = Utilities::getValue ( $phone, "" );
 	}
 	public function getRights() {
 		return $this->rights;
@@ -117,6 +117,43 @@ class Member {
 	}
 	public function getModify_date() {
 		return $this->modify_date;
+	}
+	
+	/**
+	 *
+	 * @return string a link to the member
+	 */
+	function getMemberProfilLink() {
+		return (getMemberProfilLink ( getAbout () ));
+	}
+	
+	/**
+	 *
+	 * @param string $tooltip
+	 * @param string $spanClass class of the span
+	 * @return string a link to the member
+	 */
+	function getMemberProfilLink(string $tooltip = "Profil anzeigen", string $spanClass = "flex") {
+		return ('<a style = "display: block;" href="?action=user-view&userid=' . $this->getId () . '">' . '<span class="' . $flex . '" title="' . $tooltip . '">' . $this->getUsername () . '</span>' . '</a>');
+	}
+	
+	/**
+	 *
+	 * @return string about the member
+	 */
+	function getAbout() {
+		$about = "";
+		if (strlen ( $this->getPhone () ) > 0) {
+			$about = "Telefon: " . $this->getPhone ();
+		}
+		// add member name in front
+		if (strlen ( $about ) > 0) {
+			$about = $this->getUsername () . ": " . $about;
+		} else {
+			$about = $this->getUsername ();
+		}
+		
+		return ($about);
 	}
 }
 
