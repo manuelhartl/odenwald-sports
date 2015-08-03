@@ -99,13 +99,14 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$authuserid = hasAuth () ? authUser ()->id : '';
 	$users = getAttendees ( $pdo, $tour->id );
 	foreach ( $users as $user ) {
+		$tourmember = DB_member::getMemberById ( $pdo, $user ['id'] );
 		$u = new User ();
 		$u->id = $user ['id'];
 		$u->email = $user ['email'];
 		$u->username = $user ['username'];
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		$attendeeString = $attendeeString . createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . " ";
+		$attendeeString = $attendeeString . $tourmember->getMemberProfilLink () . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}

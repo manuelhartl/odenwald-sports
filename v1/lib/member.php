@@ -109,6 +109,14 @@ class Member {
 	public function getRights() {
 		return $this->rights;
 	}
+	/**
+	 *
+	 * @param string $right
+	 * @return boolean if the member has the requested right
+	 */
+	public function hasRight(string $right) {
+		return (true);
+	}
 	public function setRights($rights) {
 		$this->rights = $rights;
 	}
