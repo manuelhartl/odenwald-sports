@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
+require_once __DIR__ . '/../lib/DB_Member.php';
 
 if (hasAuth ()) {
 	// new DBtour
