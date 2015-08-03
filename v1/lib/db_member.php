@@ -40,6 +40,12 @@ function getMemberByStatement($pdo, $selectstatement, $parameter) {
 function getMemberByName($pdo, $username) {
 	return (getMemberByStatement ( $pdo, "select id,username,email,register_date, modify_date from user where LOWER(username) = LOWER(?)", $username ));
 }
+/**
+ *
+ * @param DB connection $pdo
+ * @param String $userId
+ * @return Member
+ */
 function getMemberById($pdo, $userId) {
 	return (getMemberByStatement ( $pdo, "select id,username,email,register_date from user where id = ?", $username ));
 }

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/db.php';
-class Tour {
+class DBTour {
 	public $id;
 	public $startDateTime;
 	public $duration;
@@ -33,13 +33,13 @@ class Sport {
 	public $sportname;
 }
 function getTourObject($row) {
-	$tourObj = new Tour ();
+	$tourObj = new DBTour ();
 	$tourObj->id = $row ['id'];
 	$tourObj->startDateTime = date_create ( $row ['startdate'] );
 	$tourObj->duration = $row ['duration'];
 	$tourObj->sport = new Sport ();
 	$tourObj->sport->sportname = $row ['sportname'];
-	//$tourObj->sport->sportsubid = $row ['sportsubid'];
+	// $tourObj->sport->sportsubid = $row ['sportsubid'];
 	$tourObj->sport->sportsubname = $row ['sportsubname'];
 	$tourObj->meetingPoint = $row ['meetingpoint'];
 	$tourObj->meetingPoint_desc = $row ['meetingpoint_desc'];
@@ -71,7 +71,7 @@ function getPlaceObject($row) {
 	$place->gps->long = $row ['lon'];
 	return $place;
 }
-function insertTour($pdo, Tour $tour) {
+function insertTour($pdo, DBTour $tour) {
 	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id, skill, speed, distance, elevation, meetingpoint_desc) VALUES(?,?,?,?,?,PointFromText(?),?,?,?,?,?,?)" );
 	$stmt->bindParam ( 1, $tour->guide->id );
 	$date = toDbmsDate ( $tour->startDateTime );

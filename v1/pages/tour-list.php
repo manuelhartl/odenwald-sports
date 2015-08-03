@@ -3,7 +3,7 @@ require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
 
 if (hasAuth ()) {
-	// new tour
+	// new DBtour
 	echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
 	
 	// show actual/old tours
@@ -209,7 +209,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 }
 /**
  *
- * @param Strng $sportsubname        	
+ * @param Strng $sportsubname
  * @return the shortcut for the sport subnmae
  */
 function makeSportSubnameIconTag($sportsubname) {
