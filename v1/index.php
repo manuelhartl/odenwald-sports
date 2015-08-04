@@ -345,7 +345,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$tour = getTourById ( $pdo, $tourid );
 						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourLeave ( $pdo, authUser ()->id, $tourid );
-							setMessage ( 'Schade, das n&auml;chste mal klappt es wieder mit dem Mitfahren' );
+							setMessage ( 'Schade, das n&auml;chste Mal klappt es wieder mit dem Mitfahren' );
 						}
 						break;
 					case 'tour-cancel' :
