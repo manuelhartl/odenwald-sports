@@ -366,7 +366,9 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						setPage ( 'user-list' );
 						break;
 					case 'user-edit' :
+						$case = 'user-edit';
 					case 'user-view' :
+						$case = 'user-view';
 						$input ['userid'] = ($_REQUEST ['action'] == 'user-edit') ? authUser ()->id : $_REQUEST ['userid'];
 						$user = getUserObject ( getUserById ( $pdo, $input ['userid'] ) );
 						$userextra = getUserExtraById ( $pdo, $input ['userid'] );
@@ -390,7 +392,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$input ['address-lon'] = false;
 						}
 						
-						setPage ( $_REQUEST ['action'] );
+						setPage ( $case );
 						break;
 					case 'user-save' :
 						if (isset ( $_REQUEST ['userid'] )) {
