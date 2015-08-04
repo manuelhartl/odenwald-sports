@@ -393,7 +393,11 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						setPage ( $case );
 						break;
 					case 'user-save' :
-						if (isset ( $_REQUEST ['userid'] )) {
+						$year = $_REQUEST ['birthdate'];
+						if (! is_integer ( $year )) {
+							setMessage ( 'Geburtsjahr ist nicht g&uuml;ltig' );
+							$year = '0000';
+						} else if (isset ( $_REQUEST ['userid'] )) {
 							// edit
 							$userextra = new UserExtra ();
 							$userextra->id = authUser ()->id;
