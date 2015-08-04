@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/utilities.php';
 class Member {
 	private $id;
 	private $username;
@@ -55,7 +56,7 @@ class Member {
 	public function getEmail() {
 		return $this->email;
 	}
-	public function setEmailString(string $email) {
+	public function setEmail(string $email) {
 		$this->email = $email;
 	}
 	public function getBirtdate() {
@@ -67,7 +68,7 @@ class Member {
 	public function hasAdditionalInformation() {
 		return $this->hasAdditionalInformation;
 	}
-	public function hasAdditionalInformation(boolean $hasAdditionalInformation) {
+	public function setAdditionalInformation(boolean $hasAdditionalInformation) {
 		$this->hasAdditionalInformation = Utilities::getValue ( $hasAdditionalInformation, false );
 	}
 	public function getRealname() {
@@ -132,7 +133,7 @@ class Member {
 	 * @return string a link to the member
 	 */
 	function getMemberProfilLink() {
-		return (getMemberProfilLink ( getAbout () ));
+		return (getMemberProfilLink1 ( getAbout () ));
 	}
 	
 	/**
@@ -141,7 +142,7 @@ class Member {
 	 * @param string $spanClass class of the span
 	 * @return string a link to the member
 	 */
-	function getMemberProfilLink(string $tooltip = "Profil anzeigen", string $spanClass = "flex") {
+	function getMemberProfilLink1(string $tooltip, string $spanClass) {
 		return ('<a style = "display: block;" href="?action=user-view&userid=' . $this->getId () . '">' . '<span class="' . $flex . '" title="' . $tooltip . '">' . $this->getUsername () . '</span>' . '</a>');
 	}
 	

@@ -1,8 +1,9 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/member.php';
 class DB_member {
 	// private function
-	static private function getMemberByStatement($pdo, $selectstatement, $parameter) {
+	static function getMemberByStatement($pdo, $selectstatement, $parameter) {
 		// first get user data
 		$stmt = $pdo->prepare ( $selectstatement );
 		$stmt->execute ( array (
@@ -39,7 +40,7 @@ class DB_member {
 	 * @return Member
 	 */
 	static function getMemberByName($pdo, $username) {
-		return (getMemberByStatement ( $pdo, "select id,username,email,register_date, modify_date from user where LOWER(username) = LOWER(?)", $username ));
+		return (DB_member::getMemberByStatement ( $pdo, "select id,username,email,register_date, modify_date from user where LOWER(username) = LOWER(?)", $username ));
 	}
 	/**
 	 *
@@ -48,7 +49,7 @@ class DB_member {
 	 * @return Member
 	 */
 	static function getMemberById($pdo, $userId) {
-		return (getMemberByStatement ( $pdo, "select id,username,email,register_date from user where id = ?", $username ));
+		return (DB_member::getMemberByStatement ( $pdo, "select id,username,email,register_date from user where id = ?", $username ));
 	}
 }
 ?>
