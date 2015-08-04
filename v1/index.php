@@ -366,7 +366,9 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 					case 'user-edit' :
 						$case = 'user-edit';
 					case 'user-view' :
-						$case = 'user-view';
+						if (! isset ( $case )) {
+							$case = 'user-view';
+						}
 						$input ['userid'] = ($_REQUEST ['action'] == 'user-edit') ? authUser ()->id : $_REQUEST ['userid'];
 						$user = getUserObject ( getUserById ( $pdo, $input ['userid'] ) );
 						$userextra = getUserExtraById ( $pdo, $input ['userid'] );
@@ -391,6 +393,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						}
 						
 						setPage ( $case );
+						unset ( $case );
 						break;
 					case 'user-save' :
 						if (isset ( $_REQUEST ['userid'] )) {
