@@ -46,7 +46,8 @@ if (hasAuth ()) {
 		<th style='width: 4em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='width: 7%;'>Guide</th>";
+			echo "<th style='width:50px;'>Guide</th>";
+			echo "<th style='width: 7%;'></th>";
 			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
@@ -58,7 +59,7 @@ if (hasAuth ()) {
 		<th>Technik</th>
 		<?php
 		if (hasAuth ()) {
-			echo '<th>Teilnehmer</th>';
+			echo '<th style="width: 15%;">Teilnehmer</th>';
 			echo "<th></th>";
 		} else {
 			echo '<th>Teilnehmer</th>';
@@ -110,7 +111,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
 		// $attendeeString = $attendeeString . $tourmember->getMemberProfilLink () . " ";
-		$attendeeString = $attendeeString . createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . " ";
+		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
+		$attendeeString = $attendeeString . $emailString . createUserProfilLink ( $u, '"', createUserInfo ( $u, $ue ) ) . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
@@ -162,7 +164,10 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $tour->guide->username;
 		$ue = getUserExtraById ( $pdo, $u->id );
 		
-		echo "<td>" . createUserProfilLink ( $u, createUserInfo ( $u, $ue ) ) . "</td>";
+		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
+		
+		echo "<td width='30%' style='text-align: left;'>" . $emailString . "</td>";
+		echo "<td width='70%' style='text-align: left;'>" . createUserProfilLink ( $u, 'style = "display: block;"', createUserInfo ( $u, $ue ) ) . "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		

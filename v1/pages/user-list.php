@@ -70,7 +70,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $isActualUser) {
 	echo '<tr class="' . ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . '">';
 	echo '<td>' . $no . '</td>';
-	echo '<td title="' . createUserInfo ( $user, $userextra ) . '">' . createUserProfilLink ( $user ) . '</td>';
+	echo '<td title="' . createUserInfo ( $user, 'style = "display: block;"', $userextra ) . '">' . createUserProfilLink ( $user ) . '</td>';
 	echo '<td><a style = "display: block;" href="?action=mail-user&toid=' . $user->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $user->username . '" height="30" width="30"> </a></td>';
 	
 	if (isset ( $userextra )) {
