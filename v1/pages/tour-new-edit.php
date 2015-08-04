@@ -54,24 +54,25 @@ require_once __DIR__ . '/../lib/db_tours.php';
 							lon.dispatchEvent(new Event('change'));
 
 							var mp_desc = document.getElementById('meetingpoint_desc');
-							var mp_select = document.getElementById('meetingpoint-selection');
 							mp_desc.value = this.options[this.selectedIndex].text!='Karte'?this.options[this.selectedIndex].text:'';
-							mp_select.value = this.options[this.selectedIndex].text!='Karte'?this.options[this.selectedIndex].text:'';
-							
+														
 							var el1 = document.getElementById('row_meetingpoint_desc');
 							var el2 = document.getElementById('row_meetingpoint');
 							var el3 = document.getElementById('meetingpoint-map');
-							if (this.options[this.selectedIndex].text =='Karte') {
+							if (this.options[this.selectedIndex].text == 'Karte') {
 								el1.className = el1.className.replace( /(?:^|\s)hide(?!\S)/g , '' );
 								el2.className = el2.className.replace( /(?:^|\s)hide(?!\S)/g , '' );
 								el3.style.display = 'block';
 							} else {
 								if(!el1.className.match( /(?:^|\s)hide(?!\S)/g , '' )){
-									el1.className += 'hide';}
+									el1.className += 'hide';
+								}
 								if(!el2.className.match( /(?:^|\s)hide(?!\S)/g , '' )){
-									el2.className += 'hide' ;}
+									el2.className += 'hide' ;
+								}
 								el3.style.display = 'none';
-		}">
+							}
+		">
 		<?php
 		$pdo = db_open ();
 		$places = getPlaces ( $pdo );
@@ -102,8 +103,7 @@ require_once __DIR__ . '/../lib/db_tours.php';
 							value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" /></td>
 					</tr>
 					<!-- end row row_meetingpoint -->
-				</table>
-				<input type="hidden" id="meetingpoint-radius" /> <!--  --> <input type="hidden" id="meetingpoint-lat"
+				</table> <input type="hidden" id="meetingpoint-radius" /> <!--  --> <input type="hidden" id="meetingpoint-lat"
 				name="meetingpoint-lat" /> <!--  --> <input type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
 				<div id="meetingpoint-map" style="width: 100%; height: 400px; display: <?php echo($lasttd=="Karte"?'block':'none');?>;"></div>
 				<!-- END div "meetingpoint-map --> <script>$('#meetingpoint-map').locationpicker({
