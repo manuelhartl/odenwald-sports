@@ -112,7 +112,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		
 		// $attendeeString = $attendeeString . $tourmember->getMemberProfilLink () . " ";
 		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
-		$attendeeString = $attendeeString . $emailString . createUserProfilLink ( $u, '"', createUserInfo ( $u, $ue ) ) . " ";
+		$attendeeString = $attendeeString . $emailString . createUserProfilLink ( $u, "", createUserInfo ( $u, $ue ) ) . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
