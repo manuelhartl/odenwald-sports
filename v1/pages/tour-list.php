@@ -92,6 +92,7 @@ ex2er ( $stmt, array (
 $daystyle = 'even';
 $linestyle = '';
 $cancelstyle = '';
+$countAttendees = 0;
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
 	$tour = getTourObject ( $row );
@@ -99,6 +100,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$attendeeString = '';
 	$authuserid = hasAuth () ? authUser ()->id : '';
 	$users = getAttendees ( $pdo, $tour->id );
+	$countAttendees = count ( $users );
 	foreach ( $users as $user ) {
 		// $tourmember = DB_member::getMemberById ( $pdo, $user ['id'] );
 		$u = new User ();
@@ -129,16 +131,25 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$firsttableentry = ! (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' ));
 	echo '<tr class="' . $dstyle . '">', PHP_EOL;
 	echo '<td colspan="2">', PHP_EOL;
-	echo '<table style="width: 100%;" >', PHP_EOL;
+	echo '<table style="width: 100%; line-height: 1; margin: 0;" >', PHP_EOL;
 	if ($firsttableentry) {
 		echo '  <tr>', PHP_EOL;
 		echo '  <td colspan="2" style="color: black;">' . getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
 		echo '  </tr>', PHP_EOL;
 	}
 	echo '  <tr>', PHP_EOL;
-	echo '    <td title="' . $tour->sport->sportsubname . '">';
+	echo '    <td title="' . $tour->sport->sportsubname . '" style="text-align: left;">';
 	echo makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>", PHP_EOL;
-	echo '    <td style="color: black;">' . $startdate->format ( 'H:i' ) . '</td>', PHP_EOL;
+	echo '    <td>', PHP_EOL;
+	echo '      <table style="width: 100%;" >', PHP_EOL;
+	echo '        <tr>', PHP_EOL;
+	echo '          <td style="color: black;">' . $startdate->format ( 'H:i' ) . '</td>', PHP_EOL;
+	echo '        <tr>', PHP_EOL;
+	echo '        </tr>', PHP_EOL;
+	echo '          <td style="color: black;">' . ($countAttendees > 0 ? $countAttendees . " Biker" : "") . '</td>', PHP_EOL;
+	echo '        </tr>', PHP_EOL;
+	echo '      </table>', PHP_EOL;
+	echo '    </td>', PHP_EOL;
 	echo '  </tr>', PHP_EOL;
 	echo '</table>', PHP_EOL;
 	echo '</td>', PHP_EOL;
