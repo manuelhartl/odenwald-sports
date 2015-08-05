@@ -46,8 +46,8 @@ if (hasAuth ()) {
 		<th style='width: 4em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='width:50px;'>Guide</th>";
-			echo "<th style='width: 7%;'></th>";
+			echo "<th style='width:50px;'></th>";
+			echo "<th style='width: 7%;'>Guide</th>";
 			echo "<th style='width: 15%;'>Treffpunkt</th>";
 		}
 		?>
@@ -148,7 +148,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '          <td style="color: black;">' . $startdate->format ( 'H:i' ) . '</td>', PHP_EOL;
 	echo '        <tr>', PHP_EOL;
 	echo '        </tr>', PHP_EOL;
-	echo '          <td style="color: black;">' . ($countAttendees > 0 ? $countAttendees . " Biker" : "") . '</td>', PHP_EOL;
+	echo '          <td style="color: black; font-size: 0.8em;">' . ($countAttendees > 0 ? $countAttendees . " TN" : "") . '</td>', PHP_EOL;
 	echo '        </tr>', PHP_EOL;
 	echo '      </table>', PHP_EOL;
 	echo '    </td>', PHP_EOL;

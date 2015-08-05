@@ -18,7 +18,7 @@
 		<td><?php echo (is_a ($input['birthdate'],'DateTime')) ?$input ['birthdate']->format ( 'Y' ):'unbekannt';?></td>
 	</tr>
 	<tr>
-		<td>Wohnanschrift)</td>
+		<td>Wohnanschrift</td>
 		<td><?php echo (isset($input['address'])&&strlen($input['address'])>0) ?$input['address']: 'unbekannt';?></td>
 	</tr>
 
