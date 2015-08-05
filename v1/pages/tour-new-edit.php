@@ -47,12 +47,12 @@ require_once __DIR__ . '/../lib/db_tours.php';
 							onchange="
 							var lat = document.getElementById('meetingpoint-lat');
 							lat.value = this.value.split(';')[0].replace(',','.');
-							lat.dispatchEvent(new Event('change'));
+							$('#meetingpoint-lat').trigger('change');
 							
 							var lon = document.getElementById('meetingpoint-lon');
 							lon.value = this.value.split(';')[1].replace(',','.'); 
-							lon.dispatchEvent(new Event('change'));
-
+							$('meetingpoint-lon').trigger('change');
+							
 							var mp_desc = document.getElementById('meetingpoint_desc');
 							mp_desc.value = this.options[this.selectedIndex].text!='Karte'?this.options[this.selectedIndex].text:'';
 														
