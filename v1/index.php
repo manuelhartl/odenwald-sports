@@ -397,14 +397,14 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						break;
 					case 'user-save' :
 						$year = $_REQUEST ['birthdate'];
-						if (! is_integer ( $year )) {
+						if ((! empty ( $year )) && (! filter_var ( $year, FILTER_VALIDATE_INT ) || ($year < 1900) || ($year + 12 > date ( "Y" )))) {
 							setMessage ( 'Geburtsjahr ist nicht g&uuml;ltig' );
-							$year = '0000';
+							$year = '0';
 						} else if (isset ( $_REQUEST ['userid'] )) {
 							// edit
 							$userextra = new UserExtra ();
 							$userextra->id = authUser ()->id;
-							$userextra->birtdate = DateTime::createFromFormat ( 'Y', $_REQUEST ['birthdate'] );
+							$userextra->birtdate = DateTime::createFromFormat ( 'Y', empty ( $year ) ? 0 : $year );
 							$userextra->realname = $_REQUEST ['realname'];
 							$userextra->address = $_REQUEST ['address'];
 							$userextra->address_lat = $_REQUEST ['address-lat'];
@@ -417,8 +417,16 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							updateUserExtra ( $pdo, $userextra );
 							setMessage ( 'Profil aktualisiert' );
 							setPage ( 'home' );
+							break;
 						}
 						$input ['userid'] = authUser ()->id;
+						$input ['birthdate'] = $year;
+						$input ['realname'] = $_REQUEST ['realname'];
+						$input ['address'] = $_REQUEST ['address'];
+						$input ['mailing'] = isset ( $_REQUEST ['mailing'] ) ? $_REQUEST ['mailing'] == 'true' : false;
+						$input ['phone'] = $_REQUEST ['phone'];
+						$input ['address-lat'] = $_REQUEST ['address-lat'];
+						$input ['address-lon'] = $_REQUEST ['address-lon'];
 						break;
 					default :
 						die ();

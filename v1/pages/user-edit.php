@@ -30,36 +30,16 @@
 		</tr>
 		<tr>
 			<td>Geburtsjahr</td>
-			<td><?php
-			?>
-				<div class="row">
-					<div class='col-sm-6'>
-						<input type="text" class="form-control" style="width: 150px;" id="birthdate" maxlength="10" name="birthdate"
-							value="<?php echo (isValidDate($input ['birthdate'],"2000-1-1")->format ( 'Y' ));?>" />
-					</div>
-					<!-- 
-					<script type="text/javascript">
-            $(function () {
-                $('#birthdate').datetimepicker({
-                		defaultDate: moment('<?php echo (isValidDate($input ['birthdate'],"2000-1-1")->format ( 'Y' ));?>','YYYY'),
-                		format: 'YYYY',
-                		sideBySide: true,
-                		showClose: true
-                		}
-                      );
-            });
-// 				minDate: moment().subtract(90,'years').format('YYYY'),
-//   			maxDate: moment().subtract(16,'years').format('YYYY'),
-            
-        </script> -->
-				</div> (Dies ist f&uuml;r alle angemeldeten Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
+			<td><input type="text" class="form-control" style="width: 150px;" id="birthdate" maxlength="10" name="birthdate"
+				value="<?php echo (isValidDate($input ['birthdate'],"2000-1-1")->format ( 'Y' ));?>" /> (oder leerlassen)<br>(Dies ist
+				f&uuml;r alle angemeldeten Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
 		</tr>
 		<tr>
-		<td>Wohnanschrift)</td>
-		<td><input type="text" id="address" style="width: 100%" name="address"
-			value="<?php echo isset($input['address']) ? $input['address'] : '';?>" /> <input type="hidden" id="address-radius" />
-			<input type="hidden" id="address-lat" name="address-lat" /><input type="hidden" id="address-lon" name="address-lon" />
-			<div id="address-map" style="width: 100%; height: 400px;"></div> <script>$('#address-map').locationpicker({
+			<td>Wohnanschrift)</td>
+			<td><input type="text" id="address" style="width: 100%" name="address"
+				value="<?php echo isset($input['address']) ? $input['address'] : '';?>" /> <input type="hidden" id="address-radius" />
+				<input type="hidden" id="address-lat" name="address-lat" /><input type="hidden" id="address-lon" name="address-lon" />
+				<div id="address-map" style="width: 100%; height: 400px;"></div> <script>$('#address-map').locationpicker({
 	location: {latitude: <?php echo isset($input['address-lat']) ? $input['address-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['address-lon']) ? $input['address-lon'] : '8.670546531677246';?>},	
 	radius: 50,
 	inputBinding: {
