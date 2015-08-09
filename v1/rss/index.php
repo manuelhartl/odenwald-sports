@@ -6,9 +6,9 @@ header ( "Content-Type: application/rss+xml; charset=UTF-8" );
 $xml = new SimpleXMLElement ( '<rss/>' );
 $xml->addAttribute ( "version", "2.0" );
 $channel = $xml->addChild ( "channel" );
-$channel->addChild ( "title", "Odenwald Sports Tours" );
+$channel->addChild ( "title", "Sport2gether" );
 $channel->addChild ( "link", dirname ( get_current_url () ) );
-$channel->addChild ( "description", "Tour list of Odenwald Sports Tours" );
+$channel->addChild ( "description", "Tour list of Sport2gether" );
 $channel->addChild ( "language", "en-us" );
 
 $entries [0] ['title'] = 'title';
@@ -27,13 +27,13 @@ $stmt = $pdo->prepare ( 'select *,t.status as tourstatus,t.id as id, g.id as gui
 ex2er ( $stmt, array () );
 
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-	$tour = getTourObject ( $row );
+	$tour = getDBTour ( $row );
 	$users = getAttendees ( $pdo, $tour->id );
 	
 	$item = $channel->addChild ( "item" );
 	
 	$title = //
-getWeekDay ( $tour->startDateTime ) . ' ' . //
+Utilities::getWeekDay ( $tour->startDateTime ) . ' ' . //
 $tour->startDateTime->format ( 'd.m.Y H:i' ) . ' ' . //
 $tour->sport->sportsubname . '-Tour ' . //
 	                                        // 'guided by ' . $tour->guide->username . ' ' . //

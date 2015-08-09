@@ -370,8 +370,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$case = 'user-view';
 						}
 						$input ['userid'] = ($_REQUEST ['action'] == 'user-edit') ? authUser ()->id : $_REQUEST ['userid'];
-						$user = getUserObject ( getUserById ( $pdo, $input ['userid'] ) );
-						$userextra = getUserExtraById ( $pdo, $input ['userid'] );
+						$user = getDBUser ( getUserById ( $pdo, $input ['userid'] ) );
+						$userextra = getDBUserExtraById ( $pdo, $input ['userid'] );
 						$input ['username'] = $user->username;
 						if ($userextra) {
 							$input ['realname'] = $userextra->realname;
@@ -402,7 +402,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$year = '0';
 						} else if (isset ( $_REQUEST ['userid'] )) {
 							// edit
-							$userextra = new UserExtra ();
+							$userextra = new DBUserExtra ();
 							$userextra->id = authUser ()->id;
 							$userextra->birtdate = DateTime::createFromFormat ( 'Y', empty ( $year ) ? 0 : $year );
 							$userextra->realname = $_REQUEST ['realname'];
@@ -447,7 +447,10 @@ if (! hasAuth () && //
 
 if (isset ( $config ['beta'] ) && $config ['beta']) {
 	echo '<div id="beta">';
-	echo 'Beta Sport2gether Beta sport2gether Beta sport2gether Beta sport2gether Beta sport2gether Beta sport2gether Beta sport2gether Beta sport2gether ';
+	$info = (isset ( $config ['betainformation'] ) && $config ['betainformation']) ? $config ['betainformation'] : ' beta';
+	for($i = 1; $i < 10; $i ++) {
+		echo $info . 'Sport2gether ';
+	}
 	echo $config ['version'];
 	echo '</div>';
 }

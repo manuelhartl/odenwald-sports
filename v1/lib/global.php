@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/settings.php';
+require_once __DIR__ . '/db_users.php';
+
 $cookielifetime = 60 * 60 * 24; // 24h
 if ($_SERVER ['SERVER_NAME'] == '127.0.0.1') {
 	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], '127.0.0.1', false );
@@ -12,10 +14,18 @@ if ($_SERVER ['SERVER_NAME'] == '127.0.0.1') {
 	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], '.' . $_SERVER ['SERVER_NAME'] );
 }
 date_default_timezone_set ( "Europe/Berlin" );
-class User {
-	public $id;
-	public $username;
-	public $email;
+class SessionInfo {
+	
+	/**
+	 *
+	 * @param string $index
+	 * @param string $default
+	 * @return string
+	 */
+	public static function getInVa($index, $default = null) {
+		global $input;
+		return isset ( $input [$index] ) ? $input [$index] : ($default == null) ? "" : $default;
+	}
 }
 function hasAuth() {
 	if (! isset ( $_SESSION )) {
@@ -31,7 +41,7 @@ function requireAuth() {
 }
 function login($pdo, $username) {
 	$user = getUserByName ( $pdo, $username );
-	$_SESSION ['userObj'] = getUserObject ( $user );
+	$_SESSION ['userObj'] = getDBUser ( $user );
 }
 function authUser() {
 	return $_SESSION ['userObj'];
@@ -62,48 +72,12 @@ function get_current_url($strip = true) {
 function getUrlPrefix() {
 	return dirname ( get_current_url () );
 }
-function getInVa($index, $default = '') {
-	global $input;
-	return isset ( $input [$index] ) ? $input [$index] : $default;
-}
 function validatePassword($input) {
 	// TODO: check for character classes
 	return strlen ( $input ) >= 6;
 }
 function validateEmail($input) {
 	return filter_var ( $input, FILTER_VALIDATE_EMAIL );
-}
-/**
- *
- * @param Object[T] $value        	
- * @param Object[T) $defaultValue        	
- * @return if value is set return value,otherwise default
- */
-function getVal($value, $defaultValue) {
-	return (isset ( $value ) ? $value : $defaultValue);
-}
-/**
- *
- * @param DateTime $value        	
- * @param DateTime $defaultValue        	
- * @return if value is set return value,otherwise default
- */
-function isValidDate($value, $defaultValue) {
-	if (is_a ( $value, 'DateTime' )) {
-		return ($value);
-	}
-	return (new DateTime ( $defaultValue ));
-}
-/**
- *
- * @param String $message        	
- */
-function alert($message) {
-	if (isset ( $message )) {
-		echo "<script language=\"Javascript\">";
-		echo "alert('" . $message . "');";
-		echo "</script>";
-	}
 }
 
 ?>

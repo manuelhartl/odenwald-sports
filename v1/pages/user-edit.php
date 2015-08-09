@@ -31,8 +31,8 @@
 		<tr>
 			<td>Geburtsjahr</td>
 			<td><input type="text" class="form-control" style="width: 150px;" id="birthdate" maxlength="10" name="birthdate"
-				value="<?php echo (isValidDate($input ['birthdate'],"2000-1-1")->format ( 'Y' ));?>" /> (oder leerlassen)<br>(Dies ist
-				f&uuml;r alle angemeldeten Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
+				value="<?php echo (Utilities::isValidDate($input ['birthdate'],"2000-1-1")->format ( 'Y' ));?>" /> (oder leerlassen)<br>(Dies
+				ist f&uuml;r alle angemeldeten Benutzer sichtbar - Nur eintragen wenn dies in Ordnung ist)</td>
 		</tr>
 		<tr>
 			<td>Wohnanschrift)</td>

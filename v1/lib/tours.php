@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/db_tours.php';
+require_once __DIR__ . '/utilities.php';
 require_once __DIR__ . '/mail.php';
 function getStars($number, $id, $readonly = true) {
 	$result = ''; // '<div>';
@@ -33,7 +34,7 @@ function formatMeters($meters) {
 function getMailText($tour, $attendees = 0) {
 	return '<html><body><table>' . //
 '<tr><td>Sport:</td><td>' . $tour->sport->sportsubname . '</td></tr>' . //
-'<tr><td>Datum/Uhrzeit:</td><td>' . getWeekDay ( $tour->startDateTime ) . ', ' . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '</td></tr>' . //
+'<tr><td>Datum/Uhrzeit:</td><td>' . Utilities::getWeekDay ( $tour->startDateTime ) . ', ' . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '</td></tr>' . //
 '<tr><td>Treffpunkt:</td><td>' . htmlspecialchars ( $tour->meetingPoint ) . '</td></tr>' . //
 ($attendees == 0 ? '' : '<tr><td>Aktuell angemeldet:</td><td>' . $attendees . '</td></tr>') . //
 '<tr><td>Dauer:</td><td>' . formatMinutes ( $tour->duration ) . '</td></tr>' . //

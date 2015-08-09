@@ -6,6 +6,7 @@ $config['dbDatabase']='';
 $config['emailFrom']='';
 $config['version'] = '';
 $config['beta'] = false;
+$config['betainformation'] = 'beta';
 $config ['HTMLEditor'] = false;
 #$config['debug'] = true;
 

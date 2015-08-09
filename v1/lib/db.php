@@ -10,24 +10,6 @@ function toDbmsDate($datetime) {
 function fromDbmsDate($datetimeString) {
 	return DateTime::createFromFormat ( "Y-m-d H:i:s", $datetimeString );
 }
-function getWeekDay($datetime) {
-	switch ($datetime->format ( 'N' )) {
-		case 1 :
-			return "Mo";
-		case 2 :
-			return "Di";
-		case 3 :
-			return "Mi";
-		case 4 :
-			return "Do";
-		case 5 :
-			return "Fr";
-		case 6 :
-			return "Sa";
-		case 7 :
-			return "So";
-	}
-}
 function ex2er($stmt, $params = null) {
 	global $config;
 	$result = $stmt->execute ( $params );

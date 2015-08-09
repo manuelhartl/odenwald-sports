@@ -18,26 +18,26 @@ class DBTour {
 	public $skill;
 	public $speed;
 }
-class Gps {
+class DBGps {
 	public $lat;
 	public $long;
 }
-class Place {
+class DBPlace {
 	public $id;
 	public $name;
 	public $gps; // Gps
 }
-class Sport {
+class DBSport {
 	public $sportsubid;
 	public $sportsubname;
 	public $sportname;
 }
-function getTourObject($row) {
+function getDBTour($row) {
 	$tourObj = new DBTour ();
 	$tourObj->id = $row ['id'];
 	$tourObj->startDateTime = date_create ( $row ['startdate'] );
 	$tourObj->duration = $row ['duration'];
-	$tourObj->sport = new Sport ();
+	$tourObj->sport = new DBSport ();
 	$tourObj->sport->sportname = $row ['sportname'];
 	// $tourObj->sport->sportsubid = $row ['sportsubid'];
 	$tourObj->sport->sportsubname = $row ['sportsubname'];
@@ -50,11 +50,11 @@ function getTourObject($row) {
 		$tourObj->meetingPoint_long = $row ['meetingpoint_long'];
 	}
 	$tourObj->description = $row ['description'];
-	$tourObj->guide = new User ();
+	$tourObj->guide = new DBUser ();
 	$tourObj->guide->id = $row ['guide'];
 	$tourObj->guide->username = $row ['guidename'];
 	$tourObj->attendees = array ();
-	array_push ( $tourObj->attendees, new User () );
+	array_push ( $tourObj->attendees, new DBUser () );
 	$tourObj->canceled = ($row ['tourstatus'] == 'canceled');
 	$tourObj->distance = $row ['distance'];
 	$tourObj->elevation = $row ['elevation'];
@@ -62,11 +62,11 @@ function getTourObject($row) {
 	$tourObj->skill = $row ['skill'];
 	return $tourObj;
 }
-function getPlaceObject($row) {
-	$place = new Place ();
+function getDBPlace($row) {
+	$place = new DBPlace ();
 	$place->id = $row ['id'];
 	$place->name = $row ['name'];
-	$place->gps = new Gps ();
+	$place->gps = new DBGps ();
 	$place->gps->lat = $row ['lat'];
 	$place->gps->long = $row ['lon'];
 	return $place;
@@ -92,7 +92,7 @@ function insertTour($pdo, DBTour $tour) {
 	}
 	return true;
 }
-function updateTour($pdo, Tour $tour) {
+function updateTour($pdo, DBTour $tour) {
 	$stmt = $pdo->prepare ( "update tour set startdate = ?, duration=?, meetingpoint=?, meetingpoint_desc=? , meetingpoint_coord = PointFromText(?), description=?, skill = ? , speed = ? , distance = ?, elevation = ? where id=? and status='active'" );
 	$date = toDbmsDate ( $tour->startDateTime );
 	$point = 'POINT(' . $tour->meetingPoint_lat . " " . $tour->meetingPoint_long . ')';
@@ -123,14 +123,14 @@ function getTourById($pdo, $tourid) {
 	$stmt->execute ( array (
 			$tourid 
 	) );
-	return getTourObject ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
+	return getDBTour ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
 }
-function getPlaceById($pdo, $id) {
+function getDBPlaceById($pdo, $id) {
 	$stmt = $pdo->prepare ( "select id,name,X(coord) as lat ,Y(coord) as lon from place where id=?" );
 	$stmt->execute ( array (
 			$id 
 	) );
-	return getPlaceObject ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
+	return getDBPlace ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
 }
 function getPlaces($pdo) {
 	$stmt = $pdo->prepare ( "SELECT id,name,X(coord) as lat,Y(coord) lon FROM place ORDER BY name ASC" );

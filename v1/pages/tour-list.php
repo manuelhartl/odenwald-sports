@@ -1,7 +1,11 @@
 <?php
 require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
-require_once __DIR__ . '/../lib/db_member.php';
+require_once __DIR__ . '/../lib/utilities.php';
+function getInVa($index, $default = '') {
+	global $input;
+	return isset ( $input [$index] ) ? $input [$index] : $default;
+}
 
 if (hasAuth ()) {
 	// new DBtour
@@ -10,7 +14,7 @@ if (hasAuth ()) {
 	// show actual/old tours
 	echo '<form name="tour-list-update" action="" method="post">';
 	echo '<input name="action" type="hidden" value="tour-list-old" />';
-	echo '<input name="showcanceled" type="hidden" value="' . getInVa ( 'showold' ) . '" />';
+	echo '<input name="showcanceled" type="hidden" value="' . getInVa ( 'showcanceled' ) . '" />';
 	if (getInVa ( 'showold' ) == 'true') {
 		echo '<input name="showold" type="hidden" value="false" />';
 		echo '<input name="submit-tour-list-update" type="submit" value="Aktuelle Touren anzeigen" />';
@@ -67,14 +71,15 @@ if (hasAuth ()) {
 		?>
 	</tr>
 <?php
-$reference = getPlaceById ( $pdo, 1 );
+$reference = getDBPlaceById ( $pdo, 1 );
 if (hasAuth ()) {
-	$userextra = getUserExtraById ( $pdo, authUser ()->id );
+	$userextra = getDBUserExtraById ( $pdo, authUser ()->id );
 	if (isset ( $userextra->address_lat )) {
 		$reference->gps->lat = $userextra->address_lat;
 		$reference->gps->long = $userextra->address_long;
 	}
 }
+
 $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
 ' from tour t' . //
 ' left join user g ON (t.fk_guide_id=g.id) ' . //
@@ -82,8 +87,8 @@ $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_
 ' left join sport s ON (ss.fk_sport_id=s.id) ' . //
 ' WHERE true ' . //
 (! hasAuth () ? ' AND t.status = "active"' : '') . //
-(getInVa ( 'showcanceled' ) == 'true' ? '' : ' AND (t.status = "active")') . //
-(getInVa ( 'showold' ) == 'true' ? ' AND startdate<now() ORDER BY startdate DESC LIMIT 100' : ' AND startdate>=now() ORDER BY startdate ASC') . //
+(getInVa ( 'showcanceled', 'false' ) == 'true' ? '' : ' AND (t.status = "active")') . //
+(getInVa ( 'showold', 'false' ) == 'true' ? ' AND startdate<now() ORDER BY startdate DESC LIMIT 100' : ' AND startdate>=now() ORDER BY startdate ASC') . //
 '' ); //
 ex2er ( $stmt, array (
 		$reference->gps->lat,
@@ -96,7 +101,7 @@ $cancelstyle = '';
 $countAttendees = 0;
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	// print_r($row);
-	$tour = getTourObject ( $row );
+	$tour = getDBTour ( $row );
 	$joinedTour = false;
 	$attendeeString = '';
 	$authuserid = hasAuth () ? authUser ()->id : '';
@@ -104,11 +109,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$countAttendees = count ( $users );
 	foreach ( $users as $user ) {
 		// $tourmember = DB_member::getMemberById ( $pdo, $user ['id'] );
-		$u = new User ();
+		$u = new DBUser ();
 		$u->id = $user ['id'];
 		$u->email = $user ['email'];
 		$u->username = $user ['username'];
-		$ue = getUserExtraById ( $pdo, $u->id );
+		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
 		// $attendeeString = $attendeeString . $tourmember->getMemberProfilLink () . " ";
 		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
@@ -136,7 +141,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '<table style="width: 100%; line-height: 1; margin: 0;" >', PHP_EOL;
 	if ($firsttableentry) {
 		echo '  <tr>', PHP_EOL;
-		echo '  <td colspan="2" style="color: black;">' . getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
+		echo '  <td colspan="2" style="color: black;">' . Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
 		echo '  </tr>', PHP_EOL;
 	}
 	echo '  <tr>', PHP_EOL;
@@ -158,11 +163,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	if (hasAuth ()) {
 		// guide
-		$u = new User ();
+		$u = new DBUser ();
 		$u->id = $tour->guide->id;
 		$u->email = $tour->guide->email;
 		$u->username = $tour->guide->username;
-		$ue = getUserExtraById ( $pdo, $u->id );
+		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
 		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
 		
@@ -199,7 +204,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			if (($tour->guide->id == $authuserid)) {
 				// edit
 				if (! $tour->canceled) {
-					$tooltipdate = getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
+					$tooltipdate = Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
 					$tooltip = 'Die Tour  am ' . $tooltipdate . ' bearbeiten';
 					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-edit" value="" title="' . $tooltip . '"/></form>';
 					$tooltip = 'Die Tour  am ' . $tooltipdate . ' absagen';
@@ -208,7 +213,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			} else {
 				// Join/leave
 				if (! $tour->canceled) {
-					$tooltipdate = getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
+					$tooltipdate = Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
 					if ($joinedTour) {
 						$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' abmelden';
 						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" value="" title="' . $tooltip . '"/></form>';

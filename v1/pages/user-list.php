@@ -2,9 +2,9 @@
 require_once 'lib/global.php';
 require_once 'lib/users.php';
 
-$reference = new Gps ();
+$reference = new DBGps ();
 $hasAdress = false;
-$userextra = getUserExtraById ( $pdo, authUser ()->id );
+$userextra = getDBUserExtraById ( $pdo, authUser ()->id );
 if (isset ( $userextra->address_lat )) {
 	$hasAdress = true;
 	$reference->lat = $userextra->address_lat;
@@ -29,7 +29,7 @@ if ($hasAdress) {
 <?php
 
 // dump actual user
-$user = getUserObject ( getUserByName ( $pdo, authUser ()->username ) );
+$user = getDBUser ( getUserByName ( $pdo, authUser ()->username ) );
 showUser ( "", $user, $userextra, null, $hasAdress, $hasAdress, true );
 // space
 echo ("	<tr>");
@@ -53,24 +53,20 @@ ex2er ( $stmt, array (
 $no = 1;
 $showAdress = $hasAdress; // only if actual user has an adress
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-	unset ( $userextra );
-	$userextra = false;
 	$hasAdress = false;
-	$user = getUserObject ( $row );
+	$user = getDBUser ( $row );
 	$hasExtra = ! is_null ( $row ['fk_user_id'] );
-	if ($hasExtra) {
-		$userextra = getUserExtraObject ( $row );
-		if (isset ( $row ['dist'] )) {
-			$hasAdress = true;
-		}
+	$userextra = getDBUserExtra ( $row );
+	if (isset ( $row ['dist'] )) {
+		$hasAdress = true;
 	}
 	showUser ( $no, $user, $userextra, $row ['dist'], $hasAdress, $showAdress, false );
 	$no = $no + 1;
 }
-function showUser($no, $user, $userextra, $distance, $hasAdress, $showAdress, $isActualUser) {
+function showUser($no, DBUser $user, DBUserExtra $userextra, $distance, $hasAdress, $showAdress, $isActualUser) {
 	echo '<tr class="' . ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . '">';
 	echo '<td>' . $no . '</td>';
-	echo '<td title="' . createUserInfo ( $user, 'style = "display: block;"', $userextra ) . '">' . createUserProfilLink ( $user, 'style = "display: block;"' ) . '</td>';
+	echo '<td>' . createUserProfilLink ( $user, 'style = "display: block;"', createUserInfo ( $user, $userextra ) ) . '</td>';
 	echo '<td><a style = "display: block; border: none;" href="?action=mail-user&toid=' . $user->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $user->username . '" height="30" width="30"> </a></td>';
 	
 	if (isset ( $userextra )) {

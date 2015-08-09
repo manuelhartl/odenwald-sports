@@ -16,7 +16,7 @@ function createUserProfilLink($user, $style, $tooltip = "Profil anzeigen") {
 	// var_dump($user);
 	return ('<a ' . $style . ' href="?action=user-view&userid=' . $user->id . '">' . '<span class="flex" title="' . $tooltip . '">' . $user->username . '</span>' . '</a>');
 }
-function createUserInfo($user, $userextra) {
+function createUserInfo(DBuser $user, DBUserextra $userextra) {
 	$userinfo = "";
 	if (isset ( $userextra )) {
 		
@@ -34,6 +34,6 @@ function createUserInfo($user, $userextra) {
 		$userinfo = $user->username;
 	}
 	
-	return ($userinfo);
+	return (htmlspecialchars ( $userinfo ));
 }
 ?>

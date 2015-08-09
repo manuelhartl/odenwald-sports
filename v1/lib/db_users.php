@@ -1,6 +1,11 @@
 <?php
 require_once __DIR__ . '/db.php';
-class UserExtra {
+class DBUser {
+	public $id;
+	public $username;
+	public $email;
+}
+class DBUserExtra {
 	public $id;
 	public $birtdate;
 	public $realname;
@@ -10,28 +15,27 @@ class UserExtra {
 	public $mailing;
 	public $phone;
 }
-function getUserObject($user) {
-	$userObj = new User ();
+function getDBUser($user) {
+	$userObj = new DBUser ();
 	$userObj->id = isset ( $user ['id'] ) ? $user ['id'] : false;
 	$userObj->username = isset ( $user ['username'] ) ? $user ['username'] : false;
 	$userObj->email = isset ( $user ['email'] ) ? $user ['email'] : false;
 	$userObj->register_date = isset ( $user ['register_date'] ) ? date_create ( $user ['register_date'] ) : false;
 	return $userObj;
 }
-function getUserExtraObject($row) {
-	if (! $row) {
-		return false;
+function getDBUserExtra($row) {
+	$userextra = new DBUserExtra ();
+	if ($row && ! is_null ( $row ['fk_user_id'] )) {
+		$userextra->id = isset ( $row ['fk_user_id'] ) ? $row ['fk_user_id'] : false;
+		$userextra->realname = isset ( $row ['realname'] ) ? $row ['realname'] : false;
+		$userextra->birtdate = isset ( $row ['birthdate'] ) ? date_create ( $row ['birthdate'] ) : false;
+		$userextra->address = isset ( $row ['address'] ) ? $row ['address'] : false;
+		$userextra->address_lat = isset ( $row ['address_lat'] ) ? $row ['address_lat'] : false;
+		$userextra->address_long = isset ( $row ['address_long'] ) ? $row ['address_long'] : false;
+		// boolean, default: true
+		$userextra->mailing = isset ( $row ['mailing'] ) ? $row ['mailing'] : true;
+		$userextra->phone = isset ( $row ['phone'] ) ? $row ['phone'] : false;
 	}
-	$userextra = new UserExtra ();
-	$userextra->id = isset ( $row ['fk_user_id'] ) ? $row ['fk_user_id'] : false;
-	$userextra->realname = isset ( $row ['realname'] ) ? $row ['realname'] : false;
-	$userextra->birtdate = isset ( $row ['birthdate'] ) ? date_create ( $row ['birthdate'] ) : false;
-	$userextra->address = isset ( $row ['address'] ) ? $row ['address'] : false;
-	$userextra->address_lat = isset ( $row ['address_lat'] ) ? $row ['address_lat'] : false;
-	$userextra->address_long = isset ( $row ['address_long'] ) ? $row ['address_long'] : false;
-	// boolean, default: true
-	$userextra->mailing = isset ( $row ['mailing'] ) ? $row ['mailing'] : true;
-	$userextra->phone = isset ( $row ['phone'] ) ? $row ['phone'] : false;
 	return $userextra;
 }
 function checkAuth($pdo, $username, $password) {
@@ -93,7 +97,7 @@ function addUserExtra($pdo, $id) {
 	}
 	return $pdo->lastInsertId ();
 }
-function updateUserExtra($pdo, UserExtra $userextra) {
+function updateUserExtra($pdo, DBUserExtra $userextra) {
 	$stmt = $pdo->prepare ( "update user_extra set realname = ?, birthdate = ? , address= ? , address_coord = PointFromText(?), mailing = ?, phone = ? where fk_user_id = ?" );
 	$point = 'POINT(' . $userextra->address_lat . " " . $userextra->address_long . ')';
 	$date = toDbmsDate ( $userextra->birtdate );
@@ -110,12 +114,12 @@ function updateUserExtra($pdo, UserExtra $userextra) {
 	}
 	return true;
 }
-function getUserExtraById($pdo, $userid) {
+function getDBUserExtraById($pdo, $userid) {
 	$stmt = $pdo->prepare ( 'select *,X(address_coord) as address_lat,Y(address_coord) as address_long from user_extra where user_extra.fk_user_id = ?' );
 	$stmt->execute ( array (
 			$userid 
 	) );
-	return getUserExtraObject ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
+	return getDBUserExtra ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
 }
 function changePassword($pdo, $userid, $hashedpassword) {
 	$stmt = $pdo->prepare ( "update user set hashedpassword = ? where id = ?" );
