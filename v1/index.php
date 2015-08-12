@@ -168,27 +168,48 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				switch ($_REQUEST ['action']) {
 					case 'mail-user' :
 						setPage ( 'mail' );
-						$toid = $_REQUEST ['toid'];
-						$touser = getUserById ( $pdo, $toid );
-						$input ['to'] = $touser ['username'];
+						if (isset ( $_REQUEST ['toid'] )) {
+							$toid = $_REQUEST ['toid'];
+							$touser = getUserById ( $pdo, $toid );
+							$input ['to'] = $touser ['username'];
+						} else {
+							$toids = $_REQUEST ['toids'];
+							$tos = "";
+							foreach ( explode ( ',', $toids ) as $toid ) {
+								$touser = getUserById ( $pdo, $toid );
+								$tos .= $touser ['username'] . ",";
+							}
+							$input ['tos'] = substr ( $tos, 0, strlen ( $tos ) - 1 );
+						}
 						if (isset ( $_REQUEST ['subject'] )) {
 							$input ['subject'] = $_REQUEST ['subject'];
 						}
 						break;
 					case 'mail-send' :
-						$to = $_REQUEST ['to'];
+						
 						$subject = $_REQUEST ['subject'];
 						$body = $_REQUEST ['body'];
-						$input ['to'] = $_REQUEST ['to'];
 						$input ['subject'] = $_REQUEST ['subject'];
 						$input ['body'] = $_REQUEST ['body'];
+						$input ['to'] = $_REQUEST ['to'];
+						
 						if (empty ( $subject )) {
 							setMessage ( 'Bitte einen Betreff eingeben' );
 						} else if (empty ( $body )) {
 							setMessage ( 'Bitte eine Nachricht eingeben' );
+						} else if (empty ( $to )) {
+							setMessage ( 'Bitte Empfänger eingeben' );
 						} else {
-							$touser = getUserByName ( $pdo, $to );
-							sendmail ( $touser ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
+							if (isset ( $_REQUEST ['to'] )) {
+								$to = $_REQUEST ['to'];
+								$touser = getUserByName ( $pdo, $to );
+								sendmail ( $touser ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
+							} else if (isset ( $_REQUEST ['tos'] )) {
+								foreach ( explode ( ',', $_REQUEST ['to'] ) as $username ) {
+									$touser = getUserByName ( $pdo, $username );
+									sendmail ( $touser ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
+								}
+							}
 							setPage ( 'home' );
 							setMessage ( 'Mail an ' . $touser ['username'] . ' gesendet' );
 						}

@@ -173,7 +173,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		
 		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
 		
-		echo "<td width='30%' style='text-align: left;'>" . $emailString . "</td>";
+		echo "<td width='30%' style='text-align: left;'>" . (($tour->guide->id == $authuserid)) ? $u->username : $emailString . "</td>";
 		echo "<td width='70%' style='text-align: left;'>" . createUserProfilLink ( $u, 'style = "display: block;"', createUserInfo ( $u, $ue ) ) . "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
@@ -200,10 +200,21 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	if (hasAuth ()) {
 		// attendees
 		echo "<td style='text-align: left;'>" . $attendeeString . '</td>';
+		
 		// functions
 		echo "<td style='text-align: left;'>";
+		
 		if ($tour->startDateTime >= new DateTime ()) {
-			if (($tour->guide->id == $authuserid)) {
+			// Mail to all
+			$userIDs = strval ( $tour->guide->id );
+			$users = getAttendees ( $pdo, $tour->id );
+			$countAttendees = count ( $users );
+			foreach ( $users as $user ) {
+				$userIDs += "," . $user [userid];
+			}
+			echo '<a id="tour-mail" style = "border: none;" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Mail an alle" . '"></a>';
+			
+			if ($tour->guide->id == $authuserid) {
 				// edit
 				if (! $tour->canceled) {
 					$tooltipdate = Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );

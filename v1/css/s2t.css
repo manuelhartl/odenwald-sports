@@ -91,8 +91,8 @@ input[id=tour-leave] {
 input[id=tour-edit] {
 	background: #ccc url('../img/big/edit.png') no-repeat top left;
 	padding-left: 16px;
-	height: 40px;
-	width: 40px;
+	height: 30px;
+	width: 30px;
 	border: none;
 	background-size: 25px;
 	background-color: transparent;
@@ -101,8 +101,18 @@ input[id=tour-edit] {
 input[id=tour-cancel] {
 	background: #ccc url('../img/big/cancel.png') no-repeat top left;
 	padding-left: 16px;
-	height: 40px;
-	width: 40px;
+	height: 30px;
+	width: 30px;
+	border: none;
+	background-size: 25px;
+	background-color: transparent;
+}
+
+a[id=tour-mail] {
+	background: #ccc url('../img/big/mail.png') no-repeat top left;
+	padding-left: 16px;
+	height: 30px;
+	width: 30px;
 	border: none;
 	background-size: 25px;
 	background-color: transparent;
