@@ -171,6 +171,9 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$toid = $_REQUEST ['toid'];
 						$touser = getUserById ( $pdo, $toid );
 						$input ['to'] = $touser ['username'];
+						if (isset ( $_REQUEST ['subject'] )) {
+							$input ['subject'] = $_REQUEST ['subject'];
+						}
 						break;
 					case 'mail-send' :
 						$to = $_REQUEST ['to'];
