@@ -146,7 +146,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	}
 	echo '  <tr>', PHP_EOL;
 	echo '    <td title="' . $tour->sport->sportsubname . '" style="text-align: left;">';
-	echo makeSportSubnameIconTag ( $tour->sport->sportsubname ) . "</td>", PHP_EOL;
+	echo makeSportSubnameIconTag ( $tour->sport->sportsubname, $tour->canceled ), PHP_EOL;
+	echo '    </td>', PHP_EOL;
 	echo '    <td>', PHP_EOL;
 	echo '      <table style="width: 100%;" >', PHP_EOL;
 	echo '        <tr>', PHP_EOL;
@@ -236,7 +237,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
  * @param Strng $sportsubname
  * @return the shortcut for the sport subnmae
  */
-function makeSportSubnameIconTag($sportsubname) {
+function makeSportSubnameIconTag($sportsubname, $canceled) {
 	// (1, 1, 'MTB'),
 	// (3, 1, 'Rennrad'),
 	// (4, 1, 'Crosser'),
@@ -281,8 +282,12 @@ function makeSportSubnameIconTag($sportsubname) {
 		default :
 			$icon = "mtb";
 	}
+	if ($canceled) {
+		$icon = 'delete';
+	}
 	
 	return ("<img src='img/big/" . $icon . ".png' align='middle' border='0' height='40px' width='40px'>");
 }
+
 ?>
 </table>
