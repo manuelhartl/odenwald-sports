@@ -173,7 +173,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		
 		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
 		
-		echo "<td width='30%' style='text-align: left;'>" . (($tour->guide->id == $authuserid)) ? $u->username : $emailString . "</td>";
+		echo "<td width='30%' style='text-align: left;'>" . (($tour->guide->id == $authuserid) ? $u->username : $emailString) . "</td>";
 		echo "<td width='70%' style='text-align: left;'>" . createUserProfilLink ( $u, 'style = "display: block;"', createUserInfo ( $u, $ue ) ) . "</td>";
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
