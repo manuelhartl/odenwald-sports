@@ -210,12 +210,35 @@ td.tooltip {
 	max-height: 80px;
 	margin-bottom: 30px;
 }
+#navigation-login {
+	float: right;
+		padding-left: 20px;
+	
+}
 
 #main {
 	min-height: calc(100vH - 200px);
 	max-height: calc(100vH - 200px);
+	width: 100%;
 	overflow: auto;
 }
+
+#checkbox {
+	float: left;
+	line-height: 0.5;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+#rssbutton {
+	float: left;
+	display: inline-block;
+}
+#tourbutton {
+	float: left;
+	display: inline-block;
+}
+
 
 #version {
 	margin-top: 10px;

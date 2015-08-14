@@ -51,7 +51,14 @@ if (hasAuth ()) {
 				value="Logout" />
 		</form>
 <?php
-	echo 'Angemeldet als [' . authUser ()->username . ']';
+	echo '  <div id="navigation-login">' . PHP_EOL;
+	echo '    <div id="navigation-login-top">' . PHP_EOL;
+	echo 'Angemeldet als ';
+	echo '    </div> <!--End div navigation-login-top -->' . PHP_EOL;
+	echo '    <div id="navigation-login-bottom">' . PHP_EOL;
+	echo '[' . authUser ()->username . ']';
+	echo '    </div> <!--End div navigation-login-bottom -->' . PHP_EOL;
+	echo '  </div> <!--End div navigation-loginm -->' . PHP_EOL;
 	echo '</div>';
 } else {
 	?>

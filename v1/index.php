@@ -215,12 +215,22 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						}
 						break;
 					case 'tour-list-canceled' :
-						$input ['showcanceled'] = $_REQUEST ['showcanceled'];
-						$input ['showold'] = $_REQUEST ['showold'];
+						$showcanceled = isset ( $_SESSION ["showcanceled"] ) ? $_SESSION ["showcanceled"] : "false";
+						if ($showcanceled == "true") {
+							$showcanceled = "false";
+						} else {
+							$showcanceled = "true";
+						}
+						$_SESSION ["showcanceled"] = $showcanceled;
 						break;
 					case 'tour-list-old' :
-						$input ['showcanceled'] = $_REQUEST ['showcanceled'];
-						$input ['showold'] = $_REQUEST ['showold'];
+						$showold = isset ( $_SESSION ["showold"] ) ? $_SESSION ["showold"] : "false";
+						if ($showold == "true") {
+							$showold = "false";
+						} else {
+							$showold = "true";
+						}
+						$_SESSION ["showold"] = $showold;
 						break;
 					case 'tour-list' :
 						break;

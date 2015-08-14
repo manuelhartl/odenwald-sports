@@ -9,36 +9,47 @@ function getInVa($index, $default = '') {
 
 if (hasAuth ()) {
 	// new DBtour
-	echo '<form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
+	echo '<div id="tourbutton">' . PHP_EOL;
+	echo '  <form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
+	echo '</div> <!--End div tourbutton -->' . PHP_EOL;
+	// checkbox
 	
-	// show actual/old tours
-	echo '<form name="tour-list-update" action="" method="post">';
-	echo '<input name="action" type="hidden" value="tour-list-old" />';
-	echo '<input name="showcanceled" type="hidden" value="' . getInVa ( 'showcanceled' ) . '" />';
-	if (getInVa ( 'showold' ) == 'true') {
-		echo '<input name="showold" type="hidden" value="false" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Aktuelle Touren anzeigen" />';
-	} else {
-		echo '<input name="showold" type="hidden" value="true" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Alte Touren anzeigen" />';
-	}
-	echo '</form>';
+	// get value from session
+	$showold = isset ( $_SESSION ["showold"] ) ? $_SESSION ["showold"] : "false";
 	
-	// show hidden tours
-	echo '<form name="tour-list-update" action="" method="post">';
-	echo '<input name="action" type="hidden" value="tour-list-canceled" />';
-	echo '<input name="showold" type="hidden" value="' . getInVa ( 'showold' ) . '" />';
-	if (getInVa ( 'showcanceled' ) == 'true') {
-		echo '<input name="showcanceled" type="hidden" value="false" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren verstecken" />';
-	} else {
-		echo '<input name="showcanceled" type="hidden" value="true" />';
-		echo '<input name="submit-tour-list-update" type="submit" value="Abgesagte Touren anzeigen" />';
-	}
-	echo '</form>';
+	echo '<div id="checkbox">' . PHP_EOL;
+	echo '  <div id="topcheckbox">' . PHP_EOL;
+	echo '    <form name="oldTours" action="" method="post">' . PHP_EOL;
+	echo '    <input name="action" type="hidden" value="tour-list-old" />';
+	echo '     <fieldset>' . PHP_EOL;
+	echo '        <label for="check1">' . PHP_EOL;
+	echo '          <input name="cb_oldTours" type="checkbox" value="trcue" onclick="this.form.submit()" id="check1"' . (($showold == 'true') ? ' checked="checked"' : "") . '/>' . PHP_EOL;
+	echo '            alte Touren anzeigen' . PHP_EOL;
+	echo '        </label>' . PHP_EOL;
+	echo '     </fieldset>' . PHP_EOL;
+	echo '    </form>' . PHP_EOL;
+	echo '  </div> <!--End div topcheckbox -->' . PHP_EOL;
+	
+	// get value from session
+	$showcanceled = isset ( $_SESSION ["showcanceled"] ) ? $_SESSION ["showcanceled"] : "false";
+	
+	echo '  <div id="bottomcheckbox">' . PHP_EOL;
+	echo '    <form name="hiddenTours" action="" method="post">' . PHP_EOL;
+	echo '    <input name="action" type="hidden" value="tour-list-canceled" />';
+	echo '     <fieldset>' . PHP_EOL;
+	echo '        <label for="check2">' . PHP_EOL;
+	echo '          <input name="cb_hiddenTours" type="checkbox" value="true" onclick="this.form.submit()" id="check2"' . (($showcanceled == 'true') ? ' checked="checked"' : "") . '/>' . PHP_EOL;
+	echo '            abgesagte Touren anzeigen' . PHP_EOL;
+	echo '        </label>' . PHP_EOL;
+	echo '      </fieldset>' . PHP_EOL;
+	echo '    </form>' . PHP_EOL;
+	echo '  </div> <!--End div bottomcheckbox -->' . PHP_EOL;
+	echo '</div> <!--End div checkbox -->' . PHP_EOL;
 	
 	// show RSS-feed
-	echo '<a href="rss/">RSS</a>';
+	echo '<div id="rssbutton">' . PHP_EOL;
+	echo '  <a href="rss/">RSS</a>';
+	echo '</div> <!--End div rssbutton -->' . PHP_EOL;
 }
 ?>
 <?php
@@ -87,8 +98,8 @@ $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_
 ' left join sport s ON (ss.fk_sport_id=s.id) ' . //
 ' WHERE true ' . //
 (! hasAuth () ? ' AND t.status = "active"' : '') . //
-(getInVa ( 'showcanceled', 'false' ) == 'true' ? '' : ' AND (t.status = "active")') . //
-(getInVa ( 'showold', 'false' ) == 'true' ? ' AND startdate<now() ORDER BY startdate DESC LIMIT 100' : ' AND startdate>=now() ORDER BY startdate ASC') . //
+($showcanceled == 'true' ? '' : ' AND (t.status = "active")') . //
+($showold == 'true' ? ' AND startdate<now() ORDER BY startdate DESC LIMIT 100' : ' AND startdate>=now() ORDER BY startdate ASC') . //
 '' ); //
 ex2er ( $stmt, array (
 		$reference->gps->lat,
