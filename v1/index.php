@@ -10,16 +10,14 @@
 <title>Tourportal sport2gether</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
-<link href="css/bootstrap-datetimepicker.css" rel="stylesheet"
-	type="text/css">
+<link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
 <link href="css/s2t.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript"
-	src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script type="text/javascript" src="js/locationpicker.jquery.js"></script>
 <script type="text/javascript" src="js/jquery.rating.pack.js"></script>
 </head>
@@ -179,7 +177,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$touser = getUserById ( $pdo, $toid );
 								$tos .= $touser ['username'] . ",";
 							}
-							$input ['tos'] = substr ( $tos, 0, strlen ( $tos ) - 1 );
+							$input ['to'] = substr ( $tos, 0, strlen ( $tos ) - 1 );
 						}
 						if (isset ( $_REQUEST ['subject'] )) {
 							$input ['subject'] = $_REQUEST ['subject'];
@@ -189,29 +187,31 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						
 						$subject = $_REQUEST ['subject'];
 						$body = $_REQUEST ['body'];
+						$to = $_REQUEST ['to'];
 						$input ['subject'] = $_REQUEST ['subject'];
 						$input ['body'] = $_REQUEST ['body'];
 						$input ['to'] = $_REQUEST ['to'];
+						$receiver = "";
 						
 						if (empty ( $subject )) {
 							setMessage ( 'Bitte einen Betreff eingeben' );
 						} else if (empty ( $body )) {
 							setMessage ( 'Bitte eine Nachricht eingeben' );
 						} else if (empty ( $to )) {
-							setMessage ( 'Bitte Empfänger eingeben' );
+							setMessage ( 'Bitte Empf&auml;nger eingeben' );
 						} else {
 							if (isset ( $_REQUEST ['to'] )) {
-								$to = $_REQUEST ['to'];
-								$touser = getUserByName ( $pdo, $to );
-								sendmail ( $touser ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
-							} else if (isset ( $_REQUEST ['tos'] )) {
 								foreach ( explode ( ',', $_REQUEST ['to'] ) as $username ) {
 									$touser = getUserByName ( $pdo, $username );
+									$receiver .= "," . $touser ['username'];
 									sendmail ( $touser ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
+								}
+								if ($receiver [0] == ",") {
+									$receiver = substr ( $receiver, 1 );
 								}
 							}
 							setPage ( 'home' );
-							setMessage ( 'Mail an ' . $touser ['username'] . ' gesendet' );
+							setMessage ( 'Mail an ' . $receiver . ' gesendet' );
 						}
 						break;
 					case 'tour-list-canceled' :

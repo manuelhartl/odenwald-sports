@@ -210,9 +210,9 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			$users = getAttendees ( $pdo, $tour->id );
 			$countAttendees = count ( $users );
 			foreach ( $users as $user ) {
-				$userIDs += "," . $user [userid];
+				$userIDs .= "," . $user ['id'];
 			}
-			echo '<a id="tour-mail" style = "border: none;" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Mail an alle" . '"></a>';
+			echo '<a id="tour-mail" style = "border: none;" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Fragen (an alle) zur Tour am " . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '"></a>';
 			
 			if ($tour->guide->id == $authuserid) {
 				// edit
