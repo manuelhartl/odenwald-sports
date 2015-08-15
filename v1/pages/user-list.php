@@ -67,7 +67,7 @@ function showUser($no, DBUser $user, DBUserExtra $userextra, $distance, $hasAdre
 	echo '<tr class="' . ($no % 2 == 1 ? 'oddFirst' : 'evenfirst') . '">';
 	echo '<td>' . $no . '</td>';
 	echo '<td>' . createUserProfilLink ( $user, 'style = "display: block;"', createUserInfo ( $user, $userextra ) ) . '</td>';
-	echo '<td><a style = "display: block; border: none;" href="?action=mail-user&toid=' . $user->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $user->username . '" height="30" width="30"> </a></td>';
+	echo '<td><a style = "display: block; border: none;" href="?action=mail-user&toid=' . $user->id . '"> <img src="img/big/mail.png" alt="Mail an ' . $user->username . '" height="20" width="20"> </a></td>';
 	
 	if (isset ( $userextra )) {
 		echo "		<td>" . (isset ( $userextra->realname ) ? $userextra->realname : "") . "</td>";

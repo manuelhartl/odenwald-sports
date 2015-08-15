@@ -124,8 +124,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
 		// $attendeeString = $attendeeString . $tourmember->getMemberProfilLink () . " ";
-		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
-		$attendeeString = $attendeeString . $emailString . createUserProfilLink ( $u, "", createUserInfo ( $u, $ue ) ) . " ";
+		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="30" width="30"> </a>';
+		$attendeeString = $attendeeString . $emailString . createUserProfilLink ( $u, "style='line-height: 18px;'", createUserInfo ( $u, $ue ) ) . " ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
@@ -178,14 +178,14 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $tour->guide->username;
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
-		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '">' . PHP_EOL . '<img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37">' . PHP_EOL . '</a>';
+		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '">' . PHP_EOL . '<img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="30" width="30">' . PHP_EOL . '</a>';
 		
 		echo "<td width='30%' style='text-align: left;'>" . PHP_EOL;
-		echo (($tour->guide->id == $authuserid) ? $u->username : $emailString) . PHP_EOL;
+		echo (($tour->guide->id == $authuserid) ? "" : $emailString) . PHP_EOL;
 		echo "</td>" . PHP_EOL;
 		
 		echo "<td width='70%' style='text-align: left;'>" . PHP_EOL;
-		echo createUserProfilLink ( $u, 'style = "display: block;"', createUserInfo ( $u, $ue ) ) . PHP_EOL;
+		echo createUserProfilLink ( $u, 'style = "display: block; line-height: 18px;"', createUserInfo ( $u, $ue ) ) . PHP_EOL;
 		echo "</td>" . PHP_EOL;
 		
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
@@ -196,7 +196,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		} else {
 			$dist = "";
 		}
-		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . Utilities::clearText4Display ( $meetingpoint_short ) . "</a>" . "</span></td>" . PHP_EOL;
+		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block; line-height: 18px;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . Utilities::clearText4Display ( $meetingpoint_short ) . "</a>" . "</span></td>" . PHP_EOL;
 	}
 	// support HTML Editor
 	if (isset ( $config ['HTMLEditor'] ) && $config ['HTMLEditor']) {
