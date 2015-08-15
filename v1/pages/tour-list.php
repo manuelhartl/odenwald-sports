@@ -2,10 +2,6 @@
 require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
 require_once __DIR__ . '/../lib/utilities.php';
-function getInVa($index, $default = '') {
-	global $input;
-	return isset ( $input [$index] ) ? $input [$index] : $default;
-}
 
 if (hasAuth ()) {
 	// new DBtour
@@ -61,9 +57,9 @@ if (hasAuth ()) {
 		<th style='width: 4em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='width:50px;'></th>";
-			echo "<th style='width: 7%;'>Guide</th>";
-			echo "<th style='width: 15%;'>Treffpunkt</th>";
+			echo "<th style='width:50px;'></th>" . PHP_EOL;
+			echo "<th style='width: 7%;'>Guide</th>" . PHP_EOL;
+			echo "<th style='width: 15%;'>Treffpunkt</th>" . PHP_EOL;
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
@@ -74,10 +70,10 @@ if (hasAuth ()) {
 		<th>Technik</th>
 		<?php
 		if (hasAuth ()) {
-			echo '<th style="width: 15%;">Teilnehmer</th>';
-			echo "<th></th>";
+			echo '<th style="width: 15%;">Teilnehmer</th>' . PHP_EOL;
+			echo "<th></th>" . PHP_EOL;
 		} else {
-			echo '<th>Teilnehmer</th>';
+			echo '<th>Teilnehmer</th>' . PHP_EOL;
 		}
 		?>
 	</tr>
@@ -157,8 +153,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		echo '  </tr>', PHP_EOL;
 	}
 	echo '  <tr>', PHP_EOL;
-	echo '    <td title="' . $tour->sport->sportsubname . '" style="text-align: left;">';
-	echo makeSportSubnameIconTag ( $tour->sport->sportsubname, $tour->canceled ), PHP_EOL;
+	echo '    <td title="' . $tour->sport->sportsubname . '" style="text-align: left;">' . PHP_EOL;
+	echo Utilities::makeSportSubnameIconTag ( $tour->sport->sportsubname, $tour->canceled ), PHP_EOL;
 	echo '    </td>', PHP_EOL;
 	echo '    <td>', PHP_EOL;
 	echo '      <table style="width: 100%;" >', PHP_EOL;
@@ -182,10 +178,16 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $tour->guide->username;
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
-		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37"> </a>';
+		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '">' . PHP_EOL . '<img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="37" width="37">' . PHP_EOL . '</a>';
 		
-		echo "<td width='30%' style='text-align: left;'>" . (($tour->guide->id == $authuserid) ? $u->username : $emailString) . "</td>";
-		echo "<td width='70%' style='text-align: left;'>" . createUserProfilLink ( $u, 'style = "display: block;"', createUserInfo ( $u, $ue ) ) . "</td>";
+		echo "<td width='30%' style='text-align: left;'>" . PHP_EOL;
+		echo (($tour->guide->id == $authuserid) ? $u->username : $emailString) . PHP_EOL;
+		echo "</td>" . PHP_EOL;
+		
+		echo "<td width='70%' style='text-align: left;'>" . PHP_EOL;
+		echo createUserProfilLink ( $u, 'style = "display: block;"', createUserInfo ( $u, $ue ) ) . PHP_EOL;
+		echo "</td>" . PHP_EOL;
+		
 		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
 		$meetingpoint_long = $tour->meetingPoint;
 		
@@ -194,26 +196,26 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		} else {
 			$dist = "";
 		}
-		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . Utilities::clearText4Display ( $meetingpoint_short ) . "</a>" . "</span></td>";
+		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . Utilities::clearText4Display ( $meetingpoint_short ) . "</a>" . "</span></td>" . PHP_EOL;
 	}
 	// support HTML Editor
 	if (isset ( $config ['HTMLEditor'] ) && $config ['HTMLEditor']) {
-		echo "<td style='text-align: left;'><span class='flex1'>" . $tour->description . "</span></td>";
+		echo "<td style='text-align: left;'><span class='flex1'>" . $tour->description . "</span></td>" . PHP_EOL;
 	} else {
-		echo "<td style='text-align: left;'><span class='flex'>" . Utilities::clearText4Display ( $tour->description ) . "</span></td>";
+		echo "<td style='text-align: left;'><span class='flex'>" . Utilities::clearText4Display ( $tour->description ) . "</span></td>" . PHP_EOL;
 	}
-	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
-	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";
-	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>";
-	echo "<td>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>";
-	echo "<td>" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>";
+	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>" . PHP_EOL;
+	echo "<td>" . formatMeters ( $tour->distance ) . "</td>" . PHP_EOL;
+	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>" . PHP_EOL;
+	echo "<td>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>" . PHP_EOL;
+	echo "<td>" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>" . PHP_EOL;
 	
 	if (hasAuth ()) {
 		// attendees
-		echo "<td style='text-align: left;'>" . $attendeeString . '</td>';
+		echo "<td style='text-align: left;'>" . $attendeeString . '</td>' . PHP_EOL;
 		
 		// functions
-		echo "<td style='text-align: left;'>";
+		echo "<td style='text-align: left;'>" . PHP_EOL;
 		
 		if ($tour->startDateTime >= new DateTime ()) {
 			// Mail to all
@@ -223,16 +225,16 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			foreach ( $users as $user ) {
 				$userIDs .= "," . $user ['id'];
 			}
-			echo '<a id="tour-mail" style = "border: none;" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Fragen (an alle) zur Tour am " . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '"></a>';
+			echo '<a id="tour-mail" style = "border: none;" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Fragen (an alle) zur Tour am " . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '"></a>' . PHP_EOL;
 			
 			if ($tour->guide->id == $authuserid) {
 				// edit
 				if (! $tour->canceled) {
 					$tooltipdate = Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
 					$tooltip = 'Die Tour  am ' . $tooltipdate . ' bearbeiten';
-					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-edit" value="" title="' . $tooltip . '"/></form>';
+					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-edit" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
 					$tooltip = 'Die Tour  am ' . $tooltipdate . ' absagen';
-					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-cancel" value="" title="' . $tooltip . '"/></form>';
+					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-cancel" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
 				}
 			} else {
 				// Join/leave
@@ -240,77 +242,20 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 					$tooltipdate = Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
 					if ($joinedTour) {
 						$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' abmelden';
-						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" value="" title="' . $tooltip . '"/></form>';
+						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
 					} else {
 						$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' anmelden';
-						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-join" value="" title="' . $tooltip . '"/></form>';
+						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-join" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
 					}
 				}
 			}
 		}
-		echo "</td>";
+		echo "</td>" . PHP_EOL;
 	} else {
-		echo "<td>" . count ( $users ) . "</td>";
+		echo "<td>" . count ( $users ) . "</td>" . PHP_EOL;
 	}
-	echo "</tr>";
+	echo "</tr>" . PHP_EOL;
 	$lastdate = $startdate;
 }
-/**
- *
- * @param Strng $sportsubname
- * @return the shortcut for the sport subnmae
- */
-function makeSportSubnameIconTag($sportsubname, $canceled) {
-	// (1, 1, 'MTB'),
-	// (3, 1, 'Rennrad'),
-	// (4, 1, 'Crosser'),
-	// (5, 2, 'Lauf'),
-	// (6, 2, 'Trail-Running'),
-	// (7, 3, 'Schwimmen'),
-	// (8, 4, 'Triathlon'),
-	// (9, 4, 'Duathlon'),
-	// (10, 4, 'Swim & Bike'),
-	// (11, 5, 'Langlauf');
-	switch ($sportsubname) {
-		case 'MTB' :
-			$icon = "mtb";
-			break;
-		case 'Rennrad' :
-			$icon = "rr";
-			break;
-		case 'Crosser' :
-			$icon = "crosser";
-			break;
-		case 'Lauf' :
-			$icon = "run";
-			break;
-		case 'Trail-Running' :
-			$icon = "trailrun";
-			break;
-		case 'Schwimmen' :
-			$icon = "swim";
-			break;
-		case 'Triathlon' :
-			$icon = "3lon";
-			break;
-		case 'Duathlon' :
-			$icon = "2lon";
-			break;
-		case 'Swim & Bike' :
-			$icon = "edit";
-			break;
-		case 'Langlauf' :
-			$icon = "ski";
-			break;
-		default :
-			$icon = "mtb";
-	}
-	if ($canceled) {
-		$icon = 'delete';
-	}
-	
-	return ("<img src='img/big/" . $icon . ".png' align='middle' border='0' height='40px' width='40px'>");
-}
-
 ?>
 </table>

@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/settings.php';
+require_once __DIR__ . '/../lib/utilities.php';
 function sendmail($to, $subject, $body) {
 	sendmail_local ( $to, $subject, $body );
 }
@@ -17,6 +18,6 @@ function sendmail_local($to, $subject, $body) {
 'Content-type: text/html; charset=UTF-8' . "\n" . //
 'X-Mailer: PHP/' . phpversion () . "\n"; //
 	
-	mail ( $to, Utilities ( $subject ), Utilities::clearText4Mail ( $body ), $headers );
+	mail ( $to, Utilities::clearText4Mail ( $subject ), Utilities::clearText4Mail ( $body ), $headers );
 }
 ?>

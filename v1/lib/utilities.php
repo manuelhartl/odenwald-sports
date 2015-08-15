@@ -77,23 +77,80 @@ class Utilities {
 	
 	/**
 	 *
+	 * @param Strng $sportsubname
+	 * @return the shortcut for the sport subnmae
+	 */
+	public static function makeSportSubnameIconTag($sportsubname, $canceled) {
+		// (1, 1, 'MTB'),
+		// (3, 1, 'Rennrad'),
+		// (4, 1, 'Crosser'),
+		// (5, 2, 'Lauf'),
+		// (6, 2, 'Trail-Running'),
+		// (7, 3, 'Schwimmen'),
+		// (8, 4, 'Triathlon'),
+		// (9, 4, 'Duathlon'),
+		// (10, 4, 'Swim & Bike'),
+		// (11, 5, 'Langlauf');
+		switch ($sportsubname) {
+			case 'MTB' :
+				$icon = "mtb";
+				break;
+			case 'Rennrad' :
+				$icon = "rr";
+				break;
+			case 'Crosser' :
+				$icon = "crosser";
+				break;
+			case 'Lauf' :
+				$icon = "run";
+				break;
+			case 'Trail-Running' :
+				$icon = "trailrun";
+				break;
+			case 'Schwimmen' :
+				$icon = "swim";
+				break;
+			case 'Triathlon' :
+				$icon = "3lon";
+				break;
+			case 'Duathlon' :
+				$icon = "2lon";
+				break;
+			case 'Swim & Bike' :
+				$icon = "edit";
+				break;
+			case 'Langlauf' :
+				$icon = "ski";
+				break;
+			default :
+				$icon = "mtb";
+		}
+		if ($canceled) {
+			$icon = 'delete';
+		}
+		
+		return ("<img src='img/big/" . $icon . ".png' align='middle' border='0' height='40px' width='40px'>");
+	}
+	
+	/**
+	 *
 	 * @param string $text the text to clean
 	 */
-	public static function clearText4Mail(string $text) {
-		return (clearText ( $text ));
+	public static function clearText4Mail($text) {
+		return (Utilities::clearText ( $text ));
 	}
 	/**
 	 *
 	 * @param string $text the text to clean
 	 */
-	public static function clearText4Display(string $text) {
-		return (clearText ( $text ));
+	public static function clearText4Display($text) {
+		return (Utilities::clearText ( $text ));
 	}
 	/**
 	 *
 	 * @param string $text the text to clean
 	 */
-	public static function clearText(string $text) {
+	private static function clearText($text) {
 		return (strip_tags ( $text, '<br><br/>' ));
 	}
 }
