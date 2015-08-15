@@ -194,13 +194,13 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		} else {
 			$dist = "";
 		}
-		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . htmlentities ( $meetingpoint_short ) . "</a>" . "</span></td>";
+		echo "<td style='text-align: left;' title='" . htmlentities ( $meetingpoint_long . $dist ) . "'" . ">" . "<a style ='display: block;' href='?action=tour-view&tourid=" . $tour->id . "'><span class='flex'>" . Utilities::clearText4Display ( $meetingpoint_short ) . "</a>" . "</span></td>";
 	}
 	// support HTML Editor
 	if (isset ( $config ['HTMLEditor'] ) && $config ['HTMLEditor']) {
 		echo "<td style='text-align: left;'><span class='flex1'>" . $tour->description . "</span></td>";
 	} else {
-		echo "<td style='text-align: left;'><span class='flex'>" . strip_tags ( $tour->description, '<br><br/>' ) . "</span></td>";
+		echo "<td style='text-align: left;'><span class='flex'>" . Utilities::clearText4Display ( $tour->description ) . "</span></td>";
 	}
 	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>";
 	echo "<td>" . formatMeters ( $tour->distance ) . "</td>";

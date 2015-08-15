@@ -74,5 +74,27 @@ class Utilities {
 				return "So";
 		}
 	}
+	
+	/**
+	 *
+	 * @param string $text the text to clean
+	 */
+	public static function clearText4Mail(string $text) {
+		return (clearText ( $text ));
+	}
+	/**
+	 *
+	 * @param string $text the text to clean
+	 */
+	public static function clearText4Display(string $text) {
+		return (clearText ( $text ));
+	}
+	/**
+	 *
+	 * @param string $text the text to clean
+	 */
+	public static function clearText(string $text) {
+		return (strip_tags ( $text, '<br><br/>' ));
+	}
 }
 ?>

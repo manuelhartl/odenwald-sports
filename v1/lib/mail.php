@@ -17,6 +17,6 @@ function sendmail_local($to, $subject, $body) {
 'Content-type: text/html; charset=UTF-8' . "\n" . //
 'X-Mailer: PHP/' . phpversion () . "\n"; //
 	
-	mail ( $to, $subject, $body, $headers );
+	mail ( $to, Utilities ( $subject ), Utilities::clearText4Mail ( $body ), $headers );
 }
 ?>
