@@ -7,12 +7,15 @@
 <meta name="description" content="Tours">
 <meta name="author" content="Manuel Hartl">
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
-<title>Tourportal sport2gether</title>
+<title>Sport2gether</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
 <link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
 <link href="css/s2t.css" rel="stylesheet" type="text/css">
+<link href="css/s2t-nano.css" rel="stylesheet" type="text/css" media="(max-width: 900px)">
+<link href="css/s2t-small.css" rel="stylesheet" type="text/css" media="(max-width: 1280px) and (min-width: 901px)">
+<link href="css/s2t-big.css" rel="stylesheet" type="text/css" media="(min-width: 1281px)">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>

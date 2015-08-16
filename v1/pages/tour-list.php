@@ -63,11 +63,11 @@ if (hasAuth ()) {
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
-		<th style='text-align: center; width: 5em;'>Dauer</th>
-		<th style='text-align: center; width: 5em;'>Distanz</th>
-		<th style='text-align: center; width: 5em;'>Bergauf</th>
-		<th style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
-		<th style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
+		<th class='medium' style='text-align: center; width: 5em;'>Dauer</th>
+		<th class='medium' style='text-align: center; width: 5em;'>Distanz</th>
+		<th class='medium' style='text-align: center; width: 5em;'>Bergauf</th>
+		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
+		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th style="width: 15%;">Teilnehmer</th>' . PHP_EOL;
@@ -203,11 +203,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	} else {
 		echo "<td style='text-align: left;'><span class='flex'>" . Utilities::clearText4Display ( $tour->description ) . "</span></td>" . PHP_EOL;
 	}
-	echo "<td>" . formatMinutes ( $tour->duration ) . "</td>" . PHP_EOL;
-	echo "<td>" . formatMeters ( $tour->distance ) . "</td>" . PHP_EOL;
-	echo "<td>" . formatMeters ( $tour->elevation ) . "</td>" . PHP_EOL;
-	echo "<td>" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>" . PHP_EOL;
-	echo "<td>" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>" . PHP_EOL;
+	echo "<td class='medium' >" . formatMinutes ( $tour->duration ) . "</td>" . PHP_EOL;
+	echo "<td class='medium' >" . formatMeters ( $tour->distance ) . "</td>" . PHP_EOL;
+	echo "<td class='medium' >" . formatMeters ( $tour->elevation ) . "</td>" . PHP_EOL;
+	echo "<td class='big' >" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>" . PHP_EOL;
+	echo "<td class='big' >" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>" . PHP_EOL;
 	
 	if (hasAuth ()) {
 		// attendees
