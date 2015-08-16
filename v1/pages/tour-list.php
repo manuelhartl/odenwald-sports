@@ -57,21 +57,21 @@ if (hasAuth ()) {
 		<th style='width: 4em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
-			echo "<th style='width:50px;'></th>" . PHP_EOL;
+			echo "<th style='width: 30px;'></th>" . PHP_EOL;
 			echo "<th style='width: 7%;'>Guide</th>" . PHP_EOL;
 			echo "<th style='width: 15%;'>Treffpunkt</th>" . PHP_EOL;
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
-		<th style='text-align: right; width: 6em;'>Dauer</th>
-		<th style='text-align: right; width: 6em;'>Distanz</th>
-		<th style='text-align: right; width: 6em;'>Bergauf</th>
-		<th>Pace</th>
-		<th>Technik</th>
+		<th style='text-align: center; width: 5em;'>Dauer</th>
+		<th style='text-align: center; width: 5em;'>Distanz</th>
+		<th style='text-align: center; width: 5em;'>Bergauf</th>
+		<th style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
+		<th style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th style="width: 15%;">Teilnehmer</th>' . PHP_EOL;
-			echo "<th></th>" . PHP_EOL;
+			echo '<th style="width: 110px;"></th>' . PHP_EOL;
 		} else {
 			echo '<th>Teilnehmer</th>' . PHP_EOL;
 		}
@@ -123,8 +123,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $user ['username'];
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
-		$emailString = '<a title="Mail an ' . $u->username . '" style="border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> <img class="icon-attendee-mail" src="img/big/mail.png" alt="Mail an ' . $u->username . '"> </a>';
-		$attendeeString = $attendeeString . '<span class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profillink">' . createUserProfilLink ( $u, "style='line-height: 18px;'", createUserInfo ( $u, $ue ) ) . "</div></span> ";
+		$emailString = '<a id="tour-mail" class="icon-attendee-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> </a>';
+		$attendeeString = $attendeeString . '<div class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profil">' . createUserProfilLink ( $u, "style='line-height: 18px;'", createUserInfo ( $u, $ue ) ) . "</div></div> ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
@@ -177,7 +177,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $tour->guide->username;
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
-		$emailString = '<a title="Mail an ' . $u->username . '" style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '">' . PHP_EOL . '<img class="icon-guide-mail" src="img/big/mail.png" alt="Mail an ' . $u->username . '">' . PHP_EOL . '</a>';
+		$emailString = '<a id="tour-mail" class="icon-guide-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"></a>' . PHP_EOL;
 		
 		echo "<td width='30%' style='text-align: left;'>" . PHP_EOL;
 		echo (($tour->guide->id == $authuserid) ? "" : $emailString) . PHP_EOL;
@@ -224,7 +224,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			foreach ( $users as $user ) {
 				$userIDs .= "," . $user ['id'];
 			}
-			echo '<a id="tour-mail" class="icon-tour-mail" title="Mail an alle Mitfahrer und Guide" style = "border: none;" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Fragen (an alle) zur Tour am " . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '"></a>' . PHP_EOL;
+			echo '<a id="tour-mail" class="icon-tour-mail" title="Mail an alle Mitfahrer und Guide" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Fragen (an alle) zur Tour am " . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '"></a>' . PHP_EOL;
 			
 			if ($tour->guide->id == $authuserid) {
 				// edit
