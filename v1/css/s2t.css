@@ -70,49 +70,27 @@ input[type=submit], a {
 
 input[id=tour-join] {
 	background: #ccc url('../img/big/plus.png') no-repeat top left;
-	padding-left: 16px;
-	height: 30px;
-	width: 30px;
-	border: none;
-	background-size: 25px;
-	background-color: transparent;
 }
 
 input[id=tour-leave] {
 	background: #ccc url('../img/big/minus.png') no-repeat top left;
-	padding-left: 16px;
-	height: 30px;
-	width: 30px;
-	border: none;
-	background-size: 25px;
-	background-color: transparent;
 }
 
 input[id=tour-edit] {
 	background: #ccc url('../img/big/edit.png') no-repeat top left;
-	padding-left: 16px;
-	height: 30px;
-	width: 30px;
-	border: none;
-	background-size: 25px;
-	background-color: transparent;
 }
 
 input[id=tour-cancel] {
 	background: #ccc url('../img/big/cancel.png') no-repeat top left;
-	padding-left: 16px;
-	height: 30px;
-	width: 30px;
-	border: none;
-	background-size: 25px;
-	background-color: transparent;
 }
 
 a[id=tour-mail] {
 	background: #ccc url('../img/big/mail.png') no-repeat top left;
+}
+
+input[id=tour-join], input[id=tour-leave], input[id=tour-edit], input[id=tour-cancel] ,
+	a[id=tour-mail] {
 	padding-left: 16px;
-	height: 30px;
-	width: 30px;
 	border: none;
 	background-size: 25px;
 	background-color: transparent;
@@ -210,10 +188,10 @@ td.tooltip {
 	max-height: 80px;
 	margin-bottom: 30px;
 }
+
 #navigation-login {
 	float: right;
-		padding-left: 20px;
-	
+	padding-left: 20px;
 }
 
 #main {
@@ -234,11 +212,11 @@ td.tooltip {
 	float: left;
 	display: inline-block;
 }
+
 #tourbutton {
 	float: left;
 	display: inline-block;
 }
-
 
 #version {
 	margin-top: 10px;
@@ -319,6 +297,29 @@ td.tooltip {
 	background-image: url(../img/background_beta.jpg)
 }
 
+.attendees {
+	
+}
+
+.attendee {
+	
+}
+
+.attendee_mail {
+	float: left;
+}
+
+.attendee_profil {
+	float: left;
+}
+
 .hide {
 	display: none;
+}
+
+.icon-mail, .icon-tour-mail, .icon-tour-edit, .icon-tour-cancel,
+	.icon-attendee-mail, .icon-guide-mail, .icon-tour-join,
+	.icon-tour-leave {
+	height: 30px;
+	width: 30px;
 }

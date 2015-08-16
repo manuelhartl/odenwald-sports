@@ -123,9 +123,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $user ['username'];
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
-		// $attendeeString = $attendeeString . $tourmember->getMemberProfilLink () . " ";
-		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> <img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="30" width="30"> </a>';
-		$attendeeString = $attendeeString . $emailString . createUserProfilLink ( $u, "style='line-height: 18px;'", createUserInfo ( $u, $ue ) ) . " ";
+		$emailString = '<a title="Mail an ' . $u->username . '" style="border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> <img class="icon-attendee-mail" src="img/big/mail.png" alt="Mail an ' . $u->username . '"> </a>';
+		$attendeeString = $attendeeString . '<span class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profillink">' . createUserProfilLink ( $u, "style='line-height: 18px;'", createUserInfo ( $u, $ue ) ) . "</div></span> ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
@@ -178,7 +177,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $tour->guide->username;
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
-		$emailString = '<a style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '">' . PHP_EOL . '<img src="img/big/mail.png" alt="Mail an ' . $u->username . '" height="30" width="30">' . PHP_EOL . '</a>';
+		$emailString = '<a title="Mail an ' . $u->username . '" style = "border: none;" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '">' . PHP_EOL . '<img class="icon-guide-mail" src="img/big/mail.png" alt="Mail an ' . $u->username . '">' . PHP_EOL . '</a>';
 		
 		echo "<td width='30%' style='text-align: left;'>" . PHP_EOL;
 		echo (($tour->guide->id == $authuserid) ? "" : $emailString) . PHP_EOL;
@@ -212,7 +211,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	if (hasAuth ()) {
 		// attendees
-		echo "<td style='text-align: left;'>" . $attendeeString . '</td>' . PHP_EOL;
+		echo "<td style='text-align: left;'><span class='attendees'>" . $attendeeString . '</span></td>' . PHP_EOL;
 		
 		// functions
 		echo "<td style='text-align: left;'>" . PHP_EOL;
@@ -225,16 +224,16 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 			foreach ( $users as $user ) {
 				$userIDs .= "," . $user ['id'];
 			}
-			echo '<a id="tour-mail" style = "border: none;" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Fragen (an alle) zur Tour am " . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '"></a>' . PHP_EOL;
+			echo '<a id="tour-mail" class="icon-tour-mail" title="Mail an alle Mitfahrer und Guide" style = "border: none;" href="?action=mail-user&toids=' . $userIDs . '&subject=' . "Fragen (an alle) zur Tour am " . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '"></a>' . PHP_EOL;
 			
 			if ($tour->guide->id == $authuserid) {
 				// edit
 				if (! $tour->canceled) {
 					$tooltipdate = Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
 					$tooltip = 'Die Tour  am ' . $tooltipdate . ' bearbeiten';
-					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-edit" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
+					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-edit"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" class="icon-tour-edit"  id="tour-edit" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
 					$tooltip = 'Die Tour  am ' . $tooltipdate . ' absagen';
-					echo '<form action="" method="post"><input type="hidden" name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit"  id="tour-cancel" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
+					echo '<form action="" method="post"><input type="hidden"name="action" value="tour-cancel"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" class="icon-tour-cancel" id="tour-cancel" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
 				}
 			} else {
 				// Join/leave
@@ -242,17 +241,17 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 					$tooltipdate = Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y H:i' );
 					if ($joinedTour) {
 						$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' abmelden';
-						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
+						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-leave"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-leave" class="icon-tour-leave" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
 					} else {
 						$tooltip = 'Mich bei der Tour von ' . $tour->guide->username . ' am ' . $tooltipdate . ' anmelden';
-						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-join" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
+						echo '<form action="" method="post"><input type="hidden" name="action" value="tour-join"><input type="hidden" name="tourid" value="' . $tour->id . '"><input type="submit" id="tour-join" class="icon-tour-join" value="" title="' . $tooltip . '"/></form>' . PHP_EOL;
 					}
 				}
 			}
 		}
 		echo "</td>" . PHP_EOL;
 	} else {
-		echo "<td>" . count ( $users ) . "</td>" . PHP_EOL;
+		echo "<td style='text-align: left;'>" . count ( $users ) . "</td>" . PHP_EOL;
 	}
 	echo "</tr>" . PHP_EOL;
 	$lastdate = $startdate;
