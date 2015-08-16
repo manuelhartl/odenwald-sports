@@ -289,6 +289,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$sports = getSports ( $pdo );
 						if (isset ( $_REQUEST ['tourid'] )) {
 							$input ['tourid'] = $_REQUEST ['tourid'];
+							$tour = getTourById ( $pdo, $_POST ['tourid'] );
 						}
 						$input ['meetingpoint'] = $_REQUEST ['meetingpoint'];
 						$input ['meetingpoint_desc'] = $_REQUEST ['meetingpoint_desc'];
@@ -300,6 +301,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['speed'] = $_REQUEST ['speed'];
 						$input ['elevation'] = $_REQUEST ['elevation'];
 						$input ['distance'] = $_REQUEST ['distance'];
+						
 						if (isset ( $_REQUEST ['sport'] )) {
 							$input ['sport'] = $_REQUEST ['sport'];
 						}
@@ -309,13 +311,14 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$date = DateTime::createFromFormat ( 'd.m.Y H:i', $_REQUEST ['startdate'] );
 						if (strlen ( $_REQUEST ['meetingpoint'] ) < 5) {
 							setMessage ( 'Treffpunkt angeben' );
-						} else if (strlen ( $_REQUEST ['duration'] ) < 1) {
+						} else if (isset ( $_REQUEST ['distance'] ) && is_numeric ( $_REQUEST ['distance'] ) && floatval ( $_REQUEST ['distance'] ) < 1) {
+							setMessage ( 'Nur eine positive Distanz ist erlaubt' );
+						} else if (isset ( $_REQUEST ['duration'] ) && is_numeric ( $_REQUEST ['duration'] ) && floatval ( $_REQUEST ['duration'] ) < 1) {
 							setMessage ( 'Dauer angeben' );
 						} else if ($date < date ( 'Y-m-d H:i:s' )) {
 							setMessage ( 'Datum muss in der Zukunft liegen' );
 						} else if (isset ( $_POST ['tourid'] )) {
 							// edit
-							$tour = getTourById ( $pdo, $_POST ['tourid'] );
 							if ($tour->guide->id != authUser ()->id) {
 								// at the moment only the guide may edit a tour
 								die ();
