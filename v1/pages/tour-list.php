@@ -63,11 +63,19 @@ if (hasAuth ()) {
 		}
 		?>
 		<th style='width: 25%;'>Beschreibung</th>
+<<<<<<< HEAD
 		<th class='medium' style='text-align: center; width: 5em;'>Dauer</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Distanz</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Bergauf</th>
 		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
 		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
+=======
+		<th style='text-align: center; width: 5em;'>Dauer</th>
+		<th style='text-align: center; width: 5em;'>Distanz</th>
+		<th style='text-align: center; width: 5em;'>Bergauf</th>
+		<th style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
+		<th style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
+>>>>>>> branch 'master' of https://github.com/manuelhartl/odenwald-sports.git
 		<?php
 		if (hasAuth ()) {
 			echo '<th style="width: 15%;">Teilnehmer</th>' . PHP_EOL;
@@ -124,7 +132,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
 		$emailString = '<a id="tour-mail" class="icon-attendee-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> </a>';
+<<<<<<< HEAD
 		$attendeeString = $attendeeString . '<div class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profil">' . createUserProfilLink ( $u, "style='line-height: 18px;'", createUserInfo ( $u, $ue ) ) . "</div></div> ";
+=======
+		$attendeeString = $attendeeString . '<span class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profillink">' . createUserProfilLink ( $u, "style='line-height: 18px;'", createUserInfo ( $u, $ue ) ) . "</div></span> ";
+>>>>>>> branch 'master' of https://github.com/manuelhartl/odenwald-sports.git
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
