@@ -388,7 +388,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						if ((authUser ()->id == $tour->guide->id) && ($tour->startDateTime >= new DateTime ())) {
 							tourCancel ( $pdo, $tourid );
 							mailCancelTour ( $pdo, $tour );
-							setMessage ( 'Schade, das Du die Tour abgesagt musstest' );
+							setMessage ( 'Schade, dass Du die Tour abgesagt hast' );
 						}
 						break;
 					case 'tour-view' :
