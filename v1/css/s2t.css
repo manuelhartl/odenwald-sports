@@ -90,7 +90,7 @@ a[id=tour-mail] {
 
 input[id=tour-join], input[id=tour-leave], input[id=tour-edit], input[id=tour-cancel] ,
 	a[id=tour-mail] {
-	padding-left: 16px;
+	padding: 3px;
 	border: none;
 	background-size: 25px;
 	background-color: transparent;
@@ -102,7 +102,7 @@ input[value=Logout] {
 
 tr, td, th, table {
 	background-color: #f3f3f3;
-	padding: 3px;
+	padding: 1px;
 	vertical-align: top;
 	margin: 3px;
 	opacity: 0.9;
