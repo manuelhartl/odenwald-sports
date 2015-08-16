@@ -112,8 +112,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 			$input ['email'] = $email;
 			$input ['acceptrules'] = $acceptrules;
 			// validate
-			if (! preg_match ( "/^[0-9a-zA-Z]*$/", $username )) {
-				setMessage ( 'Der Benutzername darf nur A-Z und 0-9 enthalten' );
+			if (! preg_match ( "/^([\w])([_\-\w]+)$/", $username )) {
+				setMessage ( 'Der Benutzername darf nur A-Z und 0-9, sowie "_" und "-" ab der zweiten Stelle enthalten' );
 				break;
 			}
 			if (strlen ( $username ) < 2) {
@@ -313,8 +313,10 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							setMessage ( 'Treffpunkt angeben' );
 						} else if (isset ( $_REQUEST ['distance'] ) && is_numeric ( $_REQUEST ['distance'] ) && floatval ( $_REQUEST ['distance'] ) < 1) {
 							setMessage ( 'Nur eine positive Distanz ist erlaubt' );
+						} else if (! isset ( $_REQUEST ['duration'] ) && ! is_numeric ( $_REQUEST ['duration'] )) {
+							setMessage ( 'Dauer bitte angeben' );
 						} else if (isset ( $_REQUEST ['duration'] ) && is_numeric ( $_REQUEST ['duration'] ) && floatval ( $_REQUEST ['duration'] ) < 1) {
-							setMessage ( 'Dauer angeben' );
+							setMessage ( 'Nur positice Dauer ist erlaubt' );
 						} else if ($date < date ( 'Y-m-d H:i:s' )) {
 							setMessage ( 'Datum muss in der Zukunft liegen' );
 						} else if (isset ( $_POST ['tourid'] )) {
