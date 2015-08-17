@@ -210,7 +210,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	if (hasAuth ()) {
 		// attendees
-		echo "<td style='text-align: left;'><span class='attendees'>" . $attendeeString . '</span></td>' . PHP_EOL;
+		echo "<td style='text-align: left;'><span class='attendees, clearfix'>" . $attendeeString . '</span></td>' . PHP_EOL;
 		
 		// functions
 		echo "<td style='text-align: left;'>" . PHP_EOL;

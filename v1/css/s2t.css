@@ -297,7 +297,7 @@ td.tooltip {
 }
 
 .attendee {
-	
+	float: left;
 }
 
 .attendee_mail {
@@ -311,6 +311,19 @@ td.tooltip {
 .hide {
 	display: none;
 }
+
+.clearfix:before,
+.clearfix:after {
+content: " ";
+display: table;
+}
+.clearfix:after {
+clear: both;
+}
+.clearfix {
+*zoom: 1;
+}
+
 
 .icon-mail, .icon-tour-mail, .icon-tour-edit, .icon-tour-cancel,
 	.icon-attendee-mail, .icon-guide-mail, .icon-tour-join,
