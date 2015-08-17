@@ -43,36 +43,32 @@ if (hasAuth ()) {
 		</form>
 	</div>
 	<div id="navigation-buttons-logout">
-		<form name="user-edit" action="index.php" method="post">
-			<input name="action" type="hidden" value="user-edit" /> <input name="submit" type="submit" value="Mein Profil" />
-		</form>
 		<form name="logout" action="index.php" method="post">
 			<input name="action" type="hidden" value="logout" /> <input id="submit-logout" name="submit" type="submit"
 				value="Logout" />
 		</form>
+		<form name="user-edit" action="index.php" method="post">
+			<input name="action" type="hidden" value="user-edit" /> <input name="submit" type="submit"
+				value=<?php echo '"Profil ' .authUser ()->username.'"'; ?> />
+		</form>
+	</div>
 <?php
-	echo '  <div id="navigation-login">' . PHP_EOL;
-	echo '    <div id="navigation-login-top">' . PHP_EOL;
-	echo 'Angemeldet als ';
-	echo '    </div> <!--End div navigation-login-top -->' . PHP_EOL;
-	echo '    <div id="navigation-login-bottom">' . PHP_EOL;
-	echo '[' . authUser ()->username . ']';
-	echo '    </div> <!--End div navigation-login-bottom -->' . PHP_EOL;
-	echo '  </div> <!--End div navigation-loginm -->' . PHP_EOL;
-	echo '</div>';
 } else {
 	?>
 	</div>
-	<div id="navigation-buttons-logout">
-		<form name="register" action="index.php" method="post">
-			<input name="action" type="hidden" value="register" /> <input name="register" type="submit" value="Register" />
-		</form>
-		<form name="login" action="index.php" method="post">
-			<input name="action" type="hidden" value="goto-login" /> <input id="submit-login" name="submit" type="submit"
-				value="Login" />
-		</form>
-	</div>
+
+<div id="navigation-buttons-logout">
+	<form name="register" action="index.php" method="post">
+		<input name="action" type="hidden" value="register" /> <input name="register" type="submit" value="Register" />
+	</form>
+	<form name="login" action="index.php" method="post">
+		<input name="action" type="hidden" value="goto-login" /> <input id="submit-login" name="submit" type="submit"
+			value="Login" />
+	</form>
+</div>
 <?php
 }
 ?>
+
+
 </div>
