@@ -34,7 +34,7 @@ if (hasAuth ()) {
 	echo '     <fieldset>' . PHP_EOL;
 	echo '        <label for="check2">' . PHP_EOL;
 	echo '          <input name="cb_hiddenTours" type="checkbox" value="true" onclick="this.form.submit()" id="check2"' . (($showcanceled == 'true') ? ' checked="checked"' : "") . '/>' . PHP_EOL;
-	echo '            abgesagte Touren anzeigen' . PHP_EOL;
+	echo '            abgesagte Touren einblenden' . PHP_EOL;
 	echo '        </label>' . PHP_EOL;
 	echo '      </fieldset>' . PHP_EOL;
 	echo '    </form>' . PHP_EOL;
