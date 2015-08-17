@@ -3,15 +3,17 @@ require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
 require_once __DIR__ . '/../lib/utilities.php';
 
+// get value from session
+$showold = isset ( $_SESSION ["showold"] ) ? $_SESSION ["showold"] : "false";
+// get value from session
+$showcanceled = isset ( $_SESSION ["showcanceled"] ) ? $_SESSION ["showcanceled"] : "false";
+
 if (hasAuth ()) {
 	// new DBtour
 	echo '<div id="tourbutton">' . PHP_EOL;
 	echo '  <form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
 	echo '</div> <!--End div tourbutton -->' . PHP_EOL;
 	// checkbox
-	
-	// get value from session
-	$showold = isset ( $_SESSION ["showold"] ) ? $_SESSION ["showold"] : "false";
 	
 	echo '<div id="checkbox">' . PHP_EOL;
 	echo '  <div id="topcheckbox">' . PHP_EOL;
@@ -25,9 +27,6 @@ if (hasAuth ()) {
 	echo '     </fieldset>' . PHP_EOL;
 	echo '    </form>' . PHP_EOL;
 	echo '  </div> <!--End div topcheckbox -->' . PHP_EOL;
-	
-	// get value from session
-	$showcanceled = isset ( $_SESSION ["showcanceled"] ) ? $_SESSION ["showcanceled"] : "false";
 	
 	echo '  <div id="bottomcheckbox">' . PHP_EOL;
 	echo '    <form name="hiddenTours" action="" method="post">' . PHP_EOL;
