@@ -316,7 +316,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						} else if (! isset ( $_REQUEST ['duration'] ) && ! is_numeric ( $_REQUEST ['duration'] )) {
 							setMessage ( 'Dauer bitte angeben' );
 						} else if (isset ( $_REQUEST ['duration'] ) && is_numeric ( $_REQUEST ['duration'] ) && floatval ( $_REQUEST ['duration'] ) < 1) {
-							setMessage ( 'Nur positice Dauer ist erlaubt' );
+							setMessage ( 'Nur eine positive Dauer ist erlaubt' );
 						} else if ($date < date ( 'Y-m-d H:i:s' )) {
 							setMessage ( 'Datum muss in der Zukunft liegen' );
 						} else if (isset ( $_POST ['tourid'] )) {
