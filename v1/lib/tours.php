@@ -53,7 +53,7 @@ function mailNewTour($pdo, $tour) {
 	$stmt->execute ( array () );
 	while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		if (! isset ( $row ['mailing'] ) || $row ['mailing']) {
-			sendmail ( $row ['email'], $subject, $text );
+			sendmail ( $row ['email'], $subject, $text, false );
 		}
 	}
 }
@@ -62,7 +62,7 @@ function mailUpdateTour($pdo, $tour) {
 	$text = getMailText ( $tour );
 	$users = getAttendees ( $pdo, $tour->id );
 	foreach ( $users as $user ) {
-		sendmail ( $user ['email'], $subject, $text );
+		sendmail ( $user ['email'], $subject, $text, false );
 	}
 }
 function mailCancelTour($pdo, $tour) {
@@ -70,7 +70,7 @@ function mailCancelTour($pdo, $tour) {
 	$text = getMailText ( $tour );
 	$users = getAttendees ( $pdo, $tour->id );
 	foreach ( $users as $user ) {
-		sendmail ( $user ['email'], $subject, $text );
+		sendmail ( $user ['email'], $subject, $text, false );
 	}
 }
 

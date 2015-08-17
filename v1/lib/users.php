@@ -5,12 +5,12 @@ function sendActivationMail($username, $token, $email) {
 ' Zum Abschluss Deiner Registrierung klicke bitte auf folgenden <a href="' . getUrlPrefix () . '/activate.php?token=' . urlencode ( $token ) . '">Link</a>.' . //
 ' Danach &ouml;ffnet sich die sport2gether-Seite und Du kannst Dich mit Deinem gew&auml;hlten User und Passwort anmelden. Viel Spa&szlig;!</body><html>';
 	$subject = 'Aktivierung des Touren-Kontos von ' . $username;
-	sendmail ( $email, $subject, $text );
+	sendmail ( $email, $subject, $text, false );
 }
 function sendPasswordresetMail($username, $token, $email) {
 	$text = '<html>body><a href="' . getUrlPrefix () . '/passwordreset.php?token=' . urlencode ( $token ) . '">Password reset</a></body><html>';
-	$subject = 'Passwortreset angefoedert des Touren-Kontos von ' . $username;
-	sendmail ( $email, $subject, $text );
+	$subject = 'Passwortreset angefodert f&uuml;r Touren-Kontos von ' . $username;
+	sendmail ( $email, $subject, $text, false );
 }
 function createUserProfilLink($user, $style, $tooltip = "Profil anzeigen") {
 	// var_dump($user);
