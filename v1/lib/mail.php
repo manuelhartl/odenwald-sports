@@ -18,6 +18,6 @@ function sendmail_local($to, $subject, $body, $secure = true) {
 'Content-type: text/html; charset=UTF-8' . "\n" . //
 'X-Mailer: PHP/' . phpversion () . "\n"; //
 	
-	mail ( $to, Utilities::clearText4Mail ( $subject ), secure ? Utilities::clearText4Mail ( $body ) : $body, $headers );
+	mail ( $to, Utilities::clearText4Mail ( $subject ), $body, $headers );
 }
 ?>
