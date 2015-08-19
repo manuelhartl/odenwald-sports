@@ -52,7 +52,7 @@ if (hasAuth ()) {
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr id="tourheader">
-		<th style='width: 5em;'>Sport</th>
+		<th style='width: 3em;'>Sport</th>
 		<th style='width: 4em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
