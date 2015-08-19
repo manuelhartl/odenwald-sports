@@ -3,7 +3,7 @@ require_once __DIR__ . '/../lib/global.php';
 ?>
 <pre>
 Motto:
-1. Wir bringen Menschen zusammen, die ein gemeinsames Hobby teilen (wir m&uuml;ssten das so offen lassen, weil wir auch andere Sportarten zulassen).
+1. Wir bringen Menschen zusammen, die ein gemeinsames Hobby teilen.
 2. Jeder kann und darf sich engagieren. 
 3. Entscheidungen werden transparent getroffen und kommuniziert.
 4. Unsere Seite ist werbe- und kostenfrei.
@@ -11,19 +11,19 @@ Motto:
 
 Mit der Anmeldung und/oder Teilnahme an einer gef&uuml;hrten Mountainbiketour der sport2gether erkl&auml;rt der/die Teilnehmer/in, dass er die nachfolgenden Teilnahmehinweise gelesen hat und damit einverstanden ist: 
 &sect; 1 Begriffsbestimmungen
-(1) sport2gether ist eine Plattform, die Tourenanbieter und Mitfahrer zusammenf&uuml;hren m&ouml;chte
+(1) sport2gether ist eine Plattform, die Tourenanbieter und Mitfahrer zusammenf&uuml;hren m&ouml;chte.
 (2) Der individuelle Leiter einer der Touren wird im Weiteren als Guide bezeichnet.
-(3) Soweit nachfolgend m&auml;nnliche Begriffsbestimmungen verwendet werden schlie&szlig;en diese, soweit anwendbar, die weiblichen Begriffsbestimmungen mit ein. 
+(3) Soweit nachfolgend m&auml;nnliche Begriffsbestimmungen verwendet werden, schlie&szlig;en diese die weiblichen Begriffsbestimmungen mit ein. 
 &sect; 2 Verf&uuml;gbarkeit dieser Hinweise
 Sie k&ouml;nnen unter <?php echo get_current_url();?> nachgelesen und ausgedruckt werden. 
 &sect; 3 Absage oder Abbruch von Touren
 Es besteht kein Rechtsanspruch auf Teilnahme oder Durchf&uuml;hrung einer ausgeschriebenen Tour. Die sport2gether und/oder der Guide sind jederzeit - auch kurzfristig - berechtigt, die Tour ohne Angabe von Gr&uuml;nden abzusagen oder abzubrechen sowie Teilnehmer von der Teilnahme an der Tour auszuschlie&szlig;en. 
 &sect; 4 Teilnahmevoraussetzungen
-(1) Diesport2gether und/oder der Guide sind berechtigt, die Teilnahme an einer Tour von der Erf&uuml;llung besonderer Bedingungen (wie beispielsweise das Vorliegen bestimmter fahrtechnischer F&auml;higkeiten) abh&auml;ngig zu machen. Hierauf wird im Einzelnen in der Ausschreibung zu einer Tour hingewiesen. Teilnehmer, die das 18. Lebensjahr noch nicht vollendet haben, m&uuml;ssen eine schriftliche Einverst&auml;ndniserkl&auml;rung ihrer Erziehungsberechtigten vorlegen.
-(2) Voraussetzung f&uuml;r die Teilnahme an einer Tour sind, sofern nichts anderes angegeben ist, ein technisch einwandfreies Mountainbike sowie eine ausreichende Pannenausr&uuml;stung (u. a. Ersatzschlauch, Flickzeug, Luftpumpe, Werkzeug, etc.). Es ist nicht Aufgabe oder  Verpflichtung des Guides, den Teilnehmern im Pannenfall technische Unterst&uuml;tzung zu gew&auml;hren. Kann die Tour aufgrund einer Panne nicht zu Ende gefahren werden, so ist ein eventuell erforderlicher R&uuml;cktransport auf eigene Gefahr und Kosten des Teilnehmers durchzuf&uuml;hren.
+(1) Die sport2gether und/oder der Guide sind berechtigt, die Teilnahme an einer Tour von der Erf&uuml;llung besonderer Bedingungen (wie beispielsweise das Vorliegen bestimmter fahrtechnischer F&auml;higkeiten) abh&auml;ngig zu machen. Hierauf wird im Einzelnen in der Ausschreibung zu einer Tour hingewiesen. Teilnehmer, die das 18. Lebensjahr noch nicht vollendet haben, m&uuml;ssen eine schriftliche Einverst&auml;ndniserkl&auml;rung ihrer Erziehungsberechtigten vorlegen.
+(2) Voraussetzung f&uuml;r die Teilnahme an einer Tour sind, sofern nichts anderes angegeben ist, ein technisch einwandfreies Mountainbike sowie eine ausreichende Pannenausr&uuml;stung (u.a. Ersatzschlauch, Flickzeug, Luftpumpe, Werkzeug). Es ist nicht Aufgabe oder Verpflichtung des Guides, den Teilnehmern im Pannenfall technische Unterst&uuml;tzung zu gew&auml;hren. Kann die Tour aufgrund einer Panne nicht zu Ende gefahren werden, so ist ein eventuell erforderlicher R&uuml;cktransport auf eigene Gefahr und Kosten des Teilnehmers durchzuf&uuml;hren.
 (3) Alle Teilnehmer haben f&uuml;r eine ausreichende Schutz- und Sicherheitsausr&uuml;stung zu sorgen. Hierzu geh&ouml;ren insbesondere ein Schutzhelm (Pflicht!), eine den Witterungsbedingungen entsprechende Kleidung und ggfs. angemessene Schutzausr&uuml;stung (z. B. Handschuhe, Protektoren). Alle Teilnehmer haben selbst f&uuml;r eine ausreichende Verpflegung und Getr&auml;nke zu sorgen. 
 &sect; 4 Aufgaben des Guides
-(1) Sofern nichts anderes angegeben ist, besteht die Aufgabe des Guides ausschlie&szlig;lich darin, den Teilnehmern den Weg zu zeigen sowie die Orientierung abseits von &ouml;ffentlichen Stra&szlig;en und Wegen zu erleichtern. Die Teilnehmer sind sich dar&uuml;ber bewusst und damit einverstanden, dass der Tourverlauf und die Tourdauer, z. B. aufgrund von Witterungs- und Wegebedingungen, jederzeit - auch im Verlauf einer Tour - &Auml;nderungen unterliegen k&ouml;nnen und sich insbesondere auch der Zeitpunkt der R&uuml;ckkehr nach vorne oder nach hinten verschieben kann.
+(1) Sofern nichts anderes angegeben ist, besteht die Aufgabe des Guides ausschlie&szlig;lich darin, den Teilnehmern den Weg zu zeigen sowie die Orientierung abseits von &ouml;ffentlichen Stra&szlig;en und Wegen zu erleichtern. Die Teilnehmer sind sich dar&uuml;ber bewusst und damit einverstanden, dass der Tourverlauf und die Tourdauer, z. B. aufgrund von Witterungs- und Wegebedingungen, jederzeit - auch im Verlauf einer Tour - &Auml;nderungen unterliegen k&ouml;nnen und sich insbesondere auch der Zeitpunkt der R&uuml;ckkehr nach vorne oder hinten verschieben kann.
 (2) Es ist nicht Verpflichtung des Guides, die konditionellen oder fahrtechnischen F&auml;higkeiten der Teilnehmer zu beurteilen oder ihnen hierzu Ratschl&auml;ge zu erteilen. 
 &sect; 5 Gefahrtragung
 (1) Dem Teilnehmer einer Tour ist bekannt, dass die Benutzung eines Mountainbikes sowohl auf als auch abseits befestigter Stra&szlig;en besondere k&ouml;rperliche Anforderungen stellt und mit spezifischen Gefahren verbunden ist.
