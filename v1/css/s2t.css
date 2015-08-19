@@ -324,6 +324,28 @@ clear: both;
 *zoom: 1;
 }
 
+.wrapIcon {
+		width: 40px;
+		height: 40px;
+		position: relative;
+	}
+	.wrapIcon img {
+		position: absolute;
+	}
+	.img-a {
+		top: 0;
+		left: 0;
+		z-index: 2;
+	}
+	.img-b {
+		bottom: 0;
+		right: 0;
+		z-index: 1;
+	}
+	.img-c {
+		bottom: 0;
+		right: 0;
+	}
 
 .icon-mail, .icon-tour-mail, .icon-tour-edit, .icon-tour-cancel,
 	.icon-attendee-mail, .icon-guide-mail, .icon-tour-join,

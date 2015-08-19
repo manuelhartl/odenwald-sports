@@ -122,14 +122,21 @@ class Utilities {
 			case 'Langlauf' :
 				$icon = "ski";
 				break;
+			case 'delete' :
+				$icon = "delete";
 			default :
 				$icon = "mtb";
 		}
 		if ($canceled) {
-			$icon = 'delete';
+			$ret = '<div class="wrapIcon">' . PHP_EOL . //
+'<img class="img-c" src="img/big/' . $icon . '.png" align="middle" border="0" height="40px" width="40px">' . PHP_EOL . //
+'<img class="img-a" src="img/big/' . 'delete' . '.png" align="middle" border="0" height="40px" width="40px">' . PHP_EOL . //
+'<div>';
+		} else {
+			$ret = "<img src='img/big/" . $icon . ".png' align='middle' border='0' height='40px' width='40px'>";
 		}
 		
-		return ("<img src='img/big/" . $icon . ".png' align='middle' border='0' height='40px' width='40px'>");
+		return ($ret);
 	}
 	
 	/**
