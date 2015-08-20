@@ -65,10 +65,8 @@ if (hasAuth ()) {
 		<th class='medium' style='text-align: center; width: 5em;'>Dauer</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Distanz</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Bergauf</th>
-		<th class='big'
-			style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
-		<th class='big'
-			style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
+		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
+		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th style="width: 15%;">Teilnehmer</th>' . PHP_EOL;
@@ -116,6 +114,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$authuserid = hasAuth () ? authUser ()->id : '';
 	$users = getAttendees ( $pdo, $tour->id );
 	$countAttendees = count ( $users );
+	$firstUser=true;
 	foreach ( $users as $user ) {
 		// $tourmember = DB_member::getMemberById ( $pdo, $user ['id'] );
 		$u = new DBUser ();
@@ -125,10 +124,11 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
 		$emailString = '<a id="tour-mail1" class="icon-attendee-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> </a>';
-		$attendeeString = $attendeeString . '<div class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profil">' . createUserProfilLink ( $u, "style='border: none; line-height: 18px;'", createUserInfo ( $u, $ue ) ) . ", </div></div> ";
+		$attendeeString = $attendeeString . '<div class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profil">' . createUserProfilLink ( $u, "style='border: none; line-height: 18px;'", createUserInfo ( $u, $ue ) ) . (! $firstUser ? ', ' : '') . '</div></div> ';
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
+		$firstUser=false;
 	}
 	
 	$startdate = $tour->startDateTime;
