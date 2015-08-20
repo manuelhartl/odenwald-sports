@@ -52,8 +52,8 @@ if (hasAuth ()) {
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr id="tourheader">
-		<th style='width: 3em;'>Sport</th>
-		<th style='width: 4em;'>Datum</th>
+		<th style='width: 4em;'>Sport</th>
+		<th style='width: 3em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
 			echo "<th style='width: 30px;'></th>" . PHP_EOL;
@@ -65,8 +65,10 @@ if (hasAuth ()) {
 		<th class='medium' style='text-align: center; width: 5em;'>Dauer</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Distanz</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Bergauf</th>
-		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
-		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
+		<th class='big'
+			style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
+		<th class='big'
+			style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th style="width: 15%;">Teilnehmer</th>' . PHP_EOL;
@@ -142,14 +144,14 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	$dstyle = $daystyle . (strlen ( $linestyle ) > 0 ? ' ' . $linestyle : "") . (strlen ( $cancelstyle ) > 0 ? ' ' . $cancelstyle : "");
 	
 	$firsttableentry = ! (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' ));
+	if ($firsttableentry) {
+		echo '<tr class="' . $dstyle . '">', PHP_EOL;
+		echo '  <td colspan="' . (hasAuth () ? '13' : '9') . '" class="firstday">' . Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
+		echo '  </tr>', PHP_EOL;
+	}
 	echo '<tr class="' . $dstyle . '">', PHP_EOL;
 	echo '<td colspan="2">', PHP_EOL;
 	echo '<table style="width: 100%; line-height: 1; margin: 0;" >', PHP_EOL;
-	if ($firsttableentry) {
-		echo '  <tr>', PHP_EOL;
-		echo '  <td colspan="2" style="color: black;">' . Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
-		echo '  </tr>', PHP_EOL;
-	}
 	echo '  <tr>', PHP_EOL;
 	echo '    <td title="' . $tour->sport->sportsubname . '" style="text-align: left;">' . PHP_EOL;
 	echo Utilities::makeSportSubnameIconTag ( $tour->sport->sportsubname, $tour->canceled ), PHP_EOL;
