@@ -88,8 +88,12 @@ a[id=tour-mail] {
 	background: #ccc url('../img/big/mail.png') no-repeat top left;
 }
 
+a[id=tour-mail1] {
+	background: #ccc url('../img/big/mail1.png') no-repeat top right;
+}
+
 input[id=tour-join], input[id=tour-leave], input[id=tour-edit], input[id=tour-cancel] ,
-	a[id=tour-mail] {
+	a[id=tour-mail], a[id=tour-mail1] {
 	padding: 3px;
 	border: none;
 	background-size: 25px;
@@ -347,7 +351,7 @@ clear: both;
 		right: 0;
 	}
 
-.icon-mail, .icon-tour-mail, .icon-tour-edit, .icon-tour-cancel,
+.icon-mail, .icon-tour-mail, icon-tour-mail1, .icon-tour-edit, .icon-tour-cancel,
 	.icon-attendee-mail, .icon-guide-mail, .icon-tour-join,
 	.icon-tour-leave {
 	height: 30px;
