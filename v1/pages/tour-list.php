@@ -52,7 +52,7 @@ if (hasAuth ()) {
 ?>
 <table style='width: 100%; table-layout: fixed; text-align: right;'>
 	<tr id="tourheader">
-		<th style='width: 3em;'>Sport</th>
+		<th style='width: 4em;'>Sport</th>
 		<th style='width: 3em;'>Datum</th>
 		<?php
 		if (hasAuth ()) {
@@ -124,8 +124,8 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		$u->username = $user ['username'];
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
-		$emailString = '<a id="tour-mail1" class="icon-attendee-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> </a>';
-		$attendeeString = $attendeeString . '<div class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profil">' . createUserProfilLink ( $u, "style='border: none; line-height: 18px;'", createUserInfo ( $u, $ue ) ) . "</div></div> ";
+		$emailString = '<a id="tour-mail" class="icon-attendee-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&toid=' . $u->id . '&subject=' . $tourDescription . '"> </a>';
+		$attendeeString = $attendeeString . '<div class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profil">' . createUserProfilLink ( $u, "style='line-height: 18px;'", createUserInfo ( $u, $ue ) ) . "</div></div> ";
 		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
@@ -145,7 +145,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	$firsttableentry = ! (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' ));
 	if ($firsttableentry) {
-		echo '<tr' . $dstyle . '">', PHP_EOL;
+		echo '<tr class="' . $daystyle . '">', PHP_EOL;
 		echo '  <td colspan="' . (hasAuth () ? '13' : '9') . '" class="firstday">' . Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
 		echo '  </tr>', PHP_EOL;
 	}
