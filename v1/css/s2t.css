@@ -353,3 +353,9 @@ clear: both;
 	height: 30px;
 	width: 30px;
 }
+
+.firstday{
+	color: black;
+	text-align: left;
+	font-size: 110%;
+}
