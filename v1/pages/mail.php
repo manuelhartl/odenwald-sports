@@ -2,9 +2,15 @@
 
 <form action="index.php" method="post" style="width: 100%;">
 
-	<input type="hidden" name="action" value="mail-send" />
+	<input type="hidden" name="action" value="mail-send" /> <input type="hidden" name="to"
+		value="<?php echo $input['to'];?>" />
 	<?php
-	echo '<input type="hidden" name="to" value="' . (isset ( $input ['to'] ) ? $input ['to'] : (isset ( $input ['tos'] ) ? $input ['tos'] : "")) . '"/>';
+	if (isset ( $input ['touserid'] )) {
+		echo '<input type="hidden" name="touserid" value="' . $input ['touserid'] . '"/>';
+	}
+	if (isset ( $input ['totourid'] )) {
+		echo '<input type="hidden" name="totourid" value="' . $input ['totourid'] . '"/>';
+	}
 	?>
 	<table style="width: 100%">
 		<tr>
@@ -13,7 +19,7 @@
 		</tr>
 		<tr>
 			<td>An</td>
-			<td><?php echo (isset( $input['to'])? $input['to']:(isset( $input['tos'])? $input['tos']:"")) ; ?></td>
+			<td><?php echo $input['to']; ?></td>
 		</tr>
 		<tr>
 			<td>Betreff</td>
@@ -30,8 +36,7 @@
 
 				</form>
 				<form name="login" action="index.php" method="post">
-					<input name="action" type="hidden" value="home" /> <input
-						name="submit" type="submit" value="Abbrechen" />
+					<input name="action" type="hidden" value="home" /> <input name="submit" type="submit" value="Abbrechen" />
 				</form></td>
 		</tr>
 	</table>

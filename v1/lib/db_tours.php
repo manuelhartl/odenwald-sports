@@ -53,6 +53,7 @@ function getDBTour($row) {
 	$tourObj->guide = new DBUser ();
 	$tourObj->guide->id = $row ['guide'];
 	$tourObj->guide->username = $row ['guidename'];
+	$tourObj->guide->email = $row ['email'];
 	$tourObj->attendees = array ();
 	array_push ( $tourObj->attendees, new DBUser () );
 	$tourObj->canceled = ($row ['tourstatus'] == 'canceled');
@@ -114,12 +115,12 @@ function updateTour($pdo, DBTour $tour) {
 	return true;
 }
 function getTourById($pdo, $tourid) {
-	$stmt = $pdo->prepare ( //
-'select *,sportname,ss.sportsubname as sportsubname, ss.id as sportsubid, X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long,t.status as tourstatus, t.id as id, g.id as guide, g.username as guidename' . //
-' from tour t left join user g ON (t.fk_guide_id=g.id)' . //
-' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
-' left join sport s ON (ss.fk_sport_id=s.id) ' . //
-' where t.id=?' );
+	$stmt = $pdo->prepare ( 	//
+	'select *,sportname,ss.sportsubname as sportsubname, ss.id as sportsubid, X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long,t.status as tourstatus, t.id as id, g.id as guide, g.username as guidename' . 	//
+	' from tour t left join user g ON (t.fk_guide_id=g.id)' . 	//
+	' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . 	//
+	' left join sport s ON (ss.fk_sport_id=s.id) ' . 	//
+	' where t.id=?' );
 	$stmt->execute ( array (
 			$tourid 
 	) );

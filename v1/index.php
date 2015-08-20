@@ -169,18 +169,24 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				switch ($_REQUEST ['action']) {
 					case 'mail-user' :
 						setPage ( 'mail' );
-						if (isset ( $_REQUEST ['toid'] )) {
-							$toid = $_REQUEST ['toid'];
-							$touser = getUserById ( $pdo, $toid );
+						if (isset ( $_REQUEST ['touserid'] )) {
+							$touserid = $_REQUEST ['touserid'];
+							$touser = getUserById ( $pdo, $touserid );
+							$input ['touserid'] = $touser ['id'];
 							$input ['to'] = $touser ['username'];
-						} else {
-							$toids = $_REQUEST ['toids'];
-							$tos = "";
-							foreach ( explode ( ',', $toids ) as $toid ) {
-								$touser = getUserById ( $pdo, $toid );
-								$tos .= $touser ['username'] . ",";
+						} else if (isset ( $_REQUEST ['totourid'] )) {
+							$totourid = $_REQUEST ['totourid'];
+							$tour = getTourById ( $pdo, $totourid );
+							$users = getAttendees ( $pdo, $tour->id );
+							$to = $tour->guide->username;
+							foreach ( $users as $user ) {
+								$user = getUserById ( $pdo, $user ['id'] );
+								$to .= ', ' . $user ['username'];
 							}
-							$input ['to'] = substr ( $tos, 0, strlen ( $tos ) - 1 );
+							$input ['totourid'] = $tour->id;
+							$input ['to'] = $to;
+						} else {
+							break;
 						}
 						if (isset ( $_REQUEST ['subject'] )) {
 							$input ['subject'] = $_REQUEST ['subject'];
@@ -193,6 +199,12 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$to = $_REQUEST ['to'];
 						$input ['subject'] = $_REQUEST ['subject'];
 						$input ['body'] = $_REQUEST ['body'];
+						if (isset ( $_REQUEST ['touserid'] )) {
+							$input ['touserid'] = $_REQUEST ['touserid'];
+						}
+						if (isset ( $_REQUEST ['totourid'] )) {
+							$input ['totourid'] = $_REQUEST ['totourid'];
+						}
 						$input ['to'] = $_REQUEST ['to'];
 						$receiver = "";
 						
@@ -203,18 +215,27 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						} else if (empty ( $to )) {
 							setMessage ( 'Bitte Empf&auml;nger eingeben' );
 						} else {
-							if (isset ( $_REQUEST ['to'] )) {
-								foreach ( explode ( ',', $_REQUEST ['to'] ) as $username ) {
-									$touser = getUserByName ( $pdo, $username );
-									$receiver .= "," . $touser ['username'];
-									sendmail ( $touser ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
+							if (isset ( $_REQUEST ['touserid'] )) {
+								$touser = getUserById ( $pdo, $_REQUEST ['touserid'] );
+								// TODO: check if user is active/verified or maybe add status='verified' to getUserById-select statement
+								sendmail ( $touser ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
+								setPage ( 'home' );
+								setMessage ( 'Mail an Benutzer ' . $touser ['username'] . ' gesendet' );
+							} else if (isset ( $_REQUEST ['totourid'] )) {
+								$tour = getTourById ( $pdo, $_REQUEST ['totourid'] );
+								if (($tour->canceled) || ($tour->startDateTime < new DateTime ())) {
+									// security: this never should happen
+									break;
 								}
-								if ($receiver [0] == ",") {
-									$receiver = substr ( $receiver, 1 );
+								sendmail ( $tour->guide->email, 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
+								$users = getAttendees ( $pdo, $tour->id );
+								foreach ( $users as $user ) {
+									sendmail ( $user ['email'], 'Nachricht von ' . authUser ()->username . ' mit Betreff: ' . $subject, $body );
 								}
+								setPage ( 'home' );
+								$tourDescription = $tour->sport->sportsubname . '-Tour am ' . $tour->startDateTime->format ( 'd.m.Y H:i' );
+								setMessage ( 'Mail an den Guide und die Teilnehmer der ' . $tourDescription . ' gesendet' );
 							}
-							setPage ( 'home' );
-							setMessage ( 'Mail an ' . $receiver . ' gesendet' );
 						}
 						break;
 					case 'tour-list-canceled' :
@@ -554,10 +575,7 @@ echo '</div> <!--End div footer -->';
 echo '</div> <!--End div total -->';
 // print_r ( session_get_cookie_params () );
 /*
- * echo "<pre>";
- * print_r ( $_SESSION );
- * print_r ( $_REQUEST );
- * echo "</pre>";
+ * echo "<pre>"; print_r ( $_SESSION ); print_r ( $_REQUEST ); echo "</pre>";
  */
 ?>
 
