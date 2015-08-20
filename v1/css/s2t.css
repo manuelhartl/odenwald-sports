@@ -88,13 +88,19 @@ a[id=tour-mail] {
 	background: #ccc url('../img/big/mail.png') no-repeat top left;
 }
 
-a[id=tour-mail1] {
-	background: #ccc url('../img/big/mail1.png') no-repeat top right;
+input[id=tour-join], input[id=tour-leave], input[id=tour-edit], input[id=tour-cancel],
+	a[id=tour-mail] {
+	padding: 3px;
+	border: none;
+	background-size: 25px;
+	background-color: transparent;
 }
 
-input[id=tour-join], input[id=tour-leave], input[id=tour-edit], input[id=tour-cancel] ,
-	a[id=tour-mail], a[id=tour-mail1] {
-	padding: 3px;
+a[id=tour-mail1] {
+	background: #ccc url('../img/big/mail1.png') no-repeat top right;
+	width: 25px;
+	height: 25px;
+	padding: 0px;
 	border: none;
 	background-size: 25px;
 	background-color: transparent;
@@ -316,49 +322,59 @@ td.tooltip {
 	display: none;
 }
 
-.clearfix:before,
-.clearfix:after {
-content: " ";
-display: table;
+.clearfix:before, .clearfix:after {
+	content: " ";
+	display: table;
 }
+
 .clearfix:after {
-clear: both;
+	clear: both;
 }
+
 .clearfix {
-*zoom: 1;
+	*zoom: 1;
 }
 
 .wrapIcon {
-		width: 40px;
-		height: 40px;
-		position: relative;
-	}
-	.wrapIcon img {
-		position: absolute;
-	}
-	.img-a {
-		top: 0;
-		left: 0;
-		z-index: 2;
-	}
-	.img-b {
-		bottom: 0;
-		right: 0;
-		z-index: 1;
-	}
-	.img-c {
-		bottom: 0;
-		right: 0;
-	}
+	width: 40px;
+	height: 40px;
+	position: relative;
+}
 
-.icon-mail, .icon-tour-mail, icon-tour-mail1, .icon-tour-edit, .icon-tour-cancel,
+.wrapIcon img {
+	position: absolute;
+}
+
+.img-a {
+	top: 0;
+	left: 0;
+	z-index: 2;
+}
+
+.img-b {
+	bottom: 0;
+	right: 0;
+	z-index: 1;
+}
+
+.img-c {
+	bottom: 0;
+	right: 0;
+}
+
+.icon-mail, .icon-tour-mail, .icon-tour-edit, .icon-tour-cancel,
 	.icon-attendee-mail, .icon-guide-mail, .icon-tour-join,
 	.icon-tour-leave {
 	height: 30px;
 	width: 30px;
 }
 
-.firstday{
+.icon-tour-mail1 {
+	height: 20px;
+	width: 20px;
+}
+
+.firstday {
 	color: black;
 	text-align: left;
 	font-size: 110%;
