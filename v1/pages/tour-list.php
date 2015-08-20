@@ -145,7 +145,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	$firsttableentry = ! (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' ));
 	if ($firsttableentry) {
-		echo '<tr class="' . $dstyle . '">', PHP_EOL;
+		echo '<tr' . $dstyle . '">', PHP_EOL;
 		echo '  <td colspan="' . (hasAuth () ? '13' : '9') . '" class="firstday">' . Utilities::getWeekDay ( $startdate ) . ', ' . $startdate->format ( 'd.m.Y' ) . '</td>', PHP_EOL;
 		echo '  </tr>', PHP_EOL;
 	}
