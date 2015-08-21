@@ -59,20 +59,24 @@ if (hasAuth ()) {
 			echo "<th style='width: 30px;'></th>" . PHP_EOL;
 			echo "<th style='width: 7%;'>Guide</th>" . PHP_EOL;
 			echo "<th style='width: 15%;'>Treffpunkt</th>" . PHP_EOL;
+			echo "<th style='width: 25%;'>Beschreibung</th>" . PHP_EOL;
+		} else {
+			echo "<th style='width: 70%;'>Beschreibung</th>" . PHP_EOL;
 		}
 		?>
-		<th style='width: 25%;'>Beschreibung</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Dauer</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Distanz</th>
 		<th class='medium' style='text-align: center; width: 5em;'>Bergauf</th>
-		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
-		<th class='big' style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
+		<th class='big'
+			style='text-align: center; width: 60px; min-width: 60px;'>Pace</th>
+		<th class='big'
+			style='text-align: center; width: 60px; min-width: 60px;'>Technik</th>
 		<?php
 		if (hasAuth ()) {
 			echo '<th style="width: 15%;">Teilnehmer</th>' . PHP_EOL;
 			echo '<th style="width: 110px;"></th>' . PHP_EOL;
 		} else {
-			echo '<th>Teilnehmer</th>' . PHP_EOL;
+			echo '<th style="width: 25%;">Teilnehmer</th>' . PHP_EOL;
 		}
 		?>
 	</tr>
