@@ -190,5 +190,14 @@ function resetPassword($pdo, $token, $hashedpassword) {
 	}
 	return $stmt->rowCount () > 0;
 }
-
+function istGesetzt($pdo, $userId, $key, $value) {
+	$stmt = $pdo->prepare ( 'select `key` from user_attributes where (fk_user_id = ?) and (`key` = ? ) and (value = ? )' );
+	ex2er($stmt,  array (
+			$userId,
+			$key,
+			$value 
+	));
+	$stmt->fetch ( PDO::FETCH_ASSOC );
+	return $stmt->rowCount () > 0;
+}
 ?>
