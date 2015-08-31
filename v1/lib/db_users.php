@@ -4,6 +4,8 @@ class DBUser {
 	public $id;
 	public $username;
 	public $email;
+	public $register_date;
+	public $modify_date;
 }
 class DBUserExtra {
 	public $id;
@@ -21,6 +23,8 @@ function getDBUser($user) {
 	$userObj->username = isset ( $user ['username'] ) ? $user ['username'] : false;
 	$userObj->email = isset ( $user ['email'] ) ? $user ['email'] : false;
 	$userObj->register_date = isset ( $user ['register_date'] ) ? date_create ( $user ['register_date'] ) : false;
+	$userObj->modify_date = isset ( $user ['modify_date'] ) ? date_create ( $user ['modify_date'] ) : false;
+	
 	return $userObj;
 }
 function getDBUserExtra($row) {
@@ -146,14 +150,14 @@ function addPasswordresetToken($pdo, $userid, $token) {
 	)) );
 }
 function getUserByName($pdo, $username) {
-	$stmt = $pdo->prepare ( "select id,username,email,register_date from user where LOWER(username) = LOWER(?)" );
+	$stmt = $pdo->prepare ( "select id,username,email,register_date,modifydate from user where LOWER(username) = LOWER(?)" );
 	$stmt->execute ( array (
 			$username 
 	) );
 	return $stmt->fetch ( PDO::FETCH_ASSOC );
 }
 function getUserById($pdo, $userId) {
-	$stmt = $pdo->prepare ( "select id,username,email,register_date from user where id = ?" );
+	$stmt = $pdo->prepare ( "select id,username,email,register_date,modifydate from user where id = ?" );
 	$stmt->execute ( array (
 			$userId 
 	) );
@@ -189,6 +193,20 @@ function resetPassword($pdo, $token, $hashedpassword) {
 		return false;
 	}
 	return $stmt->rowCount () > 0;
+}
+function getUserlist($pdo, $auth_id, $auth_lat, $auth_long) {
+	$stmt = $pdo->prepare ( 'select id, fk_user_id, 111195 * ST_Distance(POINT(?,?), address_coord) as dist ' . //
+' from user u' . //
+' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
+' WHERE status = "verified"' . //
+' AND u.id != ?' . //
+' ORDER BY lower(u.username) ASC' ); //
+	ex2er ( $stmt, array (
+			$auth_lat,
+			$auth_long,
+			$auth_id 
+	) );
+	return ($stmt->fetchAll ());
 }
 
 ?>

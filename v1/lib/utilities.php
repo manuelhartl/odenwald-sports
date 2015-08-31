@@ -7,7 +7,7 @@ class Utilities {
 	 * @param Object[T) $defaultValue
 	 * @return if value is set return value, otherwise default
 	 */
-	public static function getVal($value, $defaultValue) {
+	public static function getValue($value, $defaultValue) {
 		return (isset ( $value ) ? $value : $defaultValue);
 	}
 	/**
@@ -29,7 +29,7 @@ class Utilities {
 	 * @return \DateTime
 	 */
 	static function getValidatedDate($value) {
-		$returnValue;
+		$returnValue = null;
 		if ($value instanceof \DateTime) {
 			$returnValue = $value;
 		} elseif (is_string ( $value )) {
