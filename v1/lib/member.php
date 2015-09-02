@@ -149,6 +149,11 @@ class Member {
 		
 		return ($about);
 	}
+	/**
+	 * @param double $latitude
+	 * @param double $longitude
+	 * @return the distance to the given location
+	 */
 	public function getDistanceTo($latitude, $longitude) {
 		if ($this->hasAdress ()) {
 			// return ($this->getDistanceBetweenPoints ( $this->address_lat, $this->address_long, $latitude, $longitude ));
@@ -156,6 +161,13 @@ class Member {
 		}
 		return ("");
 	}
+	/**
+	 * @param unknown $latitude1 location 1
+	 * @param unknown $longitude1 location 1
+	 * @param unknown $latitude2 location 2
+	 * @param unknown $longitude2 location 2
+	 * @return the distance between location 1 & 2
+	 */
 	private function getDistance1($latitude1, $longitude1, $latitude2, $longitude2) {
 		$earth_radius = 6371;
 		
@@ -168,6 +180,14 @@ class Member {
 		
 		return $d;
 	}
+	/**
+	 * @param unknown $latitude1 location 1
+	 * @param unknown $longitude1 location 1
+	 * @param unknown $latitude2 location 2
+	 * @param unknown $longitude2 location 2
+	 * @param string $unit "Km" and "Mi"
+	 * @return the distance between location 1 & 2
+	 */
 	private function getDistanceBetweenPoints($latitude1, $longitude1, $latitude2, $longitude2, $unit = 'Km') {
 		$theta = $longitude1 - $longitude2;
 		$distance = (sin ( deg2rad ( $latitude1 ) ) * sin ( deg2rad ( $latitude2 ) )) + (cos ( deg2rad ( $latitude1 ) ) * cos ( deg2rad ( $latitude2 ) ) * cos ( deg2rad ( $theta ) ));
@@ -183,6 +203,11 @@ class Member {
 		return ($distance);
 	}
 }
+/**
+ *
+ * @author g.wischnewski
+ *        
+ */
 class MemberManager {
 	/**
 	 *
@@ -206,6 +231,7 @@ class MemberManager {
 	}
 	/**
 	 *
+	 * @param unknown $pdo
 	 * @param DBUser $dbUser
 	 * @return Member
 	 */
@@ -227,6 +253,12 @@ class MemberManager {
 		}
 		return ($member);
 	}
+	/**
+	 * @param unknown $pdo
+	 * @param unknown $auth_id
+	 * @param unknown $auth_lat
+	 * @param unknown $auth_long
+	 */
 	public static function getUserlist($pdo, $auth_id, $auth_lat, $auth_long) {
 		$result = getUserlist ( $pdo, $auth_id, $auth_lat, $auth_long );
 		while ( $row = array_shift ( $result ) ) {
