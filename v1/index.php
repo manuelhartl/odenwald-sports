@@ -10,17 +10,22 @@
 <title>Sport2gether</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
-<link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
+<link href="css/bootstrap-datetimepicker.css" rel="stylesheet"
+	type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
 <link href="css/s2t.css" rel="stylesheet" type="text/css">
-<link href="css/s2t-nano.css" rel="stylesheet" type="text/css" media="(max-width: 900px)">
-<link href="css/s2t-small.css" rel="stylesheet" type="text/css" media="(max-width: 1280px) and (min-width: 901px)">
-<link href="css/s2t-big.css" rel="stylesheet" type="text/css" media="(min-width: 1281px)">
+<link href="css/s2t-nano.css" rel="stylesheet" type="text/css"
+	media="(max-width: 900px)">
+<link href="css/s2t-small.css" rel="stylesheet" type="text/css"
+	media="(max-width: 1280px) and (min-width: 901px)">
+<link href="css/s2t-big.css" rel="stylesheet" type="text/css"
+	media="(min-width: 1281px)">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script type="text/javascript"
+	src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script type="text/javascript" src="js/locationpicker.jquery.js"></script>
 <script type="text/javascript" src="js/jquery.rating.pack.js"></script>
 </head>
@@ -176,7 +181,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 							$input ['to'] = $touser ['username'];
 						} else if (isset ( $_REQUEST ['totourid'] )) {
 							$totourid = $_REQUEST ['totourid'];
-							$tour = getTourById ( $pdo, $totourid );
+							$tour = getDBTourById ( $pdo, $totourid );
 							$users = getAttendees ( $pdo, $tour->id );
 							$to = $tour->guide->username;
 							foreach ( $users as $user ) {
@@ -222,7 +227,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								setPage ( 'home' );
 								setMessage ( 'Mail an Benutzer ' . $touser ['username'] . ' gesendet' );
 							} else if (isset ( $_REQUEST ['totourid'] )) {
-								$tour = getTourById ( $pdo, $_REQUEST ['totourid'] );
+								$tour = getDBTourById ( $pdo, $_REQUEST ['totourid'] );
 								if (($tour->canceled) || ($tour->startDateTime < new DateTime ())) {
 									// security: this never should happen
 									break;
@@ -290,7 +295,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						break;
 					case 'tour-edit' :
 						$tourid = $_POST ['tourid'];
-						$tour = getTourById ( $pdo, $tourid );
+						$tour = getDBTourById ( $pdo, $tourid );
 						$input ['tourid'] = $tourid;
 						$input ['sport'] = $tour->sport->sportsubid;
 						$input ['meetingpoint'] = $tour->meetingPoint;
@@ -310,7 +315,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$sports = getSports ( $pdo );
 						if (isset ( $_REQUEST ['tourid'] )) {
 							$input ['tourid'] = $_REQUEST ['tourid'];
-							$tour = getTourById ( $pdo, $_POST ['tourid'] );
+							$tour = getDBTourById ( $pdo, $_POST ['tourid'] );
 						}
 						$input ['meetingpoint'] = $_REQUEST ['meetingpoint'];
 						$input ['meetingpoint_desc'] = $_REQUEST ['meetingpoint_desc'];
@@ -397,7 +402,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						break;
 					case 'tour-join' :
 						$tourid = $_POST ['tourid'];
-						$tour = getTourById ( $pdo, $tourid );
+						$tour = getDBTourById ( $pdo, $tourid );
 						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourJoin ( $pdo, authUser ()->id, $tourid );
 							setMessage ( 'Danke f&uuml;r das Anmelden an der Tour' );
@@ -405,7 +410,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						break;
 					case 'tour-leave' :
 						$tourid = $_POST ['tourid'];
-						$tour = getTourById ( $pdo, $tourid );
+						$tour = getDBTourById ( $pdo, $tourid );
 						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
 							tourLeave ( $pdo, authUser ()->id, $tourid );
 							setMessage ( 'Schade, das n&auml;chste Mal klappt es wieder mit dem Mitfahren' );
@@ -413,7 +418,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						break;
 					case 'tour-cancel' :
 						$tourid = $_POST ['tourid'];
-						$tour = getTourById ( $pdo, $tourid );
+						$tour = getDBTourById ( $pdo, $tourid );
 						if ((authUser ()->id == $tour->guide->id) && ($tour->startDateTime >= new DateTime ())) {
 							tourCancel ( $pdo, $tourid );
 							mailCancelTour ( $pdo, $tour );
@@ -422,7 +427,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						break;
 					case 'tour-view' :
 						$tourid = $_REQUEST ['tourid'];
-						$tour = getTourById ( $pdo, $tourid );
+						$tour = getDBTourById ( $pdo, $tourid );
 						setPage ( 'tour-view' );
 						break;
 					case 'user-list' :

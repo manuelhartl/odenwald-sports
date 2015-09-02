@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/utilities.php';
+/**
+ *
+ * @author g.wischnewski
+ *        
+ */
 class Member {
 	private $id;
 	private $username;

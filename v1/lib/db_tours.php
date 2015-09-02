@@ -17,6 +17,8 @@ class DBTour {
 	public $distance;
 	public $skill;
 	public $speed;
+	public $register_date;
+	public $modify_date;
 }
 class DBGps {
 	public $lat;
@@ -61,6 +63,9 @@ function getDBTour($row) {
 	$tourObj->elevation = $row ['elevation'];
 	$tourObj->speed = $row ['speed'];
 	$tourObj->skill = $row ['skill'];
+	$tourObj->register_date = $row ['register_date'];
+	$tourObj->modify_date = $row ['modify_date'];
+	
 	return $tourObj;
 }
 function getDBPlace($row) {
@@ -114,13 +119,14 @@ function updateTour($pdo, DBTour $tour) {
 	}
 	return true;
 }
-function getTourById($pdo, $tourid) {
-	$stmt = $pdo->prepare ( 	//
-	'select *,sportname,ss.sportsubname as sportsubname, ss.id as sportsubid, X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long,t.status as tourstatus, t.id as id, g.id as guide, g.username as guidename' . 	//
-	' from tour t left join user g ON (t.fk_guide_id=g.id)' . 	//
-	' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . 	//
-	' left join sport s ON (ss.fk_sport_id=s.id) ' . 	//
-	' where t.id=?' );
+function getDBTourById($pdo, $tourid) {
+	$stmt = $pdo->prepare ( //
+'select *,sportname,ss.sportsubname as sportsubname, ss.id as sportsubid, X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long,t.status as tourstatus, t.id as id, g.id as guide, g.username as guidename' . //
+'register_date,modify_date' . //
+' from tour t left join user g ON (t.fk_guide_id=g.id)' . //
+' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
+' left join sport s ON (ss.fk_sport_id=s.id) ' . //
+' where t.id=?' );
 	$stmt->execute ( array (
 			$tourid 
 	) );
