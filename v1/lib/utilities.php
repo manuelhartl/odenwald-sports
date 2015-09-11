@@ -39,7 +39,14 @@ class Utilities {
 		}
 		return ($returnValue);
 	}
-	
+	static function diyplayDateTime($value, $dateformat = 'd.m.y') {
+		if ($value != null) {
+			$dt = Utilities::getValidatedDate ( $value );
+			
+			return ($dt->format ( $dateformat ));
+		}
+		return ('no date');
+	}
 	/**
 	 *
 	 * @param String $message

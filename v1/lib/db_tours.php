@@ -64,7 +64,9 @@ function getDBTour($row) {
 	$tourObj->speed = $row ['speed'];
 	$tourObj->skill = $row ['skill'];
 	$tourObj->register_date = $row ['register_date'];
-	$tourObj->modify_date = $row ['modify_date'];
+	if (isset ( $row ['modify_date'] )) {
+		$tourObj->modify_date = $row ['modify_date'];
+	}
 	
 	return $tourObj;
 }
@@ -122,7 +124,7 @@ function updateTour($pdo, DBTour $tour) {
 function getDBTourById($pdo, $tourid) {
 	$stmt = $pdo->prepare ( //
 'select *,sportname,ss.sportsubname as sportsubname, ss.id as sportsubid, X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long,t.status as tourstatus, t.id as id, g.id as guide, g.username as guidename' . //
-'register_date,modify_date' . //
+'register_date, modify_date' . //
 ' from tour t left join user g ON (t.fk_guide_id=g.id)' . //
 ' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
 ' left join sport s ON (ss.fk_sport_id=s.id) ' . //
@@ -131,6 +133,12 @@ function getDBTourById($pdo, $tourid) {
 			$tourid 
 	) );
 	return getDBTour ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
+}
+function getCompleteTourlist($pdo) {
+	// $stmt = $pdo->prepare ( 'select id,register_date,modify_date from tour ' );
+	$stmt = $pdo->prepare ( 'select id, adddate as register_date, modifydate as modify_date from tour ' );
+	ex2er ( $stmt, array () );
+	return ($stmt->fetchAll ());
 }
 function getDBPlaceById($pdo, $id) {
 	$stmt = $pdo->prepare ( "select id,name,X(coord) as lat ,Y(coord) as lon from place where id=?" );

@@ -155,6 +155,7 @@ class Member {
 		return ($about);
 	}
 	/**
+	 *
 	 * @param double $latitude
 	 * @param double $longitude
 	 * @return the distance to the given location
@@ -166,7 +167,50 @@ class Member {
 		}
 		return ("");
 	}
+	public function toTable() {
+		echo '<table border="1">' . PHP_EOL;
+		
+		echo '  <thead>' . PHP_EOL;
+		echo '    <tr>' . PHP_EOL;
+		echo '      <td>' . '$id' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$username' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$email' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$hasAdditionalInformation' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$realname' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$address' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$address_lat' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$address_long' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$mailing' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$phone' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$rights' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$register_date' . '</td>' . PHP_EOL;
+		echo '      <td>' . '$modify_date' . '</td>' . PHP_EOL;
+		echo '    </tr>' . PHP_EOL;
+		echo '  </thead>' . PHP_EOL;
+		
+		echo '  <tbody>' . PHP_EOL;
+		echo '    <tr>' . PHP_EOL;
+		echo '      <td>' . $this->id . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->username . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->email . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->hasAdditionalInformation . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->realname . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->address . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->address_lat . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->address_long . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->mailing . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->phone . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->rights . '</td>' . PHP_EOL;
+		echo '      <td>' . Utilities::diyplayDateTime ( $this->register_date ) . '</td>' . PHP_EOL;
+		echo '      <td>' . Utilities::diyplayDateTime ( $this->modify_date ) . '</td>' . PHP_EOL;
+		echo '    </tr>' . PHP_EOL;
+		echo '  </tbody>' . PHP_EOL;
+		
+		echo '</table>' . PHP_EOL;
+	}
+	
 	/**
+	 *
 	 * @param unknown $latitude1 location 1
 	 * @param unknown $longitude1 location 1
 	 * @param unknown $latitude2 location 2
@@ -186,6 +230,7 @@ class Member {
 		return $d;
 	}
 	/**
+	 *
 	 * @param unknown $latitude1 location 1
 	 * @param unknown $longitude1 location 1
 	 * @param unknown $latitude2 location 2
@@ -259,6 +304,7 @@ class MemberManager {
 		return ($member);
 	}
 	/**
+	 *
 	 * @param unknown $pdo
 	 * @param unknown $auth_id
 	 * @param unknown $auth_lat
@@ -271,6 +317,26 @@ class MemberManager {
 			$member = MemberManager::getMemberByID ( $pdo, ( string ) $row ['id'] );
 			echo ($member->getUsername ()) . ' : ' . $member->getDistanceTo ( $auth_lat, $auth_long ) . ' (' . $row ['dist'] . ')' . PHP_EOL;
 		}
+	}
+	public static function dumpAllMembers($pdo) {
+		$result = getCompleteUserlist ( $pdo );
+		$number = 1;
+		
+		echo '<table border="1">' . PHP_EOL;
+		echo '  <tbody>' . PHP_EOL;
+		
+		while ( $row = array_shift ( $result ) ) {
+			$member = MemberManager::getMemberByID ( $pdo, ( string ) $row ['id'] );
+			echo '    <tr>' . PHP_EOL;
+			echo '      <td>' . $number . '</td>' . PHP_EOL;
+			echo '      <td>';
+			echo $member->toTable ();
+			echo '</td>' . PHP_EOL;
+			echo '    </tr>' . PHP_EOL;
+			$number += 1;
+		}
+		echo '  </tbody>' . PHP_EOL;
+		echo '</table>' . PHP_EOL;
 	}
 }
 

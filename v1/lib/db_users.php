@@ -208,5 +208,14 @@ function getUserlist($pdo, $auth_id, $auth_lat, $auth_long) {
 	) );
 	return ($stmt->fetchAll ());
 }
+function getCompleteUserlist($pdo) {
+	$stmt = $pdo->prepare ( 'select id, fk_user_id ' . //
+' from user u' . //
+' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
+' WHERE status = "verified"' . //
+' ORDER BY lower(u.username) ASC' ); //
+	ex2er ( $stmt, array () );
+	return ($stmt->fetchAll ());
+}
 
 ?>
