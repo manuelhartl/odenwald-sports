@@ -1,7 +1,9 @@
 <?php
+require_once __DIR__ . '/member.php';
 /**
- * @author g.wischnewski
  *
+ * @author g.wischnewski
+ *        
  */
 class Tour {
 	private $id;
@@ -72,19 +74,19 @@ class Tour {
 	public function getMeetingPoint() {
 		return $this->meetingPoint;
 	}
-	public function setMeetingPoint(String $meetingPoint) {
+	public function setMeetingPoint($meetingPoint) {
 		$this->meetingPoint = $meetingPoint;
 	}
 	public function getMeetingPoint_desc() {
 		return $this->meetingPoint_desc;
 	}
-	public function setMeetingPoint_desc(String $meetingPoint_desc) {
+	public function setMeetingPoint_desc($meetingPoint_desc) {
 		$this->meetingPoint_desc = $meetingPoint_desc;
 	}
 	public function getDescription() {
 		return $this->description;
 	}
-	public function setDescription(String $description) {
+	public function setDescription($description) {
 		$this->description = $description;
 	}
 	public function getTourmembers() {
@@ -129,13 +131,13 @@ class Tour {
 	public function getSkill() {
 		return $this->skill;
 	}
-	public function setSkill(int $skill) {
+	public function setSkill($skill) {
 		$this->skill = $skill;
 	}
 	public function getSpeed() {
 		return $this->speed;
 	}
-	public function setSpeed(int $speed) {
+	public function setSpeed($speed) {
 		$this->speed = $speed;
 	}
 	public function getRegister_date() {
@@ -149,45 +151,55 @@ class Tour {
 		
 		echo '  <thead>' . PHP_EOL;
 		echo '    <tr>' . PHP_EOL;
-		echo '      <td>' . '$id' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$startDateTime' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$duration' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$sport' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$meetingPoint' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$meetingPoint_desc' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$description' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$guide' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$tourmembers' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$status' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$meetingPoint_lat' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$meetingPoint_long' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$elevation' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$distance' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$speed' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$register_date' . '</td>' . PHP_EOL;
-		echo '      <td>' . '$modify_date' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'id' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'startDateTime' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'duration' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'sport' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'meetingPoint' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'meetingPoint_desc' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'description' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'guide' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'tourmembers' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'status' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'meetingPoint_lat' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'meetingPoint_long' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'elevation' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'distance' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'speed' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'register_date' . '</td>' . PHP_EOL;
+		echo '      <td>' . 'modify_date' . '</td>' . PHP_EOL;
 		echo '    </tr>' . PHP_EOL;
 		echo '  </thead>' . PHP_EOL;
 		
 		echo '  <tbody>' . PHP_EOL;
 		echo '    <tr>' . PHP_EOL;
 		echo '      <td>' . $this->id . '</td>' . PHP_EOL;
-		echo '      <td>' . $this->startDateTime . '</td>' . PHP_EOL;
+		echo '      <td>' . Utilities::diyplayDateTime ( $this->startDateTime, 'd.m.Y H:i' ) . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->duration . '</td>' . PHP_EOL;
-		echo '      <td>' . $this->sport . '</td>' . PHP_EOL;
+		echo '      <td>' . $this->sport->sportname . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->meetingPoint . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->meetingPoint_desc . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->description . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->guide . '</td>' . PHP_EOL;
-		echo '      <td>' . '$this->tourmembers' . '</td>' . PHP_EOL;
+		echo '      <td>';
+		if (isset ( $this->tourmembers )) {
+			$last = count ( $this->tourmembers );
+			foreach ( $this->tourmembers as $tourmember ) {
+				echo $tourmember->getUsername ();
+				if ($last > 1) {
+					echo ' ,';
+				}
+			}
+		}
+		echo '</td>' . PHP_EOL;
 		echo '      <td>' . $this->status . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->meetingPoint_lat . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->meetingPoint_long . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->elevation . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->distance . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->speed . '</td>' . PHP_EOL;
-		echo '      <td>' . Utilities::diyplayDateTime ( $this->register_date ) . '</td>' . PHP_EOL;
-		echo '      <td>' . Utilities::diyplayDateTime ( $this->modify_date ) . '</td>' . PHP_EOL;
+		echo '      <td>' . Utilities::diyplayDateTime ( $this->register_date, 'd.m.Y H:i' ) . '</td>' . PHP_EOL;
+		echo '      <td>' . Utilities::diyplayDateTime ( $this->modify_date, 'd.m.Y H:i' ) . '</td>' . PHP_EOL;
 		echo '    </tr>' . PHP_EOL;
 		echo '  </tbody>' . PHP_EOL;
 		
@@ -207,6 +219,31 @@ class TourManager {
 		$tour = new Tour ( $dbtour->id, $dbtour->register_date, $dbtour->modify_date );
 		// set all information
 		
+		$tour->setStartDateTime ( $dbtour->startDateTime );
+		$tour->setDuration ( $dbtour->duration );
+		$tour->setSport ( $dbtour->sport );
+		$tour->setMeetingPoint ( $dbtour->meetingPoint );
+		$tour->setMeetingPoint_desc ( $dbtour->meetingPoint_desc );
+		$tour->setDescription ( $dbtour->description );
+		
+		$users = getAttendees ( $pdo, $dbtour->id );
+		if (count ( $users ) > 0) {
+			$tourmembers = array ();
+			foreach ( $users as $user ) {
+				$tourmember = MemberManager::getMemberById ( $pdo, $user ['id'] );
+				array_push ( $tourmembers, $tourmember );
+			}
+			$tour->setTourmembers ( $tourmembers );
+		}
+		//
+		$tour->setStatus ( $dbtour->canceled );
+		$tour->setMeetingPoint_lat ( $dbtour->meetingPoint_lat );
+		$tour->setMeetingPoint_long ( $dbtour->meetingPoint_long );
+		$tour->setElevation ( $dbtour->elevation );
+		$tour->setDistance ( $dbtour->distance );
+		$tour->setSkill ( $dbtour->skill );
+		$tour->setSpeed ( $dbtour->speed );
+		
 		return ($tour);
 	}
 	public static function dumpAllTours($pdo) {
@@ -215,10 +252,8 @@ class TourManager {
 		
 		echo '<table border="1">' . PHP_EOL;
 		echo '  <tbody>' . PHP_EOL;
-		
 		while ( $row = array_shift ( $result ) ) {
-			var_dump ( $row );
-			$tour = TourManager::getTourByID ( $pdo, ( string ) $row ['id'] );
+			$tour = TourManager::getTourByID ( $pdo, $row ['id'] );
 			echo '    <tr>' . PHP_EOL;
 			echo '      <td>' . $number . '</td>' . PHP_EOL;
 			echo '      <td>';

@@ -201,8 +201,8 @@ class Member {
 		echo '      <td>' . $this->mailing . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->phone . '</td>' . PHP_EOL;
 		echo '      <td>' . $this->rights . '</td>' . PHP_EOL;
-		echo '      <td>' . Utilities::diyplayDateTime ( $this->register_date ) . '</td>' . PHP_EOL;
-		echo '      <td>' . Utilities::diyplayDateTime ( $this->modify_date ) . '</td>' . PHP_EOL;
+		echo '      <td>' . Utilities::diyplayDateTime ( $this->register_date, 'd.m.Y H:i' ) . '</td>' . PHP_EOL;
+		echo '      <td>' . Utilities::diyplayDateTime ( $this->modify_date, 'd.m.Y H:i' ) . '</td>' . PHP_EOL;
 		echo '    </tr>' . PHP_EOL;
 		echo '  </tbody>' . PHP_EOL;
 		
