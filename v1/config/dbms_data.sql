@@ -38,7 +38,8 @@ INSERT INTO `sport` (`id`, `sportname`) VALUES
 (2, 'Run'),
 (3, 'Swim'),
 (4, 'Multi-Sport'),
-(5, 'Ski');
+(5, 'Ski'),
+(6, 'Social');
 
 --
 -- Dumping data for table `sport_subtype`
@@ -54,7 +55,8 @@ INSERT INTO `sport_subtype` (`id`, `fk_sport_id`, `sportsubname`) VALUES
 (8, 4, 'Triathlon'),
 (9, 4, 'Duathlon'),
 (10, 4, 'Swim & Bike'),
-(11, 5, 'Langlauf');
+(11, 5, 'Langlauf'),
+(12, 6, 'Feier');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
