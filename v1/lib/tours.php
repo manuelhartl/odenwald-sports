@@ -7,9 +7,9 @@ function getStars($number, $id, $readonly = true) {
 	$disabled = $readonly ? 'disabled' : '';
 	for($i = 1; $i <= 6; $i ++) {
 		if ($number == $i) {
-			$result = $result . '<input id="' . $id . '" name="' . $id . '" type="radio" value="' . $i . '" class="star" ' . $disabled . ' checked/>';
+			$result = $result . '<input id="' . $id . '" name="' . $id . '" type="radio" value="' . $i . '" class="star required" ' . $disabled . ' checked/>';
 		} else {
-			$result = $result . '<input id="' . $id . '" name="' . $id . '" type="radio" value="' . $i . '" class="star" ' . $disabled . '/>';
+			$result = $result . '<input id="' . $id . '" name="' . $id . '" type="radio" value="' . $i . '" class="star required" ' . $disabled . '/>';
 		}
 	}
 	return $result; // . '</div>';
