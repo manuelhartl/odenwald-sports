@@ -156,10 +156,7 @@ require_once __DIR__ . '/../lib/db_tours.php';
 		</tr>
 		<tr>
 			<td>Datum/Uhrzeit</td>
-			<td><?php
-			// echo $input ['startdate']->format ( 'd.m.Y H:i' );
-			?>
-				<div class="row">
+			<td><div class="row">
 					<div class='col-sm-6'>
 						<input type="text" class="form-control" style="width: 150px;" id="startdate" maxlength="16" name="startdate"
 							value="<?php echo isset($input['startdate']) ? $input['startdate'] : '';?>" />

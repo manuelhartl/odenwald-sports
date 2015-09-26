@@ -98,7 +98,7 @@ function insertTour($pdo, DBTour $tour) {
 	if (! ex2er ( $stmt )) {
 		return false;
 	}
-	return true;
+	return $pdo->lastInsertId();
 }
 function updateTour($pdo, DBTour $tour) {
 	$stmt = $pdo->prepare ( "update tour set startdate = ?, duration=?, meetingpoint=?, meetingpoint_desc=? , meetingpoint_coord = PointFromText(?), description=?, skill = ? , speed = ? , distance = ?, elevation = ? where id=? and status='active'" );

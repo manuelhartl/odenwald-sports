@@ -1,6 +1,7 @@
 <div id="login">
 	<form name="login" action="index.php" method="post">
-		<input name="action" type="hidden" value="login" />
+		<input name="action" type="hidden" value="login" /> <input name="goto" type="hidden"
+			value="<?php echo isset($input['goto']) ? $input['goto'] : '';?>" />
 		<table>
 			<tr>
 				<td>User Name:</td>

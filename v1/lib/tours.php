@@ -31,20 +31,22 @@ function formatMeters($meters) {
 		return round ( $meters / 1000, 1 ) . ' km';
 	}
 }
-function getMailText($tour, $attendees = 0) {
-	return '<html><body><table>' . //
-'<tr><td>Sport:</td><td>' . $tour->sport->sportsubname . '</td></tr>' . //
-'<tr><td>Datum/Uhrzeit:</td><td>' . Utilities::getWeekDay ( $tour->startDateTime ) . ', ' . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '</td></tr>' . //
-'<tr><td>Treffpunkt:</td><td>' . htmlspecialchars ( $tour->meetingPoint ) . '</td></tr>' . //
-($attendees == 0 ? '' : '<tr><td>Aktuell angemeldet:</td><td>' . $attendees . '</td></tr>') . //
-'<tr><td>Dauer:</td><td>' . formatMinutes ( $tour->duration ) . '</td></tr>' . //
-'<tr><td>Distanz:</td><td>' . formatMeters ( $tour->distance ) . '</td></tr>' . //
-'<tr><td>Bergauf:</td><td>' . formatMeters ( $tour->elevation ) . '</td></tr>' . //
-'<tr><td>Technik:</td><td>' . $tour->skill . '/6</td></tr>' . //
-'<tr><td>Pace:</td><td>' . $tour->speed . '/6</td></tr>' . //
-'<tr><td>Beschreibung:</td><td>' . htmlspecialchars ( $tour->description ) . '</td></tr>' . //
-'</table>' . //
-'<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a></body><html>'; //
+function getMailText(DBTour $tour, $attendees = 0) {
+	return '<html><body><table>' . 	//
+	'<tr><td>Sport:</td><td>' . $tour->sport->sportsubname . '</td></tr>' . 	//
+	'<tr><td>Datum/Uhrzeit:</td><td>' . Utilities::getWeekDay ( $tour->startDateTime ) . ', ' . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '</td></tr>' . 	//
+	'<tr><td>Treffpunkt:</td><td>' . htmlspecialchars ( $tour->meetingPoint ) . '</td></tr>' . 	//
+	($attendees == 0 ? '' : '<tr><td>Aktuell angemeldet:</td><td>' . $attendees . '</td></tr>') . 	//
+	'<tr><td>Dauer:</td><td>' . formatMinutes ( $tour->duration ) . '</td></tr>' . 	//
+	'<tr><td>Distanz:</td><td>' . formatMeters ( $tour->distance ) . '</td></tr>' . 	//
+	'<tr><td>Bergauf:</td><td>' . formatMeters ( $tour->elevation ) . '</td></tr>' . 	//
+	'<tr><td>Technik:</td><td>' . $tour->skill . '/6</td></tr>' . 	//
+	'<tr><td>Pace:</td><td>' . $tour->speed . '/6</td></tr>' . 	//
+	'<tr><td>Beschreibung:</td><td>' . htmlspecialchars ( $tour->description ) . '</td></tr>' . 	//
+	'</table>' . 	//
+	'<a href="' . getUrlPrefix () . '/index.php?action=tour-view&tourid='.$tour->id.'">Diese Tour anzeigen</a><br/>' . 	//
+	'<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a>' . 	//
+	'</body><html>'; //
 }
 function mailNewTour($pdo, $tour) {
 	$subject = $tour->guide->username . ' hat neue Tour eingestellt';

@@ -4,22 +4,22 @@ require_once __DIR__ . '/db_users.php';
 
 $cookielifetime = 60 * 60 * 24; // 24h
 if ($_SERVER ['SERVER_NAME'] == '127.0.0.1') {
-	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], '127.0.0.1', false );
+	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '127.0.0.1', false );
 	session_start ();
-	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], '127.0.0.1', false );
+	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '127.0.0.1', false );
 } else {
-	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], $_SERVER ['SERVER_NAME'] );
+	session_set_cookie_params ( $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], $_SERVER ['SERVER_NAME'] );
 	session_start ();
 	// reset cookie parameters because of a quirk in php - if you dont do this the cookie lifetime wont be updated on subsequent page requests
-	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' ) [1], '.' . $_SERVER ['SERVER_NAME'] );
+	setcookie ( session_name (), session_id (), time () + $cookielifetime, '/' . explode ( '/', $_SERVER ['REQUEST_URI'] . '/' )[1], '.' . $_SERVER ['SERVER_NAME'] );
 }
 date_default_timezone_set ( "Europe/Berlin" );
 class SessionInfo {
 	
 	/**
 	 *
-	 * @param string $index
-	 * @param string $default
+	 * @param string $index        	
+	 * @param string $default        	
 	 * @return string
 	 */
 	public static function getInVa($index, $default = null) {
@@ -78,6 +78,15 @@ function validatePassword($input) {
 }
 function validateEmail($input) {
 	return filter_var ( $input, FILTER_VALIDATE_EMAIL );
+}
+function htmlHeaderRedirect($url, $seconds = 0) {
+	echo '<!DOCTYPE html>';
+	echo '<html lang="en">';
+	echo '<head>';
+	echo '<meta http-equiv="refresh" content="' . $seconds . '; url=' . $url . '">';
+	echo '<title>Touren</title>';
+	echo '</head>';
+	echo '<body>';
 }
 
 ?>

@@ -1,3 +1,11 @@
+<?php
+require_once __DIR__ . '/lib/global.php';
+require_once __DIR__ . '/lib/db_users.php';
+require_once __DIR__ . '/lib/db_tours.php';
+require_once __DIR__ . '/lib/users.php';
+require_once __DIR__ . '/lib/tours.php';
+function html_headers() {
+	?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,32 +18,23 @@
 <title>Sport2gether</title>
 <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
 <!-- <link href="css/bootstrap-theme.css" rel="stylesheet" type="text/css"> -->
-<link href="css/bootstrap-datetimepicker.css" rel="stylesheet"
-	type="text/css">
+<link href="css/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 <link href="css/jquery.rating.css" rel="stylesheet" type="text/css">
 <link href="css/s2t.css" rel="stylesheet" type="text/css">
-<link href="css/s2t-nano.css" rel="stylesheet" type="text/css"
-	media="(max-width: 900px)">
-<link href="css/s2t-small.css" rel="stylesheet" type="text/css"
-	media="(max-width: 1280px) and (min-width: 901px)">
-<link href="css/s2t-big.css" rel="stylesheet" type="text/css"
-	media="(min-width: 1281px)">
+<link href="css/s2t-nano.css" rel="stylesheet" type="text/css" media="(max-width: 900px)">
+<link href="css/s2t-small.css" rel="stylesheet" type="text/css" media="(max-width: 1280px) and (min-width: 901px)">
+<link href="css/s2t-big.css" rel="stylesheet" type="text/css" media="(min-width: 1281px)">
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/moment.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/bootstrap-datetimepicker.js"></script>
-<script type="text/javascript"
-	src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
 <script type="text/javascript" src="js/locationpicker.jquery.js"></script>
 <script type="text/javascript" src="js/jquery.rating.pack.js"></script>
 </head>
 <body>
 <?php
-require_once __DIR__ . '/lib/global.php';
-require_once __DIR__ . '/lib/db_users.php';
-require_once __DIR__ . '/lib/db_tours.php';
-require_once __DIR__ . '/lib/users.php';
-require_once __DIR__ . '/lib/tours.php';
+}
 function setPage($page) {
 	$_SESSION ['page'] = $page;
 }
@@ -65,10 +64,19 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				login ( $pdo, $username );
 				setPage ( "home" );
 				setMessage ( $username . ', du bist jetzt angemeldet' );
+				if (isset ( $_REQUEST ['goto'] )) {
+					htmlHeaderRedirect ( $_REQUEST ['goto'] );
+					exit ();
+				}
 			} else {
 				setPage ( "login" );
 				$input ['username'] = $username;
-				setMessage ( $username . ', leider hat das Anmelden nicht geklappt' );
+				$input ['goto'] = $_REQUEST ['goto'];
+				if (empty ( $username )) {
+					setMessage ( 'Bitte gib einen Benutzernamen ein' );
+				} else {
+					setMessage ( $username . ', leider hat das Anmelden nicht geklappt' );
+				}
 			}
 			break;
 		case 'logout' :
@@ -170,6 +178,8 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 		default :
 			if (! hasAuth ()) {
 				setPage ( 'login' );
+				// print_r($_SERVER);
+				$input ['goto'] = $_SERVER ['REQUEST_URI'];
 			} else {
 				switch ($_REQUEST ['action']) {
 					case 'mail-user' :
@@ -262,6 +272,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$_SESSION ["showold"] = $showold;
 						break;
 					case 'tour-list' :
+						setPage ("home");
 						break;
 					case 'password-change' :
 						setPage ( "password-change" );
@@ -389,7 +400,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 								$tour->speed = $_REQUEST ['speed'];
 								$tour->distance = $_REQUEST ['distance'] * 1000;
 								$tour->elevation = $_REQUEST ['elevation'];
-								if (insertTour ( $pdo, $tour )) {
+								if ($tour->id = insertTour ( $pdo, $tour )) {
 									mailNewTour ( $pdo, $tour );
 									setMessage ( 'Die Tour wurde erfolgreich gespeichert' );
 								} else {
@@ -514,6 +525,8 @@ if (! hasAuth () && //
 {
 	setPage ( 'home' );
 }
+
+html_headers ();
 
 if (isset ( $config ['beta'] ) && $config ['beta']) {
 	echo '<div id="beta">';
