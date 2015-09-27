@@ -133,6 +133,10 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 				setMessage ( 'Der Benutzername mu&szlig; mindestens aus 2 Zeichen bestehen' );
 				break;
 			}
+			if (strlen ( $username ) > 20) {
+				setMessage ( 'Der Benutzername darf nur 20 Zeichen lang sein' );
+				break;
+			}
 			if (! validatePassword ( $password )) {
 				setMessage ( 'Das Passwort mu&szlig; mindestens 6 Zeichen lang sein' );
 				break;
@@ -272,7 +276,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$_SESSION ["showold"] = $showold;
 						break;
 					case 'tour-list' :
-						setPage ("home");
+						setPage ( "home" );
 						break;
 					case 'password-change' :
 						setPage ( "password-change" );
