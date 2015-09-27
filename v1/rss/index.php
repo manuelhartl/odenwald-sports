@@ -32,16 +32,16 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	
 	$item = $channel->addChild ( "item" );
 	
-	$title = //
-Utilities::getWeekDay ( $tour->startDateTime ) . ' ' . //
-$tour->startDateTime->format ( 'd.m.Y H:i' ) . ' ' . //
-$tour->sport->sportsubname . '-Tour ' . //
+	$title = 	//
+	Utilities::getWeekDay ( $tour->startDateTime ) . ' ' . 	//
+	$tour->startDateTime->format ( 'd.m.Y H:i' ) . ' ' . 	//
+	$tour->sport->sportsubname . '-Tour ' . 	//
 	                                        // 'guided by ' . $tour->guide->username . ' ' . //
 	'at ' . $tour->meetingPoint . ' '; //
 	
 	$item->addChild ( "title", $title );
 	$item->addChild ( "link", dirname ( get_current_url () ) );
-	$item->addChild ( "description", getMailText ( $tour, count ( $users ) ) );
+	$item->addChild ( "description", htmlspecialchars ( getMailText ( $tour, count ( $users ) ) ) );
 }
 echo $xml->asXML ();
 ?>
