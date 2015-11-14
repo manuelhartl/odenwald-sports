@@ -416,11 +416,18 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						}
 						break;
 					case 'tour-join' :
-						$tourid = $_POST ['tourid'];
+						$tourid = $_REQUEST ['tourid'];
 						$tour = getDBTourById ( $pdo, $tourid );
-						if (! $tour->canceled && ($tour->startDateTime >= new DateTime ())) {
-							tourJoin ( $pdo, authUser ()->id, $tourid );
-							setMessage ( 'Danke f&uuml;r das Anmelden an der Tour' );
+						if ($tour->guide->id == authUser ()->id) {
+							setMessage ( 'Du musst dich als Guide nicht f&uuml;r deine eigene Tour anmelden :)' );
+							break;
+						}
+						if ((! $tour->canceled) && ($tour->startDateTime >= new DateTime ())) {
+							if (tourJoin ( $pdo, authUser ()->id, $tourid )) {
+								setMessage ( 'Danke f&uuml;r das Anmelden an der Tour' );
+							} else {
+								setMessage ( 'Sorry - da ist etwas beim Anmelden schief gelaufen (Evtl. bist du schon angemeldet)' );
+							}
 						}
 						break;
 					case 'tour-leave' :

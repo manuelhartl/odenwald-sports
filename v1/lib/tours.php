@@ -44,6 +44,7 @@ function getMailText(DBTour $tour, $attendees = 0) {
 	'<tr><td>Pace:</td><td>' . $tour->speed . '/6</td></tr>' . 	//
 	'<tr><td>Beschreibung:</td><td>' . htmlspecialchars ( $tour->description ) . '</td></tr>' . 	//
 	'</table>' . 	//
+	'<a href="' . getUrlPrefix () . '/index.php?action=tour-join&tourid='.$tour->id.'">Mich bei dieser Tour anmelden</a><br/>' . 	//
 	'<a href="' . getUrlPrefix () . '/index.php?action=tour-view&tourid='.$tour->id.'">Diese Tour anzeigen</a><br/>' . 	//
 	'<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a>' . 	//
 	'</body><html>'; //
