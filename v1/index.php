@@ -324,7 +324,12 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						$input ['speed'] = $tour->speed;
 						$input ['distance'] = $tour->distance / 1000;
 						$input ['elevation'] = $tour->elevation;
-						setPage ( 'tour-edit' );
+						// input validation
+						if ($tour->startDateTime < date ( 'Y-m-d H:i:s' )) {
+							setMessage ( 'Eine Tour darf nachtr&auml;glich nicht bearbeitet werden' );
+						} else {
+							setPage ( 'tour-edit' );
+						}
 						break;
 					case 'tour-save' :
 						$sports = getSports ( $pdo );
