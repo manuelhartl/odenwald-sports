@@ -3,3 +3,5 @@
 /.project
 /v1/config/settings.php
 /phpBB3/
+*.iml
+/.idea
