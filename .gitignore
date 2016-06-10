@@ -2,6 +2,10 @@
 /.buildpath
 /.project
 /v1/config/settings.php
+/v1/Mockup
 /phpBB3/
 *.iml
 /.idea
+/nbproject/private/
+/nbproject/
+.DS_Store
