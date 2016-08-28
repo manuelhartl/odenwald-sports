@@ -31,7 +31,7 @@ if (isset ( $userextra->address_lat )) {
 	$reference->long = $userextra->address_long;
 }
 
-$stmt = $pdo->prepare ( 'select username,id,register_date,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, address, mailing, phone ' . //
+$stmt = $pdo->prepare ( 'select username,id,register_date,realname,birthdate,fk_user_id,111195 * ST_Distance(POINT(?,?), address_coord) as dist, address, X(address_coord) as address_lat,Y(address_coord) as address_long, mailing, phone ' . //
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
@@ -61,10 +61,14 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	if (isset($row['address'])) {
 		$user['address']= $row ['address'];
 	}
+	if (isset ( $row['address_lat'] )) {
+		$user['address_gps']['lat'] = $row['address_lat'];
+		$user['address_gps']['long'] = $row['address_long'];
+	}
 	if (isset($row['phone'])) {
 		$user['phone']= $row ['phone'];
-	}	
-	
+	}
+
 	// push to array
 	$user_list[]=$user;
 }
