@@ -32,9 +32,7 @@ $stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_
 ' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
 ' left join sport s ON (ss.fk_sport_id=s.id) ' . //
 ' WHERE true ' . //
-(! hasAuth () ? ' AND t.status = "active"' : '') . //
-($showcanceled == 'true' ? '' : ' AND (t.status = "active")') . //
-($showold == 'true' ? ' AND startdate<now() ORDER BY startdate DESC LIMIT 100' : ' AND startdate>=now() ORDER BY startdate ASC') . //
+(' ORDER BY startdate ASC') . //
 '' ); //
 ex2er ( $stmt, array (
 		$reference->gps->lat,

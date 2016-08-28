@@ -35,12 +35,10 @@ $stmt = $pdo->prepare ( 'select username,id,register_date,realname,birthdate,fk_
 ' from user u' . //
 ' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
 ' WHERE status = "verified"' . //
-' AND u.id != ?' . //
 ' ORDER BY lower(u.username) ASC' ); //
 ex2er ( $stmt, array (
 		$reference->lat,
-		$reference->long,
-		authUser ()->id 
+		$reference->long
 ) );
 
 
