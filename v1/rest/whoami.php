@@ -25,7 +25,6 @@ if (!hasAuth()) {
   $pdo = db_open();
 	$user = array();
 	$userextra = getUserExtraById ( $pdo, authUser()->id );
-	print_r($userextra);
 	$user['id']=authUser ()->id;
 	$user['username']=authUser ()->username;
 	$user['registerdate']= authUser()->register_date->format(DateTime::ISO8601);
