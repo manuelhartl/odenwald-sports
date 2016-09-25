@@ -35,6 +35,9 @@ class DBSport {
 	public $sportname;
 }
 function getDBTour($row) {
+	if (! $row) {
+		return false;
+	}
 	$tourObj = new DBTour ();
 	$tourObj->id = $row ['id'];
 	$tourObj->startDateTime = date_create ( $row ['startdate'] );
@@ -98,7 +101,7 @@ function insertTour($pdo, DBTour $tour) {
 	if (! ex2er ( $stmt )) {
 		return false;
 	}
-	return $pdo->lastInsertId();
+	return $pdo->lastInsertId ();
 }
 function updateTour($pdo, DBTour $tour) {
 	$stmt = $pdo->prepare ( "update tour set startdate = ?, duration=?, meetingpoint=?, meetingpoint_desc=? , meetingpoint_coord = PointFromText(?), description=?, skill = ? , speed = ? , distance = ?, elevation = ? where id=? and status='active'" );
@@ -131,6 +134,21 @@ function getDBTourById($pdo, $tourid) {
 	$stmt->execute ( array (
 			$tourid 
 	) );
+	return getDBTour ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
+}
+function getDBTourByGuideAndDate($pdo, $guideid, $startdate) {
+	$stmt = $pdo->prepare ( //
+'select *,sportname,ss.sportsubname as sportsubname,ss.id as sportsubid,X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long,t.status as tourstatus, t.id as id,g.id as guide,g.username as guidename' . //
+' from tour t left join user g ON (t.fk_guide_id=g.id)' . //
+' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
+' left join sport s ON (ss.fk_sport_id=s.id) ' . //
+' where (t.fk_guide_id = ?) and (t.startdate = ?)' );
+	if (! ex2er ( $stmt, array (
+			$guideid,
+			toDbmsDate ( $startdate ) 
+	) )) {
+		return false;
+	}
 	return getDBTour ( $stmt->fetch ( PDO::FETCH_ASSOC ) );
 }
 function getCompleteTourlist($pdo) {
