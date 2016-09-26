@@ -56,7 +56,9 @@ INSERT INTO `sport_subtype` (`id`, `fk_sport_id`, `sportsubname`) VALUES
 (9, 4, 'Duathlon'),
 (10, 4, 'Swim & Bike'),
 (11, 5, 'Langlauf'),
-(12, 6, 'Feier');
+(12, 6, 'Feier'),
+(13, 1, 'Downhill'),
+(14, 1, 'E-Bike');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
