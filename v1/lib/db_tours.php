@@ -225,5 +225,14 @@ function tourCancel($pdo, $tourid) {
 	}
 	return true;
 }
+function tourActivate($pdo, $tourid) {
+	$stmt = $pdo->prepare ( "update tour set status='active' where id = ?" );
+	if (! ex2er ( $stmt, array (
+			$tourid
+	) )) {
+		return false;
+	}
+	return true;
+}
 
 ?>

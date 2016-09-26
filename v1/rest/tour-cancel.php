@@ -28,7 +28,7 @@ if (! $tour) {
 			http_response_code ( 200 );
 		}
 	} else {
-		$json ['error'] ['text'] = 'tour canceled or too old';
+		$json ['error'] ['text'] = 'tour too old';
 		http_response_code ( 400 );
 	}
 }
