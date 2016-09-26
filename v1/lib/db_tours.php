@@ -228,11 +228,20 @@ function tourCancel($pdo, $tourid) {
 function tourActivate($pdo, $tourid) {
 	$stmt = $pdo->prepare ( "update tour set status='active' where id = ?" );
 	if (! ex2er ( $stmt, array (
-			$tourid
+			$tourid 
 	) )) {
 		return false;
 	}
 	return true;
 }
-
+function tourChangeGuide($pdo, $tourid, $newguideid) {
+	$stmt = $pdo->prepare ( "update tour set fk_guide_id = ? where id = ?" );
+	if (! ex2er ( $stmt, array (
+			$newguideid,
+			$tourid 
+	) )) {
+		return false;
+	}
+	return true;
+}
 ?>
