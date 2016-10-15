@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
+require_once __DIR__ . '/../lib/db_tours.php'; // for dbgps...
+
 function jsonCheckAuth() {
 	if (! hasAuth ()) {
 		$json ['authenticated'] = hasAuth ();
@@ -34,6 +36,30 @@ function getTourStmt($pdo, $id = -1) {
 	ex2er ( $stmt, array (
 			$reference->gps->lat,
 			$reference->gps->long 
+	) );
+	return $stmt;
+}
+function getUserStmt($pdo, $id = -1) {
+	$reference = new DBGps ();
+	$hasAdress = false;
+	$userextra = getDBUserExtraById ( $pdo, authUser ()->id );
+	if (isset ( $userextra->address_lat )) {
+		$hasAdress = true;
+		$reference->lat = $userextra->address_lat;
+		$reference->long = $userextra->address_long;
+	}
+	
+	$stmt = $pdo->prepare ( //
+'select username,id,register_date,realname,birthdate,fk_user_id,' . //
+'111195 * ST_Distance(POINT(?,?), address_coord) as dist, address, X(address_coord) as address_lat,Y(address_coord) as address_long,' . //
+'mailing, phone ' . //
+' from user u' . //
+' left join user_extra ue ON (ue.fk_user_id=u.id) ' . //
+' WHERE status = "verified"' . //
+' ORDER BY lower(u.username) ASC' ); //
+	ex2er ( $stmt, array (
+			$reference->lat,
+			$reference->long 
 	) );
 	return $stmt;
 }
@@ -74,5 +100,34 @@ function row2tour($pdo, $row) {
 		}
 	}
 	return $tour;
+}
+function row2user($pdo, $row) {
+	
+	$user ['id'] = $row ['id'];
+	$user ['username'] = $row ['username'];
+	$user ['registerdate'] = date_create ( $row ['register_date'] )->format ( DateTime::ISO8601 );
+	if (isset ( $row ['realname'] )) {
+		$user ['realname'] = $row ['realname'];
+	}
+	if (isset ( $row ['birthdate'] )) {
+		$user ['birthdate'] = date_create ( $row ['birthdate'] )->format ( DateTime::ISO8601 );
+	}
+	if (isset ( $row ['dist'] )) {
+		$user ['distance'] = $row ['dist'];
+	}
+	if (isset ( $row ['address'] )) {
+		$user ['address'] = $row ['address'];
+	}
+	if (isset ( $row ['address_lat'] )) {
+		$user ['address_gps'] ['lat'] = $row ['address_lat'];
+		$user ['address_gps'] ['long'] = $row ['address_long'];
+	}
+	if (isset ( $row ['phone'] )) {
+		$user ['phone'] = $row ['phone'];
+	}
+	if (isset ( $row ['mailing'] )) {
+		$user ['mailing'] = $row ['mailing'] ? 'true' : 'false';
+	}
+	return $user;
 }
 ?>

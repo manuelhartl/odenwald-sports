@@ -1,5 +1,4 @@
 <?php
-
 require_once __DIR__ . '/restlib.php';
 
 if ($_SERVER['REQUEST_METHOD'] != "GET"){
@@ -13,11 +12,11 @@ $showcanceled = isset ( $_GET ["showcanceled"] ) ? $_GET ["showcanceled"] : "fal
 
 
 $stmt = getTourStmt($pdo);
-$tour_list = array();
+$list = array();
 while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
-	$tour_list[]=row2tour($pdo, $row);
+	$list[]=row2tour($pdo, $row);
 }
-$json['tours']=$tour_list;
+$json['tours']=$list;
 $json['authenticated']=hasAuth();
 header('Content-type: application/json');
 echo json_encode($json);

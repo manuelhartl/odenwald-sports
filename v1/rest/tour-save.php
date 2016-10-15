@@ -22,6 +22,10 @@ foreach ( $tours as $tour ) {
 	$isNew = true;
 	if (array_key_exists ( 'id', $tour )) {
 		$dbtour = getDBTourById ( $pdo, $tour ['id'] );
+		if ($dbtour->guide->id != authUser()->id) {
+			http_response_code ( 401 );
+			exit ();
+		}
 		if (! $dbtour) {
 			http_response_code ( 400 );
 			exit ();
