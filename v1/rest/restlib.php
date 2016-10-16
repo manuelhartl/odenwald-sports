@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
 require_once __DIR__ . '/../lib/db_tours.php'; // for dbgps...
-
 function jsonCheckAuth() {
 	if (! hasAuth ()) {
 		$json ['authenticated'] = hasAuth ();
@@ -11,6 +10,12 @@ function jsonCheckAuth() {
 		http_response_code ( 400 );
 		exit ();
 	}
+}
+function getTourLastModified($pdo) {
+	$stmt = $pdo->prepare ( 'select modifydate from tour ORDER BY modifydate DESC LIMIT 1' );
+	ex2er ( $stmt, array () );
+	$row = $stmt->fetch ( PDO::FETCH_ASSOC );
+	return $row['modifydate'];
 }
 function getTourStmt($pdo, $id = -1) {
 	$reference = getDBPlaceById ( $pdo, 1 );
@@ -78,7 +83,8 @@ function row2tour($pdo, $row) {
 	$tour ['sport'] ['id'] = $row ['sportid'];
 	$tour ['sport'] ['name'] = $row ['sportname'];
 	$tour ['sport'] ['subname'] = $row ['sportsubname'];
-	$tour ['bringlight']= $row ['bringlight'] ? 'true' : 'false';;
+	$tour ['bringlight'] = $row ['bringlight'] ? 'true' : 'false';
+	;
 	$users = getAttendees ( $pdo, $row ['id'] );
 	$tour ['attendees_count'] = count ( $users );
 	if (hasAuth ()) {
@@ -103,7 +109,6 @@ function row2tour($pdo, $row) {
 	return $tour;
 }
 function row2user($pdo, $row) {
-	
 	$user ['id'] = $row ['id'];
 	$user ['username'] = $row ['username'];
 	$user ['registerdate'] = date_create ( $row ['register_date'] )->format ( DateTime::ISO8601 );
