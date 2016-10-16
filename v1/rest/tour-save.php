@@ -55,6 +55,7 @@ foreach ( $tours as $tour ) {
 	$dbtour->speed = $tour ['speed'];
 	$dbtour->distance = $tour ['distance'];
 	$dbtour->elevation = $tour ['elevation'];
+	$dbtour->bringlight = $tour ['bringlight']=='true';
 	
 	if ($isNew) {
 		if ($dbtour->id = insertTour ( $pdo, $dbtour )) {
@@ -66,7 +67,10 @@ foreach ( $tours as $tour ) {
 			exit ();
 		}
 	} else {
-		updateTour ( $pdo, $dbtour );
+		if (!updateTour ( $pdo, $dbtour )) {
+			http_response_code ( 500 );
+			exit ();
+		}
 	}
 	
 	$stmt = getTourStmt ( $pdo, $dbtour->id );

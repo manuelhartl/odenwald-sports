@@ -23,7 +23,7 @@ function getTourStmt($pdo, $id = -1) {
 	}
 	
 	$stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
-',X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long, ss.id as sportid' . //
+',X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long, ss.id as sportid, bringlight' . //
 ' from tour t' . //
 ' left join user g ON (t.fk_guide_id=g.id) ' . //
 ' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
@@ -78,6 +78,7 @@ function row2tour($pdo, $row) {
 	$tour ['sport'] ['id'] = $row ['sportid'];
 	$tour ['sport'] ['name'] = $row ['sportname'];
 	$tour ['sport'] ['subname'] = $row ['sportsubname'];
+	$tour ['bringlight']= $row ['bringlight'] ? 'true' : 'false';;
 	$users = getAttendees ( $pdo, $row ['id'] );
 	$tour ['attendees_count'] = count ( $users );
 	if (hasAuth ()) {

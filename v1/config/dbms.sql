@@ -90,7 +90,8 @@ CREATE TABLE IF NOT EXISTS `tour` (
   `skill` enum('1','2','3','4','5','6') COLLATE utf8_bin NOT NULL,
   `speed` enum('1','2','3','4','5','6') COLLATE utf8_bin NOT NULL,
   `distance` int(11) NOT NULL,
-  `elevation` int(11) NOT NULL
+  `elevation` int(11) NOT NULL,
+  `bringlight` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- --------------------------------------------------------
