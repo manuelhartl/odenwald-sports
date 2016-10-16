@@ -1,0 +1,101 @@
+.lo-TableBody{
+}
+
+/* Size: width */
+.lo-TableCell-col-0{
+	width: 100px;
+}
+
+.lo-TableCell-col-1{
+    	padding-top: 3px; /* - margin-top of textarea */
+	width: 8em;
+}
+
+.lo-TableCell-col-2{
+	width: calc(( 40 * ( 100% - ( 8em ))) / 100 );
+	min-width: 10em;
+}
+
+/* Abstand Button zu Eingabefelder */
+.lo-TableCell-Content-Login-1{
+	margin-top: 2em;
+}
+
+/* size: height */
+#username, #password{
+	height: 1.5em;
+}
+
+.lo-TableRow-Head, .lo-TableRow-Foot{
+	height: 75px;
+}
+
+
+/* input fields */
+#username, #password{
+	width:  100%;
+	resize: none;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	border: none;
+
+	/* resize baseline */
+    	vertical-align: text-top;
+    	margin-top: -1px; /* - (border-top-width + padding-top) */
+
+  	font-family: inherit;
+   	font-size: inherit;
+}
+
+
+.lo-TableRow-Content{
+	padding: 0.2em;
+}
+
+
+.lo-TableCell-col-2{
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border-style: solid;
+	border-width:thin medium;
+	padding: 5px;
+}
+
+
+/* responsive design */
+/* big-screen */
+@media (min-width: 1281px){
+}
+
+/* medium--screen */
+@media (min-width: 901px) and (max-width: 1280px){
+}
+
+/* small-screen */
+@media (min-width: 301px) and (max-width: 900px){
+}
+
+
+/* mobil-screen */
+@media (max-width: 300px){
+
+html{
+	font-size: small;
+}
+
+}
+
+@media (max-height: 400px){
+
+.small {
+	display: none;
+}
+
+.lo-TableBody {
+	height: 100%;
+	overflow-y: scroll;
+}
+
+}

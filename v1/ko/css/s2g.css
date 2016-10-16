@@ -1,0 +1,470 @@
+html {
+	background: url('../img/background.png') no-repeat center center fixed;
+	background-size: 100% 100%;
+	background-color: #ffffff;
+	font-weight: 400;
+	color: #000000;
+	margin-bottom: 0px;
+	margin-top: 15px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+html, body {
+}
+
+body, input, textarea {
+	font-family: Verdana, "Courier New", Courier, Georgia, Times, "Times New Roman", serif;
+}
+
+#main {
+    min-height: calc(100vh - 200px);
+    max-height: calc(100vh - 200px);
+    width: 100%;
+}
+
+.flex {
+	display: inline-block;
+	/* white-space: nowrap;*/
+	overflow: hidden;
+	text-overflow: ellipsis;	/** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
+	-o-text-overflow: ellipsis;	/** Opera 9 & 10 **/
+	width: 100%;
+	max-height: 100px;
+}
+
+/* date(time)picker */
+.ui-widget {
+	font-size: 1em;
+}
+.ui-widget-header {
+	background: #669999;
+}
+/* move datetimepicker into front */
+.ui-datepicker{z-index: 99 !important};
+
+
+/* https://gist.github.com/jensgro/4557625 */
+.clearfix:before, .clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+
+.clearfix {
+	zoom: 1;
+}
+
+.searchfield {
+	width: 98%;
+}
+
+.hasDatepicker{
+	width: 100%;
+	border: none;
+}
+
+
+/* slider Positionierung */
+.oben, .unten { display: flex; }
+.links { float: left; }
+.rechts { float: right; }
+.links, .rechts { width: 30px; }
+.mitte {  width: 100%; margin: 0 10px; }
+
+.unten {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* even, odd changes */
+.even-title, .even, .odd-title, .odd {
+	padding-top: 3px;
+	padding-bottom: 3px;
+	opacity: 0.8;
+	/* Header Even: Font */
+	/* color: dimgrey; */
+}
+.even-title, even {
+}
+.even {
+	/* Content Even */
+	background-color: white;
+}
+.even-title {
+	/* Header Even */
+	background-color: #d9d9d9;
+}
+
+.even a, .even-title a {
+}
+
+.even .tl-guide, .even .tl-member, .even .ul-member, .even-title .tl-guide, .even-title .tl-member, .even-title .ul-member, .even-title .st-member {
+	/* Member: Fill */
+	background-color: transparent;
+}
+
+.even .tl-guide-mail:hover,         .even .tl-member-mail:hover,         .even .ul-member-mail:hover,         .even .st-member-mail:hover,
+.even .tl-guide-profil:hover,       .even .tl-member-profil:hover,       .even .ul-member-profil:hover,       .even .st-member-profil:hover,
+.even-title .tl-guide-mail:hover,   .even-title .tl-member-mail:hover,   .even-title .ul-member-mail:hover,   .even-title .st-member-mail:hover,
+.even-title .tl-guide-profil:hover, .even-title .tl-member-profil:hover, .even-title .ul-member-profil:hover, .even-title .st-member-profil:hover {
+	/* H-E(T) 3 */
+	background-color: darkgray;
+}
+
+.odd-title, odd {
+}
+.odd {
+	/* Content Odd */
+	background-color: white;
+}
+.odd-title{
+	/* Header Odd */
+	background-color: #cccccc;
+}
+
+.odd a, .odd-title a {
+}
+
+
+.odd .tl-guide, .odd .tl-member, .odd .ul-member, .odd-title .tl-guide,.odd-title  .tl-member,.odd-title  .ul-member,.odd-title  .st-member {
+	/* Member: Fill */
+	background-color: transparent;
+}
+
+.odd .tl-guide-mail:hover,         .odd .tl-member-mail:hover,         .odd .ul-member-mail:hover,         .odd .st-member-mail:hover,
+.odd .tl-guide-profil:hover,       .odd .tl-member-profil:hover,       .odd .ul-member-profil:hover,       .odd .st-member-profil:hover,
+.odd-title .tl-guide-mail:hover,   .odd-title .tl-member-mail:hover,   .odd-title .ul-member-mail:hover,   .odd-title .st-member-mail:hover,
+.odd-title .tl-guide-profil:hover, .odd-title .tl-member-profil:hover, .odd-title .ul-member-profil:hover, .odd-title .st-member-profil:hover {
+	/* H-O(T) 3 */
+	background-color: silver;
+}
+
+.odd-title, .even-title{
+	-webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+	-moz-border-radius-topleft: 10px;
+	-moz-border-radius-topright: 10px;
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+.odd, .even{
+	-webkit-border-bottom-right-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	-moz-border-radius-bottomright: 10px;
+	-moz-border-radius-bottomleft: 10px;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
+
+/* Table */
+.tl-Table, .ul-Table, .to-Table, .lo-Table, .re-Table, .pr-Table, .st-Table, .ma-Table {
+}
+
+.tl-TableHeading, .tl-TableBody, .tl-TableFoot, .tl-TableRow,
+.ul-TableHeading, .ul-TableBody, .ul-TableFoot, .ul-TableRow,
+.to-TableHeading, .to-TableBody, .to-TableFoot, .to-TableRow,
+.lo-TableHeading, .lo-TableBody, .lo-TableFoot, .lo-TableRow,
+.re-TableHeading, .re-TableBody, .re-TableFoot, .re-TableRow,
+.pr-TableHeading, .pr-TableBody, .pr-TableFoot, .pr-TableRow,
+.st-TableHeading, .st-TableBody, .st-TableFoot, .st-TableRow,
+.ma-TableHeading, .ma-TableBody, .ma-TableFoot, .ma-TableRow {
+	clear: both;
+}
+
+.tl-TableBody, .ul-TableBody, .to-TableBody, .lo-TableBody, .re-TableBody, .pr-TableBody, .st-TableBody, .ma-TableBody {
+	height: calc( 100vh - 280px );
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.tl-TableCell, .tl-TableHead, .ul-TableCell, .ul-TableHead, .to-TableCell, .to-TableHead,
+.lo-TableCell, .lo-TableHead, .re-TableCell, .re-TableHead, .pr-TableCell, .pr-TableHead,
+.st-TableCell, .st-TableHead, .ma-TableCell, .ma-TableHead {
+   	float: left;
+}
+.tl-Table:after, .ul-Table:after, .to-Table:after, .lo-Table:after, .re-Table:after, .pr-Table:after, .st-Table:after, .ma-Table:after {
+  	 visibility: hidden;
+  	 display: block;
+  	 font-size: 0;
+  	 content: " ";
+  	 clear: both;
+  	 height: 0;
+}
+.tl-TableRow, .ul-TableRow, .to-TableRow, .lo-TableRow, .re-TableRow, .pr-TableRow, .st-TableRow, .ma-TableRow {
+	width: calc( 100% );
+}
+/* remove underline from Link */
+.tl-a-member-profil, .ul-a-member-profil, .st-a-member-profil{
+	text-decoration:none;
+	vertical-align: bottom;
+}
+.tl-guide, .tl-member, .ul-member, .st-member {
+	border-radius: 6px;
+}
+
+/* TODO: GW Namen noch  neutralisieren */
+.tl-guide-mail, .tl-member-mail, .ul-member-mail, .st-member-mail {
+	padding-left: 5px;
+}
+.tl-guide-profil, .tl-member-profil, .ul-member-profil, .st-member-profil {
+	vertical-align: top;
+	padding-right: 5px;
+	padding-left: 2px;
+}
+
+.tl-icon-member-mail, .ul-icon-member-mail, .st-icon-member-mail {
+ 	background: transparent url('../img/s2g.sprite.png') calc( -8 * 25px ) 0px no-repeat;
+}
+.tl-icon-member-mail:hover, .ul-icon-member-mail:hover, .st-icon-member-mail:hover {
+ 	background: transparent url('../img/s2g.sprite.png') calc( 0 * 25px ) calc( -1 * 25px ) no-repeat;
+}
+
+/* sport icons */
+.tl-icon-sport-mtb {
+ 	background: url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -1 * 25px );
+}
+
+.tl-icon-sport-rennrad {
+ 	background: url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -1 * 25px );
+}
+
+.tl-icon-sport-run {
+ 	background: url('../img/s2g.sprite.png') calc( -0 * 25px ) calc( -3 * 25px );
+}
+
+.tl-icon-sport-schwimmen {
+ 	background: url('../img/s2g.sprite.png') calc( -2 * 25px ) calc( -3 * 25px );
+}
+
+.tl-icon-sport-ski {
+ 	background: url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -3 * 25px );
+}
+
+.tl-icon-sport-crosser {
+ 	background: url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -3 * 25px );
+}
+
+.tl-icon-sport-trailrun {
+ 	background: url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -3 * 25px );
+}
+
+.tl-icon-sport-duathlon {
+ 	background: url('../img/s2g.sprite.png') calc( -0 * 25px ) calc( -5 * 25px );
+}
+
+.tl-icon-sport-triathlon {
+ 	background: url('../img/s2g.sprite.png') calc( -2 * 25px ) calc( -5 * 25px );
+}
+
+.tl-icon-sport-feier {
+ 	background: url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -5 * 25px );
+}
+
+.tl-icon-sport-swim-bike {
+ 	background: url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -5 * 25px );
+}
+
+.tl-icon-sport-downhill-bike {
+ 	background: url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -17 * 25px );
+}
+
+.tl-icon-sport-e-bike {
+ 	background: url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -17 * 25px );
+}
+
+.tl-icon-sport-canceled {
+ 	background: url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -1 * 25px );
+}
+
+.tl-icon-sport-history {
+ 	background: url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -17 * 25px );
+}
+
+.disable{
+    opacity:0.5;
+}
+
+.tl-icon-sport-mtb, .tl-icon-sport-rennrad, .tl-icon-sport-run, .tl-icon-sport-schwimmen, .tl-icon-sport-ski, .tl-icon-sport-crosser, .tl-icon-sport-trailrun, .tl-icon-sport-duathlon, .tl-icon-sport-triathlon, .tl-icon-sport-feier, .tl-icon-sport-swim-bike, .tl-icon-sport-downhill-bike, .tl-icon-sport-e-bike, .tl-icon-sport-canceled, .tl-icon-sport-history {
+	width: 50px;
+	height: 50px;
+	background-color: transparent;
+	zoom: 1.4;
+    		-moz-transform:scale(1.4);
+    		-moz-transform-origin: 0 0;
+	border-radius: 10px;
+}
+
+
+/* rate icons */
+.tl-icon-rate-1 {
+	background: transparent url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -5 * 25px ) no-repeat;
+}
+.tl-icon-rate-2 {
+	background: transparent url('../img/s2g.sprite.png') calc( -0 * 25px ) calc( -9 * 25px ) no-repeat;
+}
+.tl-icon-rate-3 {
+	background: transparent url('../img/s2g.sprite.png') calc( -2 * 25px ) calc( -9 * 25px ) no-repeat;
+}
+.tl-icon-rate-4 {
+	background: transparent url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -9 * 25px ) no-repeat;
+}
+.tl-icon-rate-5 {
+	background: transparent url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -9 * 25px ) no-repeat;
+}
+.tl-icon-rate-6 {
+	background: transparent url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -9 * 25px ) no-repeat;
+}
+
+.tl-icon-rate-1, .tl-icon-rate-2, .tl-icon-rate-3, .tl-icon-rate-4, .tl-icon-rate-5, .tl-icon-rate-6 {
+	display: inline-block;
+	width: 32px;
+	height: 25px;
+	background-color: transparent;
+	background-repeat: no-repeat;
+}
+
+
+/* icon overlay (size analog icon-sport.. */
+.wrapIcon {
+	width: 50px;
+	height: 50px;
+	position: relative;
+	transform: scale(1.4);
+		-moz-transform: scale(1.4);
+		-ms-transform: scale(1.4);
+		-webkit-transform: scale(1.4);
+		-o-transform: scale(1.4);
+	transform-origin: left top;
+		-moz-transform-origin: left top;
+		-ms-transform-origin: left top;
+		-webkit-transform-origin: left top;
+}
+.wrapIcon1 {
+	width: 50px;
+	height: 50px;
+	position: relative;
+	zoom: 1.4;
+    		-moz-transform:scale(1.4);
+    		-moz-transform-origin: 0 0;
+}
+
+.wrapIcon span{
+	position: absolute;
+}
+
+
+.img-a {
+	top: 0;
+	left: 0;
+	z-index: 2;
+}
+
+.img-b {
+	top: 0;
+	left: 0;
+	z-index: 1;
+}
+
+.img-c {
+	top: 0;
+	left: 0;
+}
+
+select, option {
+ font: inherit;
+}
+
+
+form {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.notBig {
+	display: none;
+}
+
+/* responsive design */
+/* big-screen */
+@media (min-width: 900px){
+
+.big, .medium, .bigPortrait {
+}
+
+}
+.notbig {
+	display: none;
+}
+
+/* medium--screen */
+@media (min-width: 901px) and (max-width: 1280px){
+
+.big {
+	display: none;
+}
+
+.notbig, .medium, .mini {
+	display: initial;
+}
+
+}
+
+/* small-screen */
+@media (min-width: 301px) and (max-width: 900px){
+
+.big, .medium {
+	display: none;
+}
+
+.notbig, .mini {
+	display: initial;
+}
+
+}
+
+
+/* mobil-screen */
+@media (max-width: 300px){
+
+.big, .medium, .mini {
+	display: none;
+}
+.notBig {
+	display: initial;
+}
+
+
+}
+
+@media screen and (orientation:portrait){
+.bigPortrait{
+	display: none;
+}
+}
+
+/* mobil-screen */
+/* width-screen */
+@media (min-height: 481px){
+
+.small {
+}
+
+}
+
+@media (max-height: 480px){
+
+.small {
+	display: none;
+}
+.tl-TableBody, .ul-TableBody, .to-TableBody, .lo-TableBody, .re-TableBody, .pr-TableBody, .st-TableBody {
+	height: calc( 100vH - 120px );
+	overflow-y: scroll;
+}
+
+}

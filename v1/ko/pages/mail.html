@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+	<link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
+	<link rel="stylesheet" type="text/css" href="../css/s2g-ma.css" />
+	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+	<script type='text/javascript' >
+
+	// view_use_strict 'use strict';
+	
+	// class to represent all mails
+	var MailViewModel = function() {
+		var self = this;
+		var s_id = "mail";
+
+		self.data = getData();
+		self.me = getMe();
+		
+		self.sender = ko.observable(self.me.nickname);		
+		self.recipe = ko.observable("Empfängerliste");
+		self.subject = ko.observable("Mail an alle");
+		self.mailcontent = ko.observable("leer");
+		
+		self.init = function(){
+			var type = getTempStorage(s_id, "type");
+			var source = getTempStorage(s_id, "source");
+			var subsource = getTempStorage(s_id, "subsource");
+			
+			if(type == "2tourmember"){
+				var tour = self.data.getTour(source);
+				self.recipe(subsource);
+				self.subject(tour.tourMail2User());				
+			}else if(type == "2tourguide"){
+				var tour = self.data.getTour(source);
+				self.recipe(tour.guide);
+				self.subject(tour.tourMail2Guide(self.me.nickname));				
+			}else if(type == "2tourall"){
+				var tour = self.data.getTour(source);
+				self.recipe(tour.getMembersString());
+				self.subject(tour.tourMail2Tour(self.me.nickname));				
+			} else if(type == "2user"){
+				var user = self.data.getUser(subsource);
+				self.recipe(subsource);
+				self.subject(user.userMail(self.me.nickname));				
+			}
+		}
+		
+		self.cancel = function(){
+			var destination = getTempStorage(s_id, "destination_cancel");
+			setMessage("Mail an " + self.recipe() + " abgebrochen");
+			clearTempStorage(s_id);
+			go2Destination(destination);
+		}
+		
+		self.send = function(){
+			var destination = getTempStorage(s_id, "destination_success");
+			setMessage("Mail erfolgreich an " + self.recipe() + " geschickt" + " [" + self.subject() + " - " + self.mailcontent() + "]");
+			clearTempStorage(s_id);
+			go2Destination(destination);
+		}
+		
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 10);
+		};
+
+		/* --------- Construction --------- */
+		self.init();
+		
+		// show message if available
+		var message = getMessage();
+		if( message != null && message != ""){
+			self.showMessage(message);
+		}
+	};
+	
+	</script>
+	<title>Sport2Gether (KnockOut)</title>
+</head>
+<body onload="ko.applyBindings(new MailViewModel());">
+	<div class="total">
+		<div id="navigation">
+			<div id="navigation-top" class="small bigPortrait">
+				<div id="message"></div>
+				<div id="logo"></div>
+			</div> <!--End div navigation-top -->
+			<div id="navigation-bottom">
+				<div id="navigation-buttons">
+					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+					<span data-bind="if: me!=null" class="bigPortrait">
+						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					</span >
+				</div> <!--End div navigation-buttons -->
+				<div id="navigation-buttons-logout" data-bind="if: me!=null">
+					<button id="btn-logout" data-bind="click: Logout">Logout</button>
+					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
+				</div> <!--End div navigation-buttons-logout (logged in) -->
+				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
+					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+				</div> <!--End div navigation-buttons-in (logged out) -->
+			</div> <!--End div navigation-bottom -->
+		</div> <!--End div navigation -->
+		<div class="content" id="main">
+			<div class="ma-Table">
+				<div class="ma-TableBody">
+					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Absender">
+						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Absender-2-1">Von</span></div>
+						<div class="ma-TableCell ma-TableCell-col-2-large">
+							<span class="ma-TableCell-Content-Absender-2-2">
+								<span id="Absender" data-bind="text: sender"></span>
+							</span>
+						</div>
+					</div> <!-- div ma-TableRow ENDE -->
+					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Empfaenger">
+						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Empfaenger-1">An</span></div>
+						<div class="ma-TableCell ma-TableCell-col-2-large">
+							<span class="ma-TableCell-Content-Empfaenger-2">
+								<span id="Empfaenger" data-bind="text: recipe"></span>
+							</span>
+						</div>
+					</div> <!-- div ma-TableRow ENDE -->
+					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Betreff">
+						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Betreff-1">Betreff</span></div>
+						<div class="ma-TableCell ma-TableCell-col-2-large">
+							<span class="ma-TableCell-Content-Betreff-2">
+								<input type="text" id="Betreff" data-bind="textInput: subject"></input>
+							</span>
+						</div>
+					</div> <!-- div ma-TableRow ENDE -->
+					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Editor">
+						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Editor-1">Inhalt</span></div>
+						<div class="ma-TableCell ma-TableCell-col-2-large">
+							<span class="ma-TableCell-Content-Editor-2">
+								<textarea id="Editor" name="editor" data-bind="textInput: mailcontent"></textarea>
+							</span>
+						</div>
+					</div> <!-- div ma-TableRow ENDE -->
+					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Send">
+						<div class="ma-TableCell ma-TableCell-col-0 big">&nbsp</div>
+						<div class="ma-TableCell ma-TableCell-col-1">&nbsp</div>
+						<div class="ma-TableCell ma-TableCell-Content-Send-1">
+							<span class="ma-TableCell-Content-Send-2">
+								<button id="btncancel" data-bind="click: cancel">Abbrechen</button>
+							</span>
+							<span class="ma-TableCell-Content-Send-3">
+								<button id="btnlogin" data-bind="click: send">Senden</button>
+							</span>
+						</div>
+					</div> <!-- div ma-TableRow ENDE -->
+				</div> <!-- div ma-TableBody ENDE -->
+			</div>  <!-- div ma-Table ENDE -->
+
+		</div> <!--End div content -->
+		<div id="footer" class="small">
+			<div id="version">
+				<a href="html/FAQ.php" target="_blank">FAQ</a>
+				<a href="html/disclaimer.php" target="_blank">Regeln</a>
+				<a href="html/impressum.php" target="_blank">Impressum</a>
+				<span data-bind="text: data.versioninfo" />
+			</div> <!--End div version -->
+		</div> <!--End div footer -->
+	</div> <!--End div total -->
+
+</body>
+</html>

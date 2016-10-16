@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-re.css" />
+    <meta charset="UTF-8">
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+	<script type='text/javascript' >
+
+	// class to represent a single user	
+	var PasswordViewModel = function() {
+		var self = this;
+		
+		self.data = getData();
+		self.me = getMe();
+		
+		self.username = ko.observable("");
+		self.password = ko.observable("");
+		self.password1 = ko.observable("");
+		self.email = ko.observable("");
+		self.acceptRules = ko.observable(false);
+
+		self.cancel = function(){
+			// no session info to reset
+			go2TourlistPage();
+		}
+		
+		self.save = function(){
+			if(!self.acceptRules()){
+				self.showMessage("Registrierung nur nach Anerkennung der Regeln");	
+			}else if(self.username()==null || self.username().length <2){
+				self.showMessage("Benutzername muss mindestens 2 Zeichen enthalten");	
+			}else if(self.password()==null || self.password().length <5){
+				self.showMessage("Passwort muss mindestens 5 Zeichen enthalten");	
+			}else if(self.password()!=self.password1()){
+				self.showMessage("Passwörter stimmen nicht überein");	
+			}else if(self.email()==null||self.email().length<5){
+				self.showMessage("Email Adresse kann nicht stimmen");	
+			}else  {
+				// no session info to reset
+				Register(self.username(), self.password(), self.email(), self.acceptRules(), 'tl', 're')
+			}
+		}
+		
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 10);
+		};
+
+		/* --------- Construction --------- */
+		// show message if available
+		var message = getMessage();
+		if( message != null && message != ""){
+			self.showMessage(message);
+		}		
+	}
+	
+	</script>
+	<title>Sport2Gether (KnockOut)</title>
+</head>
+<body onload="ko.applyBindings(new PasswordViewModel());">
+	<div class="total">
+		<div id="navigation">
+			<div id="navigation-top" class="small bigPortrait">
+				<div id="message"></div>
+				<div id="logo"></div>
+			</div> <!--End div navigation-top -->
+			<div id="navigation-bottom">
+				<div id="navigation-buttons">
+					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+					<span data-bind="if: me!=null" class="bigPortrait">
+						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					</span >
+				</div> <!--End div navigation-buttons -->
+				<div id="navigation-buttons-logout" data-bind="if: me!=null">
+					<button id="btn-logout" data-bind="click: Logout">Logout</button>
+					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
+				</div> <!--End div navigation-buttons-logout (logged in) -->
+				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
+					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+				</div> <!--End div navigation-buttons-in (logged out) -->
+			</div> <!--End div navigation-bottom -->
+		</div> <!--End div navigation -->
+		<div class="content" id="main">
+		
+			<div class="re-Table">
+				<div class="re-TableBody">
+					<div class="re-TableRow re-TableRow-Content re-TableRow-Head small">&nbsp</div> <!-- div re-TableRow ENDE -->
+					<div class="re-TableRow re-TableRow-Content re-TableRow-Username">
+						<div class="re-TableCell re-TableCell-col-0 big">&nbsp</div>
+						<div class="re-TableCell re-TableCell-col-1">
+							<span class="re-TableCell-Content-Username-1">Benutzername</span>
+						</div>
+						<div class="re-TableCell re-TableCell-col-2">
+							<span class="re-TableCell-Content-Username-2">
+								<input type="text" id="username" name="username" placeholder="Benutzername" data-bind="textInput: username"></input>
+							</span>
+						</div>
+					</div> <!-- div re-TableRow ENDE -->
+					<div class="re-TableRow re-TableRow-Content re-TableRow-Username">
+						<div class="re-TableCell re-TableCell-col-0 big">&nbsp</div>
+						<div class="re-TableCell re-TableCell-col-1">
+							<span class="re-TableCell-Content-Password-1.1">Passwort</span>
+						</div>
+						<div class="re-TableCell re-TableCell-col-2">
+							<span class="re-TableCell-Content-Password-1.2">
+								<input type="password" id="password" name="password" placeholder="Passwort" data-bind="textInput: password"></input>
+							</span>
+						</div>
+					</div> <!-- div re-TableRow ENDE -->
+					<div class="re-TableRow re-TableRow-Content re-TableRow-Repeat-Password">
+						<div class="re-TableCell re-TableCell-col-0 big">&nbsp</div>
+						<div class="re-TableCell re-TableCell-col-1">
+							<span class="re-TableCell-Content-Password-2.1">Passwort wiederholen</span>
+						</div>
+						<div class="re-TableCell re-TableCell-col-2">
+							<span class="re-TableCell-Content-Password-2.2">
+								<input type="password" id="passwordrepeat" name="passwordrepeat" placeholder="Passwort wiederholen" data-bind="textInput: password1"></input>
+							</span>
+						</div>
+					</div> <!-- div re-TableRow ENDE -->
+					<div class="re-TableRow re-TableRow-Content re-TableRow-Email">
+						<div class="re-TableCell re-TableCell-col-0 big">&nbsp</div>
+						<div class="re-TableCell re-TableCell-col-1">
+							<span class="re-TableCell-Content-Email-1">E-Mail-Adresse</span>
+						</div>
+						<div class="re-TableCell re-TableCell-col-2">
+							<span class="re-TableCell-Content-Email-2">
+								<input type="text" id="email" name="email" placeholder="Email eingeben" data-bind="textInput: email"></input>
+							</span>
+						</div>
+					</div> <!-- div re-TableRow ENDE -->
+					<div class="re-TableRow re-TableRow-Content re-TableRow-Rules">
+						<div class="re-TableCell re-TableCell-col-0 big">&nbsp</div>
+						<div class="re-TableCell re-TableCell-col-1">
+							<span class="re-TableCell-Content-Rules-1">Ich habe die Regeln</span>
+						</div>
+						<div class="re-TableCell re-TableCell-col-2-tini">
+							<span class="re-TableCell-Content-Rules-2">
+								<input type="checkbox" id="rules" name="rules" data-bind="checked: acceptRules" />
+							</span>
+						</div> 
+						<div class="re-TableCell re-TableCell-col-3">
+							<span class="re-TableCell-Content-Rules-3"> gelesen und akzeptiere sie</span>
+						</div> 
+					</div> <!-- div re-TableRow ENDE -->
+					<div class="re-TableRow re-TableRow-Content re-TableRow-Save">
+						<div class="re-TableCell re-TableCell-col-0 big">&nbsp</div>
+						<div class="re-TableCell re-TableCell-col-1">&nbsp</div>
+						<div class="re-TableCell re-TableCell-Content-Save-1">
+							<span class="re-TableCell-Content-Save-2">
+								<button id="btnlogin" data-bind="click: cancel">Abbrechen</button>
+							</span>
+							<span class="re-TableCell-Content-Save-3">
+								<button id="btnlogin" data-bind="click: save">Speichern</button>
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="re-TableRow re-TableRow-Content re-TableRow-Foot small">&nbsp</div> <!-- div re-TableRow ENDE -->
+
+				</div> <!-- div re-TableBody ENDE -->
+			</div> <!-- div re-Table ENDE -->
+
+		</div> <!--End div content -->
+		<div id="footer" class="small">
+			<div id="version">
+				<a href="html/FAQ.php" target="_blank">FAQ</a>
+				<a href="html/disclaimer.php" target="_blank">Regeln</a>
+				<a href="html/impressum.php" target="_blank">Impressum</a>
+				<span data-bind="text: data.versioninfo" />
+			</div> <!--End div version -->
+		</div> <!--End div footer -->
+	</div> <!--End div total -->
+
+</body>
+</html>

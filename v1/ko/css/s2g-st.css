@@ -1,0 +1,83 @@
+.st-Table{
+}
+
+.st-TableHeading {
+/* analog .even */
+	padding-top: 5px;
+}
+
+.st-Tablerow-Content {
+	margin-top: 10px;
+}
+
+.st-TableRow {
+	padding-left: 10px;
+	overflow-y: hidden;
+}
+
+/* Size */
+.st-TableHeading .st-TableCell-User {
+	width: calc(( 100% - ( 3em + 16em + 16em + 17px )));
+}
+.st-TableCell-User {
+	width: calc(( 100% - ( 3em + 16em + 16em )));
+}
+.st-TableCell-Mail {
+	width: 3em;
+}
+.st-TableCell-GuidedTours {
+	width: 16em;
+}
+.st-TableCell-ToursGuide {
+	width: 16em;
+}
+.st-TableCell-Scrollbar {
+	width: 17px;
+}
+
+.st-TableHead-Content-ToursGuide, .st-TableHead-Content-GuidedTours {
+	float:right;
+	padding-right: 50px;
+}
+
+.odd-title, .even-title, .odd, .even {
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.st-Table .odd {
+	background-color: lightgrey;
+}
+
+
+/* icons allgemein */
+.st-icon-member-mail {
+	display: inline-block;
+	width: 35px;
+	height: 25px;
+	border: none;
+	background-color: transparent;
+}
+
+/* responsive design */
+/* big-screen */
+@media (min-width: 1281px){
+}
+
+/* medium-screen */
+@media (min-width: 901px) and (max-width: 1280px){
+
+}
+
+/* small-screen */
+@media (min-width: 301px) and (max-width: 900px){
+
+}
+
+@media (max-height: 300px){
+
+.tl-TableBody {
+	height: 100%;
+}
+}

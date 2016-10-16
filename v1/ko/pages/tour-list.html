@@ -1,0 +1,678 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, width=1281">
+	<link rel="stylesheet" href="../script/css/jquery-ui.css">
+	<link rel="stylesheet" href="../script/css/jquery.multiselect.css">
+	<link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+	<link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
+	<link rel="stylesheet" type="text/css" href="../css/s2g-tl.css" />
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/jquery-ui.min.js'></script>
+	<script type='text/javascript' src='../script/jquery.multiselect.min.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+	<script type='text/javascript' >
+
+	'use strict';
+
+	ko.bindingHandlers.multiselect = {
+		init: function (element, valueAccessor, allBindingAccessors) {
+			var options = valueAccessor();
+
+			ko.bindingHandlers.options.update(
+				element,
+				function() { return options.options; },
+				allBindingAccessors
+			);
+
+			ko.bindingHandlers.selectedOptions.init(
+				element,
+				function() { return options.selectedOptions; },
+				allBindingAccessors
+			);
+
+			ko.bindingHandlers.selectedOptions.update(
+				element,
+				function() { return options.selectedOptions; },
+				allBindingAccessors
+			);
+
+			$(element).multiselect(options.config);
+
+			//make view model know about select/deselect changes
+			$(element).bind("multiselectcheckall", function () { $(element).trigger("change"); });
+			$(element).bind("multiselectuncheckall", function () { $(element).trigger("change"); });
+		},
+		update: function (element, valueAccessor, allBindingAccessors) {
+			var options = valueAccessor();
+			//update html if items set through code
+			ko.bindingHandlers.selectedOptions.update(
+				element,
+				function () { return options.selectedOptions; },
+				allBindingAccessors
+			);
+
+			$(element).multiselect("refresh");
+		}
+	};
+
+	</script>
+
+	<script type='text/javascript' >
+	
+	// view_use_strict 'use strict';
+	
+	// class to represent all tours
+	var ToursViewModel = function() {
+		const minutesHistory = 1*60;
+		var self = this;
+		
+		self.data = getData();
+		self.me = getMe();
+		self.now = getDate();
+		
+		self.selectedOptions = ko.observableArray(self.data.getTourTypes());
+		var _selectedOptions = ko.observable(JSON.parse(getPreference("tl_selectedTourtype")));
+		self.selectedOptions = ko.computed({
+			read: function() { return(_selectedOptions());},
+			write: function (value) { _selectedOptions(value); setPreference("tl_selectedTourtype", ko.toJSON(value))},
+			owner: self
+		});
+		self.options = ko.observableArray(self.data.getTourTypes());
+		self.getTourSelection = ko.computed(function() { return( (self.options().length==self.selectedOptions().length)?'Alles':'# Tourart(en)'); });
+		
+		self.headers = [
+			{id:'ID_Sport',title:'Sport',sortPropertyName:'datetime', sortType: "date", sortTitle:'Sortierung nach Datum', searchTitle:'Suche nach Datum [xx,xxxx,xx.xxxx,xx.xx.xxx]', asc: false, active: false},
+			{id:'ID_Beschreibung',title:'Beschreibung',sortPropertyName:'description', sortType: "text", sortTitle:'Sortierung nach Beschreibung',  searchTitle:'Suche im Beschreibungstext', asc: true, active: false},
+			{id:'ID_Dauer',title:'Dauer',sortPropertyName:'duration', sortType: "int", sortTitle:'Sortierung nach Dauer', asc: true, active: false},
+			{id:'ID_Distanz',title:'Distanz',sortPropertyName:'distance', sortType: "int", sortTitle:'Sortierung nach Entfernung', asc: true, active: false},
+			{id:'ID_Bergauf',title:'Bergauf',sortPropertyName:'up', sortType: "int", sortTitle:'Sortierung nach Höhe', asc: true, active: false},
+			{id:'ID_Pace',title:'Pace',sortPropertyName:'pace', sortType: "int", sortTitle:'Sortierung nach Geschwindigkeit', asc: true, active: false},
+			{id:'ID_Technik',title:'Technik',sortPropertyName:'technic', sortType: "int", sortTitle:'Sortierung nach Schwierigkeit', asc: true, active: false},
+			{id:'ID_Teilnehmer',title:'Teilnehmer',sortPropertyName:'guide', sortType: "text", sortTitle:'Sortierung nach Guide',  searchTitle:'Suche nach Mitfahrern [G:{Name des TourGuides}]', asc: true, active: false}
+		];
+		self.getHeader = function(title){ return(ko.utils.arrayFirst(self.headers, function(header) {return (header.title == title);})); };
+
+		self.setHeader = function(item, members, tours){
+			var clname;
+			var t;
+			if(item.id == "ID_Beschreibung"){
+				t = item.title + ' (' + tours + ' Touren)';		
+			}else if(item.id == "ID_Teilnehmer"){
+				t = members + ' Mitfahrer angemeldet';
+			}else{
+				t = item.title;
+			}
+			clname = t;
+			if(item.sortPropertyName!=null){
+				if(item.active){
+					clname += (item.asc?" &#9650;":" &#9660;");
+				}else{
+					clname += " &#x29D7;"; // Rhombus  &#x29EB; //  Sanduhr &#x29D7; // Karte Karo &#9830; // Pfeile &#8661;
+				}
+			}
+			var doc = document.getElementById(item.id);
+			if(doc){
+				doc.innerHTML = clname;
+			}
+		};
+		
+		// set the default sort
+		self.activeSort = ko.observable(function(){return 0;});
+		self.sort = function(header, event){
+			// if this header was just clicked a second time
+			if(header.active) {
+				header.asc = !header.asc; // toggle the direction of the sort
+			}
+			// make sure all other headers are set to inactive
+			ko.utils.arrayForEach(self.headers, function(item){ item.active = false; } );
+			// the header that was just clicked is now active
+			header.active = true; // our now-active header
+			// make sure all headers show correct sort direction
+			ko.utils.arrayForEach(self.headers, function(item){
+			    self.setHeader(item, self.getMembers(), self.filteredTours().length);
+			} );
+			var prop = header.sortPropertyName;
+			var type = header.sortType;
+			function ascSort(a,b){ 
+				var val1;
+				var val2;				
+				if(a[prop] instanceof Function){
+					if(isString(a[prop]())){
+						val1 = a[prop]().toLowerCase();
+						val2 = b[prop]().toLowerCase();
+					}else{
+						val1 = a[prop]();
+						val2 = b[prop]();
+					}
+				}else{
+					if(isString(a[prop])){
+						val1 = a[prop].toLowerCase();
+						val2 = b[prop].toLowerCase();
+					}else{
+						val1 = a[prop];
+						val2 = b[prop];
+					}
+				}
+				// handle integer
+				if(type=="int"){
+					val1 = getInteger(val1,10);
+					val2 = getInteger(val2,10);
+				}
+				
+				return(val1 > val2 ? -1 : val1 < val2 ? 1 : val1 == val2 ? 0 : 0);
+			}
+			
+			function descSort(a,b){ 
+				var val1;
+				var val2;				
+				if(a[prop] instanceof Function){
+					if(isString(a[prop])){
+						val1 = a[prop]().toLowerCase();
+						val2 = b[prop]().toLowerCase();
+					}else{
+						val1 = a[prop]();
+						val2 = b[prop]();
+					}
+				}else{
+					if(isString(a[prop])){
+						val1 = a[prop].toLowerCase();
+						val2 = b[prop].toLowerCase();
+					}else{
+						val1 = a[prop];
+						val2 = b[prop];
+					}
+				}
+				// handle integer
+				if(type=="int"){
+					val1 = getInteger(val1,10);
+					val2 = getInteger(val2,10);
+				}
+				
+				return(val1 < val2 ? -1 : val1 > val2 ? 1 : val1 == val2 ? 0 : 0);
+			}
+			var sortFunc = header.asc ? ascSort : descSort;
+
+			// store the new active sort function
+			self.activeSort(sortFunc);
+		};
+			
+		// setze Benutzerspezifische Preferenzen und speicher sie ab
+		var _showMore = ko.observable(getPreference("tl_showMore"));
+		self.showMore = ko.computed({
+			read: function() { return(_showMore());},
+			write: function (value) { _showMore(value); setPreference("tl_showMore", value)},
+			owner: self
+		});
+		var _showFilter = ko.observable(getPreference("tl_showFilter"));
+		self.showFilter = ko.computed({
+			read: function() { return(_showFilter());},
+			write: function (value) { _showFilter(value); setPreference("tl_showFilter", value)},
+			owner: self
+		});
+		var _showActiveTours = ko.observable(getPreference("tl_showActiveTours"));
+		self.showActiveTours = ko.computed({
+			read: function() { return(_showActiveTours());},
+			write: function (value) { _showActiveTours(value); setPreference("tl_showActiveTours", value)},
+			owner: self
+		});
+		var _showOldTours = ko.observable(getPreference("tl_showOldTours"));
+		self.showOldTours = ko.computed({
+			read: function() { return(_showOldTours());},
+			write: function (value) { _showOldTours(value); setPreference("tl_showOldTours", value)},
+			owner: self
+		});
+		var _showNightlyTours = ko.observable(getPreference("tl_showNightlyTours"));
+		self.showNightlyTours = ko.computed({
+			read: function() { return(_showNightlyTours());},
+			write: function (value) { _showNightlyTours(value); setPreference("tl_showNightlyTours", value)},
+			owner: self
+		});
+		var _showDeactivateTours = ko.observable(getPreference("tl_showDeactivateTours"));
+		self.showDeactivateTours = ko.computed({
+			read: function() { return(_showDeactivateTours());},
+			write: function (value) { _showDeactivateTours(value); setPreference("tl_showDeactivateTours", value)},
+			owner: self
+		});
+
+		self.filters = [
+			{title:'Alle', filter: null},
+			{title:'2015', filter: function(item){return item.datetime.getFullYear() == 2015;}},
+			{title:'2016', filter: function(item){return item.datetime.getFullYear() == 2016;}}
+		];
+		self.getFilter = function(title){ return((ko.utils.arrayFirst(self.filters, function(filter) {return (filter.title == title);})).filter); };
+		self.actFilter = ko.observable(self.getFilter('Alle'));
+		
+		self.searchDescription = ko.observable("");
+		self.searchMembers = ko.observable("");
+		self.searchDate = ko.observable("");
+		
+		self.tours = ko.observable(data.tours()).extend({ rateLimit: 50 });
+		
+        self.pageIndex = ko.observable(0);
+		self.filteredTours = ko.computed(function() {
+			var result;
+			result = ko.utils.arrayFilter(self.tours(), function(tour) {
+				var accept = ((self.showActiveTours()&&!tour.oldTour(self.now)) || (self.showOldTours()&&tour.oldTour(self.now))) && ((self.showDeactivateTours()&&!tour.active)||(tour.active)) && ((self.showNightlyTours()&&tour.night())||(!tour.night()));
+
+				if(self.showActiveTours()&&!accept){
+					// show active and some of the old tours
+					if(tour.oldTour(self.now)){
+						accept = (self.now.getTime()-tour.datetime.getTime())<(minutesHistory*1000*60);
+					}
+				}
+				if(accept&&self.actFilter()){
+					accept = self.actFilter()(tour);
+				}
+				if(accept){
+					// check tourtype if not all selected
+					if(self.options().length>self.selectedOptions().length){
+						var t = self.data.getTourTypebyType(tour.tourtype).tourart;
+						var i = self.selectedOptions().length;
+						accept = false;
+						while (i--) {
+							if (self.selectedOptions()[i] === t) {
+								accept = true;
+								break;
+							}
+						}
+					}
+				}
+				if(accept){
+					var searchValue = self.searchDescription().toLowerCase();
+					if(searchValue!=''){
+						if((tour.meetingpoint.toLowerCase().indexOf(searchValue) == -1)&&(tour.description.toLowerCase().indexOf(searchValue) == -1)){
+							return(false);
+						}
+					}
+					searchValue = self.searchDate().toLowerCase();
+					if(searchValue!=''){
+						// support:
+						// [xx]xx       -> [20]15           --> xx.xx.2015
+						// xx.[xx]xx    -> 12.[20]15        --> xx.12.2015
+						// xx.xx.[xx]xx -> 4.11.[20]15      --> 04.11.2015
+						var fields = searchValue.split('.');
+						if(fields.length == 1){
+							var year = parseInt(fields[0]);
+							if(year<100){
+								year+=2000;
+							}
+							if(tour.datetime.getFullYear() != year){
+								return(false);
+							}
+						}else if(fields.length == 2){
+							var month = parseInt(fields[0]);
+							var year = parseInt(fields[1]);
+							if(year<100){
+								year+=2000;
+							}
+							if(!(tour.datetime.getMonth()+1 == month&&tour.datetime.getFullYear() == year)){
+								return(false);
+							}
+						}else if(fields.length == 3){
+							var day = parseInt(fields[0]);
+							var month = parseInt(fields[1]);
+							var year = parseInt(fields[2]);
+							if(year<100){
+								year+=2000;
+							}
+							if(!(tour.datetime.getDate() == day&&tour.datetime.getMonth()+1 == month&&tour.datetime.getFullYear() == year)){
+								return(false);
+							}
+						}		
+					}
+					searchValue = self.searchMembers().toLowerCase();
+					if(searchValue!=''){
+						accept= false;
+						var filterMembers = searchValue.split(",");
+						for (var i = 0, len = filterMembers.length; i < len; i++) {
+							var filterMember = filterMembers[i].toLowerCase().trim();
+							
+							if(filterMember.startsWith("g:")){
+								if(tour.isPossibleTourGuide(filterMember.substr(2))){
+									return(true);
+								}
+							}else{
+								if(tour.isPossibleTourMember(filterMember)){
+									return(true);
+								}
+							}		
+						}
+					}
+				}
+				return (accept);
+			});
+			
+			if(result.length>0){
+				result = result.sort(self.activeSort());
+				// set header
+				var total = 0;
+				ko.utils.arrayFilter(result, function(tour) { total += tour.tourMembers(); });
+				self.setHeader(self.getHeader("Beschreibung"), total, result.length);
+				self.setHeader(self.getHeader("Teilnehmer"), total, result.length);
+			}
+			
+			// check paging
+			self.pageIndex(0);
+			
+			return(result);
+		});
+		
+		self.getMembers = ko.computed(function() {
+			var total = 0;
+			ko.utils.arrayFilter(self.filteredTours(), function(tour) {
+				total += tour.tourMembers();
+			});
+			
+			return(total);
+		});
+		
+		// Page size
+		self.pageSize = ko.observable(100);
+        self.firstPage = function() { self.pageIndex(0); };
+        self.previousPage = function() { self.pageIndex(self.pageIndex() - 1); };
+        self.nextPage = function() { self.pageIndex(self.pageIndex() + 1); };
+		self.maxPageIndex = ko.dependentObservable(function() {
+			return Math.ceil(self.filteredTours().length / self.pageSize()) - 1;
+		});
+        self.lastPage = function() { self.pageIndex(self.maxPageIndex()); };
+		self.pagedRows = ko.dependentObservable(function() {
+			var size = self.pageSize();
+			var start = self.pageIndex() * size;
+			return self.filteredTours().slice(start, start + size);
+		});
+		self.actPages = function(what, pages) { 
+			var act = self.pageIndex() * self.pageSize();
+			var max = self.filteredTours().length;
+			if(what=="first") return("<<"+(pages?" 1-" + Math.min(self.pageSize(), max):""));
+			if(what=="previous") return("<"+(pages?" " + Math.max(1, act - self.pageSize())+"-"+act:""));
+			if(what=="next") return((pages?Math.min(act+self.pageSize(), max)+"-"+Math.min(act+self.pageSize()+self.pageSize(), max)+" ":"")+">");
+			if(what=="last") return( (pages?Math.max(1, act - self.pageSize())+"-"+max+" ":"")+">>");
+			return("???");
+		};
+		
+		self.getTours = function(){
+			clearData();
+			go2TourlistPage();
+		}
+		
+		self.newTour = function(){
+			go2TourPage(0, true, 'tl', 'tl');
+		}
+		
+		self.editTour = function(tourID){
+			go2TourPage(tourID, true, 'tl', 'tl' );
+		}
+		
+		self.toggleActiveTour = function(tourID){
+			toggleActiveTour(tourID);
+		}
+		
+		self.add2Tour = function(tourID){
+			add2Tour(tourID, self.me.nickname);
+		}
+		
+		self.removeFromTour = function(tourID){
+			removeFromTour(tourID, self.me.nickname);
+		}
+		
+		self.showTour = function(tourID){
+			go2TourPage(tourID, false, 'tl', 'tl' );
+		}
+
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 10);
+		};
+
+		/* --------- Construction --------- */
+		// sort tour list by date time
+		self.sort(self.getHeader('Sport'));
+		
+		// show message if available
+		var message = getMessage();
+		if( message != null && message != ""){
+			self.showMessage(message);
+		}		
+	};
+	
+	ko.options.deferUpdates = true;
+	
+	</script>
+	<title>Sport2Gether (KnockOut)</title>
+</head>
+<body onload="ko.applyBindings(new ToursViewModel());">
+	<div data-bind='visible: false'> Wo sind die Touren... 
+		<img width="100" src="../img/spinner.gif" alt="DEIN BILD" style="float:center">
+	</div>
+ 	<div class="total" style="display: none" data-bind="visible: true">
+		<div id="navigation">
+			<div id="navigation-top" class="small bigPortrait">
+				<div id="message"></div>
+				<div id="logo"></div>
+			</div> <!--End div navigation-top -->
+			<div id="navigation-bottom">
+				<div id="navigation-buttons">
+					<button id="btn-tour-list" data-bind="click: getTours">Touren</button>
+					<span data-bind="if: me!=null" >
+						<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+					</span>
+					<span data-bind="if: me!=null" class="bigPortrait">
+						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					</span>
+				</div> <!--End div navigation-buttons -->
+				<div id="navigation-buttons-logout" data-bind="if: me!=null">
+					<button id="btn-logout" data-bind="click: Logout">Logout</button>
+					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
+				</div> <!--End div navigation-buttons-logout (logged in) -->
+				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
+					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+				</div> <!--End div navigation-buttons-in (logged out) -->
+			</div> <!--End div navigation-bottom -->
+		</div> <!--End div navigation -->
+		<div class="content" id="main">
+			<div id="tourtools" class="small" data-bind="if: me!=null">
+				<div id="tourbutton">
+					<button id="btn-new_tour" class="bigPortrait" data-bind="click: newTour">Neue Tour</button>
+				</div>  <!--End div tourbutton -->
+				<div id="checkbox">
+					<div id="topcheckbox">
+						<label for="check1"><input name="cb_activeTours" data-bind="checked: showActiveTours, click: function() {firstPage(); setSessionStorage('global', 'showActiveTours', showActiveTours()); return(true);}" id="check1" type="checkbox">aktive Touren</label>
+						<label for="check2"><input name="cb_oldTours" data-bind="checked: showOldTours, click: function() {firstPage(); setSessionStorage('global', 'showOldTours', showOldTours()); return(true);}" id="check2" type="checkbox">alte Touren</label>
+					</div> <!--End div topcheckbox -->
+					<div id="bottomcheckbox" data-bind="if: showMore" class="bigPortrait">
+						<label for="check3"><input name="cb_deactiveTours" data-bind="checked: showDeactivateTours, click: function() { setSessionStorage('global', 'showDeactivateTours', showDeactivateTours()); return(true);}" id="check3" type="checkbox">abgesagte Touren</label>
+						<label for="check4"><input name="cb_nightlyTours" data-bind="checked: showNightlyTours, click: function() { setSessionStorage('global', 'showNightlyTours', showNightlyTours()); return(true);}" id="check3" type="checkbox">nächtliche Touren</label>
+					</div> <!--End div bottomcheckbox -->
+				</div>  <!--End div checkbox -->
+				<div class="bigPortrait">
+					<a id="rssbutton" data-bind="attr: {href: getRSSLink()}">RSS</a>
+				</div><!--End div rssbutton -->
+				<div id="cb_tools">
+					<div id="cb_tools_top">
+						<label for="check5"><input name="cb_showMore" data-bind="checked: showMore" id="check5" type="checkbox">Mehr..</label>
+					</div> <!--End div cb_tools_top -->
+					<div id="cb_tools_bottom" data-bind="if: showMore" class="bigPortrait">
+						<label for="check6"><input name="cb_showFilter" data-bind="checked: showFilter" id="check6" type="checkbox">Filter</label>
+						<span data-bind="if: showFilter">
+							<select data-bind="options: filters, optionsText: 'title', optionsValue: 'filter', value: actFilter, optionsCaption: 'Wähle...'"></select>
+							<select multiple="multiple" data-bind="multiselect: { config:  {noneSelectedText:'Wähle Tourart', checkAllText:'Alle Tourarten' ,uncheckAllText:'keine Tourarten', selectedText: getTourSelection()}, options: options, selectedOptions: selectedOptions }"></select>
+						</span>
+					</div> <!--End div cb_tools_bottom -->
+				</div>  <!--End div cb_tools -->
+				<div class="tournav big">
+					<div id="firstbutton" data-bind="visible: pageIndex() > 0">
+						<button id="btn-first" data-bind="click: firstPage, text:actPages('first', true)">&lt;&lt;</button>
+					</div><!--End div firstbutton -->
+					<div id="prevbutton" data-bind="visible: pageIndex() > 0">
+						<button id="btn-prev" data-bind="click: previousPage, text:actPages('previous', true)">&lt;</button>
+					</div><!--End div prevbutton -->
+					<div id="nextbutton" data-bind="visible: pageIndex() < maxPageIndex()">
+						<button id="btn-next" data-bind="click: nextPage, text:actPages('next', true)">&gt;</button>
+					</div><!--End div nextbutton -->
+					<div id="lastbutton" data-bind="visible: pageIndex() < maxPageIndex()">
+						<button id="btn-last" data-bind="click: lastPage, text:actPages('last', true)">&gt;&gt;</button>
+					</div><!--End div lastbutton -->
+				</div>
+				<div class="tournav notbig">
+					<div id="firstbutton" data-bind="visible: pageIndex() > 0">
+						<a id="firstbutton" href="#" data-bind="click: firstPage, text:actPages('first', false)">&lt;&lt;</a>
+					</div><!--End div firstbutton -->
+					<div id="prevbutton" data-bind="visible: pageIndex() > 0">
+						<a id="prevbutton" href="#" data-bind="click: previousPage, text:actPages('previous', false)">&lt;</a>
+					</div><!--End div prevbutton -->
+					<div id="nextbutton" data-bind="visible: pageIndex() < maxPageIndex()">
+						<a id="nextbutton" href="#" data-bind="click: nextPage, text:actPages('next', false)">&gt;</a>	
+					</div><!--End div nextbutton -->
+					<div id="lastbutton" data-bind="visible: pageIndex() < maxPageIndex()">
+						<a id="lastbutton" href="#" data-bind="click: lastPage, text:actPages('last', false)">&gt;&gt;</a>	
+					</div><!--End div lastbutton -->
+				</div>
+			</div>  <!--End div tourtools -->
+			<div class="tl-Table" data-bind="if: me!=null">
+				<div class="tl-TableRow tl-TableHeading">
+					<div class="tl-TableHead tl-TableCell-Sport"><span id="ID_Sport" class="tl-TableHead-Content-Sport" data-bind="click: sort.bind($data,getHeader('Sport')), attr: {title: getHeader('Sport').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Beschreibung"><span id="ID_Beschreibung" class="tl-TableHead-Content-Beschreibung flex" data-bind="click: sort.bind($data,getHeader('Beschreibung')), attr: {title: getHeader('Beschreibung').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Dauer medium"><span id="ID_Dauer" class="tl-TableHead-Content-Dauer"data-bind="click: sort.bind($data,getHeader('Dauer')), attr: {title: getHeader('Dauer').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Distanz medium"><span id="ID_Distanz" class="tl-TableHead-Content-Distanz" data-bind="click: sort.bind($data,getHeader('Distanz')), attr: {title: getHeader('Distanz').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Bergauf medium"><span id="ID_Bergauf" class="tl-TableHead-Content-Bergauf" data-bind="click: sort.bind($data,getHeader('Bergauf')), attr: {title: getHeader('Bergauf').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Pace big"><span id="ID_Pace" class="tl-TableHead-Content-Pace" data-bind="click: sort.bind($data,getHeader('Pace')), attr: {title: getHeader('Pace').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Technik big"><span id="ID_Technik" class="tl-TableHead-Content-Technik" data-bind="click: sort.bind($data,getHeader('Technik')), attr: {title: getHeader('Technik').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Teilnehmer"><span id="ID_Teilnehmer" class="tl-TableHead-Content-Teilnehmer flex" data-bind="click: sort.bind($data,getHeader('Teilnehmer')), attr: {title: getHeader('Teilnehmer').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Scrollbar"><span>&nbsp;</span></div>
+				</div> <!-- div tl-Tablerow ENDE -->
+				<div class="tl-TableRow tl-TableHeading" data-bind="if: showFilter">
+					<div class="tl-TableHead tl-TableCell-Sport"><input class="searchfield" data-bind="value: $root.searchDate, valueUpdate: 'afterkeydown', attr: {title: getHeader('Sport').searchTitle}" /></div>
+					<div class="tl-TableHead tl-TableCell-Beschreibung"><input class="searchfield" data-bind="value: $root.searchDescription, valueUpdate: 'afterkeydown', attr: {title: getHeader('Beschreibung').searchTitle}" /></div>
+					<div class="tl-TableHead tl-TableCell-Dauer medium"><span>&nbsp;</span></div>
+					<div class="tl-TableHead tl-TableCell-Distanz medium"><span>&nbsp;</span></div>
+					<div class="tl-TableHead tl-TableCell-Bergauf medium"><span>&nbsp;</span></div>
+					<div class="tl-TableHead tl-TableCell-Pace big"><span>&nbsp;</span></div>
+					<div class="tl-TableHead tl-TableCell-Technik big"><span>&nbsp;</span></div>
+					<div class="tl-TableHead tl-TableCell-Teilnehmer"><input class="searchfield" data-bind="value: $root.searchMembers, valueUpdate: 'afterkeydown', attr: {title: getHeader('Teilnehmer').searchTitle}" /></div>
+					<div class="tl-TableHead tl-TableCell-Scrollbar"><span>&nbsp;</span></div>
+				</div> <!-- div tl-Tablerow ENDE -->
+				<div class="tl-TableBody" data-bind="foreach: pagedRows">
+					<!-- Tour Title -->
+					<div class="tl-TableRow tl-Tablerow-Title">
+						<div class="tl-TableCell tl-TableCell-Title" data-bind="css: isEven()?'even-title':'odd-title'">
+							<div class="tl-TableCell-Content-Title"><span data-bind="text: tourday()"></span> um 
+								<span class="tl-TableCell-Content-Zeit" data-bind="text: tourtime()"></span> mit 
+								<span class="tl-TableCell-Content-Guide tl-guide">
+									<span class="tl-guide-mail"><a class="tl-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2tourguide', id, data.getUser(guide).nickname,'tl', 'tl'), attr: { title: data.getUser(guide).userMailTitle() }"></a></span> <!-- span tl-guide-mail ENDE -->
+									<span class="tl-guide-profil"><a class="tl-a-member-profil" data-bind="click: go2ProfilPage.bind($data, data.getUser(guide).nickname), attr: { title: data.getUser(guide).userPhoneInfo() }, text: data.getUser(guide).nickname">name of the guide</a></span> <!-- span tl-guide-profil ENDE -->
+								</span> <!-- span tl-guide ENDE -->
+							</div> <!-- div tl-TableContent-Title ENDE -->
+							<div class="tl-TableCell-Content-Tools">
+								<span data-bind="if: tourMembers()>0"><a class="tl-icon-member-mail" title="Mail an alle Mitfahrer und Guide" data-bind="click: go2MailPage.bind($data, '2tourall', id, id, 'tl', 'tl')"></a></span>
+								<span><input class="tl-input-icon-copy" value="" data-bind="click: $root.editTour.bind($data, -id), attr: { title: tourCopyTitle() }" onmouseover="this.className='tl-input-icon-copy hover'" onmouseout="this.className='tl-input-icon-copy'" type="submit"></span>
+								<span data-bind="if: !oldTour($root.now)">
+									<!-- div Unterscheidung ob Guide oder Mitfahrer -->
+									<span data-bind="if: $root.me.nickname===data.getUser(guide).nickname">
+										<span data-bind="if: active"><input class="tl-input-icon-edit" value="" data-bind="click: $root.editTour.bind($data, id), attr: { title: tourEditTitle() }" onmouseover="this.className='tl-input-icon-edit hover'" onmouseout="this.className='tl-input-icon-edit'" type="submit"></span>
+										<span data-bind="if: active"><input class="tl-input-icon-deactivate" value="" data-bind="click: $root.toggleActiveTour.bind($data, id), attr: { title: tourDeactivateTitle() }" onmouseover="this.className='tl-input-icon-deactivate hover'" onmouseout="this.className='tl-input-icon-deactivate'" type="submit"></span>
+										<!-- only for deactive tours -->
+										<span data-bind="ifnot: active"><input class="tl-input-icon-activate" value="" data-bind="click: $root.toggleActiveTour.bind($data, id), attr: { title: tourActivateTitle() }" onmouseover="this.className='tl-input-icon-activate hover'" onmouseout="this.className='tl-input-icon-activate'" type="submit"></span>
+									</span> <!-- span Guide ENDE -->
+									<span data-bind="ifnot: $root.me.nickname===data.getUser(guide).nickname">
+										<span data-bind="if: !isTourMember($root.me.nickname)"><input class="tl-input-icon-plus" value="" data-bind="click: $root.add2Tour.bind($data, id), attr: { title: tourRegisterTitle() }" onmouseover="this.className='tl-input-icon-plus hover'" onmouseout="this.className='tl-input-icon-plus'" type="submit"></span>
+										<span data-bind="if: isTourMember($root.me.nickname)"><input class="tl-input-icon-minus" value="" data-bind="click: $root.removeFromTour.bind($data, id), attr: { title: tourUnRegisterTitle() }" onmouseover="this.className='tl-input-icon-minus hover'" onmouseout="this.className='tl-input-icon-minus'" type="submit"></span>
+									</span> <!-- span Mitfahrer ENDE -->
+								</span> <!-- span History ENDE -->
+								<span data-bind="if: oldTour($root.now)&&correctable($root.me.nickname)"><input class="tl-input-icon-edit" value="" data-bind="click: $root.editTour.bind($data, id), attr: { title: tourEditTitle() }" onmouseover="this.className='tl-input-icon-edit hover'" onmouseout="this.className='tl-input-icon-edit'" type="submit"></span>
+									
+							</div> <!-- div tl-TableCell-Content-Tools ENDE -->
+						</div> <!-- div tl-Tablecell-Title ENDE -->
+					</div> <!-- div tl-Tablerow-Title ENDE -->
+					<!-- Tour Content -->
+					<div class="tl-TableRow tl-Tablerow-Content mini" data-bind="css: isEven()?'even':'odd'">
+						<div class="tl-TableCell tl-TableCell-Sport">
+							<div class="wrapIcon">
+								<span data-bind="css:getTourtypeCSS(), attr: { title: data.getTourTypebyType(tourtype).description }"></span>					
+								<span data-bind="visible: !active, css: getTourtypeCanceledCSS()"></span>					
+								<span data-bind="visible: oldTour($root.now), css:getTourtypeOldCSS()"></span>					
+							</div> <!-- div class=wrapIcon" --> 
+						</div> <!-- div tl-TableCell-Sport --> 
+						<div class="tl-TableCell tl-TableCell-Beschreibung" data-bind="click: $root.showTour.bind($data, id)">
+							<div><span class="tl-TableCell-Content-Treffpunkt" data-bind="text: meetingpoint, attr: {title: meetingpointInfo($root.me.latitude, $root.me.longitude)}" /></div>
+							<div><span class="tl-TableCell-Content-Beschreibung flex" data-bind="text: description" /></div>
+						</div> <!-- div tl-TableCell-Beschreibung -->
+						<div class="tl-TableCell tl-TableCell-Dauer medium"><span class="tl-TableCell-Content-Dauer" data-bind="text: durationText()" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Distanz medium"><span class="tl-TableCell-Content-Distanz" data-bind="text: distanceText()" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Bergauf medium"><span class="tl-TableCell-Content-Bergauf" data-bind="text: upText()" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Pace big">
+							<span data-bind="css:getPaceCSS(), attr: { title: data.getRateFromRatetype(pace).speed }"></span>		
+						</div>
+						<div class="tl-TableCell tl-TableCell-Technik big">
+							<span data-bind="css:getTechnicCSS(), attr: { title: data.getSTKDescription(data.getRateFromRatetype(technic)) }"></span>		
+						</div>
+						<div class="tl-TableCell tl-TableCell-Teilnehmer">
+							<span class="tl-TableCell-Content-Teilnehmer" data-bind="foreach: members">
+								<div class="tl-member">
+									<span class="tl-member-mail">
+										<a class="tl-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2tourmember', $parent.id, data.getUser($data).nickname, 'tl', 'tl'), attr: { title: data.getUser($data).userMailTitle() }"></a>
+									</span>
+									<span class="tl-member-profil" class="flex">
+										<a class="tl-a-member-profil" data-bind="click: go2ProfilPage.bind($data, data.getUser($data).nickname), attr: { title: data.getUser($data).userPhoneInfo() }, text: data.getUser($data).nickname"></a>
+									</span>
+								</div>
+							</span> <!-- tl-TableCell-Content-Teilnehmer ENDE -->
+						</div> <!-- div tl-TableCell-Teilnehmer ENDE -->
+					</div> <!-- div tl-Tablerow ENDE -->
+				</div>  <!-- div tl-Tablebody ENDE -->
+			</div>  <!-- div tl-Table ENDE -->
+ <!-- ohne authentifizierung -->
+			<div class="tl-Table" data-bind="if: $root.me==null">
+				<div class="tl-TableRow tl-TableHeading">
+					<div class="tl-TableHead tl-TableCell-Sport"><span id="ID_Sport" class="tl-TableHead-Content-Sport" data-bind="click: sort.bind($data,getHeader('Sport')), attr: {title: getHeader('Sport').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Beschreibung-wA"><span id="ID_Beschreibung" class="tl-TableHead-Content-Beschreibung flex" data-bind="click: sort.bind($data,getHeader('Beschreibung')), attr: {title: getHeader('Beschreibung').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Dauer medium"><span id="ID_Dauer" class="tl-TableHead-Content-Dauer"data-bind="click: sort.bind($data,getHeader('Dauer')), attr: {title: getHeader('Dauer').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Distanz medium"><span id="ID_Distanz" class="tl-TableHead-Content-Distanz" data-bind="click: sort.bind($data,getHeader('Distanz')), attr: {title: getHeader('Distanz').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Bergauf medium"><span id="ID_Bergauf" class="tl-TableHead-Content-Bergauf" data-bind="click: sort.bind($data,getHeader('Bergauf')), attr: {title: getHeader('Bergauf').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Teilnehmer-wA big"><span id="ID_Teilnehmer" class="tl-TableHead-Content-Teilnehmer flex" data-bind="click: sort.bind($data,getHeader('Teilnehmer')), attr: {title: getHeader('Teilnehmer').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Scrollbar"><span>&nbsp;</span></div>
+				</div> <!-- div tl-Tablerow ENDE -->
+				<div class="tl-TableBody" data-bind="foreach: filteredTours()">
+					<!-- Tour Title -->
+					<div class="tl-TableRow tl-Tablerow-Title">
+						<div class="tl-TableCell tl-TableCell-Title" data-bind="css: isEven()?'even-title':'odd-title'">
+							<div class="tl-TableCell-Content-Title"><span data-bind="text: tourday()"></span> um 
+								<span class="tl-TableCell-Content-Zeit" data-bind="text: tourtime()"></span>
+							</div> <!-- div tl-TableContent-Title ENDE -->
+						</div> <!-- div tl-TableCell-Title ENDE -->
+					</div> <!-- div tl-Tablerow-Title ENDE -->
+					<div class="tl-TableRow tl-Tablerow-Content mini" data-bind="css: isEven()?'even':'odd'">
+						<div class="tl-TableCell tl-TableCell-Sport">
+							<div class="wrapIcon">
+								<span data-bind="css:getTourtypeCSS(), attr: { title: data.getTourTypebyType(tourtype).description }"></span>					
+								<span data-bind="visible: !active, css:getTourtypeCanceledCSS()"></span>					
+								<span data-bind="visible: oldTour(self.now), css:getTourtypeOldCSS()"></span>					
+							</div> <!-- div class=wrapIcon" --> 
+						</div> <!-- div tl-TableCell-Sport --> 
+						<div class="tl-TableCell tl-TableCell-Beschreibung-wA"><span class="tl-TableCell-Content-Beschreibung flex" data-bind="text: description" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Dauer medium"><span class="tl-TableCell-Content-Dauer" data-bind="text: durationText()" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Distanz medium"><span class="tl-TableCell-Content-Distanz" data-bind="text: distanceText()" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Bergauf medium"><span class="tl-TableCell-Content-Bergauf" data-bind="text: upText()" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Teilnehmer-wA big"><span class="tl-TableCell-Content-Teilnehmer"data-bind="text: tourMembers() + ' Teilnehmer'" ></span></div>
+					</div> <!-- div tl-Tablerow ENDE -->		 
+				 
+				</div> <!-- div tl-TableBody ENDE -->
+			</div> <!-- div tl-Table ENDE -->
+			
+		</div> <!--End div content -->
+		<div id="footer" class="small">
+			<div id="version">
+				<a href="html/FAQ.php" target="_blank">FAQ</a>
+				<a href="html/disclaimer.php" target="_blank">Regeln</a>
+				<a href="html/impressum.php" target="_blank">Impressum</a>
+				<span data-bind="text: data.versioninfo" />
+			</div> <!--End div version -->
+		</div> <!--End div footer -->
+	</div> <!--End div total -->
+
+</body>
+</html>

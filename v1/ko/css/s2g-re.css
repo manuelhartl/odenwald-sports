@@ -1,0 +1,101 @@
+.re-TableBody{
+}
+
+/* Size: width */
+.re-TableCell-col-0{
+	width: 100px;
+}
+
+.re-TableCell-col-1{
+    	padding-top: 3px; /* - margin-top of textarea */
+	width: 12em;
+}
+
+.re-TableCell-col-2{
+	width: calc(( 40 * ( 100% - ( 12em ))) / 100 );
+	min-width: 12em;
+}
+
+/* Abstand Button zu Eingabefelder */
+.re-TableCell-Content-Save-1{
+	margin-top: 2em;
+}
+
+/* size: height */
+#username, #password, #passwordrepeat, #email{
+	height: 1.5em;
+}
+
+.re-TableRow-Head, .re-TableRow-Foot{
+	height: 75px;
+}
+
+
+/* input fields */
+#username, #password, #passwordrepeat, #email{
+	width:  100%;
+	resize: none;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	border: none;
+
+	/* resize baseline */
+    	vertical-align: text-top;
+    	margin-top: -1px; /* - (border-top-width + padding-top) */
+
+  	font-family: inherit;
+   	font-size: inherit;
+}
+
+
+.re-TableRow-Content{
+	padding: 0.2em;
+}
+
+
+.re-TableCell-col-2{
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border-style: solid;
+	border-width:thin medium;
+	padding: 5px;
+}
+
+
+/* responsive design */
+/* big-screen */
+@media (min-width: 1281px){
+}
+
+/* medium--screen */
+@media (min-width: 901px) and (max-width: 1280px){
+}
+
+/* small-screen */
+@media (min-width: 301px) and (max-width: 900px){
+}
+
+
+/* mobil-screen */
+@media (max-width: 300px){
+
+html{
+	font-size: small;
+}
+
+}
+
+@media (max-height: 450px){
+
+.small {
+	display: none;
+}
+
+.re-TableBody {
+	height: 100%;
+	overflow-y: scroll;
+}
+
+}

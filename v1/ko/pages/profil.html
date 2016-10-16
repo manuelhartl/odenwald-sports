@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0">
+	<link rel="stylesheet" href="../script/css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-pr.css" />
+	<meta charset="UTF-8">
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/jquery-ui.min.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+	<script type='text/javascript' >
+	
+		'use strict';
+
+	
+		ko.bindingHandlers.datepicker = {
+			init: function(element, valueAccessor, allBindingsAccessor) {
+				var $el = $(element);
+				
+				//initialize datepicker with some optional options
+				var options = allBindingsAccessor().datepickerOptions || {};
+				$el.datepicker(options);
+
+				//handle the field changing
+				ko.utils.registerEventHandler(element, "change", function() {
+					var observable = valueAccessor();
+					observable($el.datepicker("getDate"));
+				});
+
+				//handle disposal (if KO removes by the template binding)
+				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+					$el.datepicker("destroy");
+				});
+			},
+			update: function(element, valueAccessor) {
+				var value = ko.utils.unwrapObservable(valueAccessor()),
+					$el = $(element),
+					current = $el.datepicker("getDate");
+				
+				if (value - current !== 0) {
+					$el.datepicker("setDate", value);   
+				}
+			}
+		};
+		
+		jQuery(function($)
+		{
+			$.datepicker.regional['de'] = {clearText: 'löschen', clearStatus: 'aktuelles Datum löschen',
+			closeText: 'schließen', closeStatus: 'ohne Änderungen schließen',
+			prevText: '<zurück', prevStatus: 'letzten Monat zeigen',
+			nextText: 'Vor>', nextStatus: 'nächsten Monat zeigen',
+			currentText: 'heute', currentStatus: '',
+			monthNames: ['Januar','Februar','März','April','Mai','Juni', 'Juli','August','September','Oktober','November','Dezember'],
+			monthNamesShort: ['Jan','Feb','Mär','Apr','Mai','Jun', 'Jul','Aug','Sep','Okt','Nov','Dez'],
+			monthStatus: 'anderen Monat anzeigen', yearStatus: 'anderes Jahr anzeigen',
+			weekHeader: 'Wo', weekStatus: 'Woche des Monats',
+			dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+			dayNamesShort: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+			dayNamesMin: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+			dayStatus: 'Setze DD als ersten Wochentag', dateStatus: 'Wähle D, M d',
+			dateFormat: 'dd.mm.yy', firstDay: 1, 
+			initStatus: 'Wähle ein Datum', isRTL: false};
+			$.datepicker.setDefaults($.datepicker.regional['de']);
+		});
+	
+	</script>
+
+	<script type='text/javascript' >
+
+	// view_use_strict 'use strict';
+	
+	// class to represent a single user	
+	var ProfileViewModel = function() {
+		var self = this;
+		var s_id = "profil";
+		
+		self.data = getData();
+		self.me = getMe();
+		
+		self.actUser = self.data.getUser(getTempStorage(s_id, "profil_nickname"));
+		self.readonly = self.actUser != null && self.actUser.nickname != self.me.nickname;
+
+		self.nickname = ko.observable(self.actUser.nickname);
+		self.name = ko.observable(self.actUser.name);
+		self.phone = ko.observable(self.actUser.phone);
+		
+		self.birthday = ko.observable(self.actUser.birthday);
+		self.adress = ko.observable(self.actUser.adress);
+		self.tourletter = ko.observable(self.actUser.tourletter);
+
+		self.okProfile = function(){
+			setMessage("zeige Profil");
+			removeSessionStorage(s_id);
+			go2TourlistPage();
+		}	
+		self.cancelProfile = function(){
+			setMessage("Profiländerung abgebrochen");
+			removeSessionStorage(s_id);
+			go2TourlistPage();
+		}	
+		self.saveProfile = function(){
+			// verify birthday
+			var b = self.birthday();
+			SetProfile(self.me.nickname, self.name(), self.phone(), b, self.adress(), self.tourletter(), "tl", "pr");
+		}
+		
+		self.resetPreferences = function(){
+			clearPreferences();
+			self.showMessage("Präferenzen erfolgreich gelöscht");
+		}
+		
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 10);
+		};
+
+		/* --------- Construction --------- */
+		// show message if available
+		var message = getMessage();
+		if( message != null && message != ""){
+			self.showMessage(message);
+		}
+	}
+	</script>
+	<title>Sport2Gether (KnockOut)</title>
+</head>
+<body onload="ko.applyBindings(new ProfileViewModel());">
+	<div class="total">
+		<div id="navigation">
+			<div id="navigation-top" class="small bigPortrait">
+				<div id="message"></div>
+				<div id="logo"></div>
+			</div> <!--End div navigation-top -->
+			<div id="navigation-bottom">
+				<div id="navigation-buttons">
+					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+					<span data-bind="if: me!=null" class="bigPortrait">
+						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					</span >
+				</div> <!--End div navigation-buttons -->
+				<div id="navigation-buttons-logout" data-bind="if: me!=null">
+					<button id="btn-logout" data-bind="click: Logout">Logout</button>
+					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
+				</div> <!--End div navigation-buttons-logout (logged in) -->
+				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
+					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+				</div> <!--End div navigation-buttons-in (logged out) -->
+			</div> <!--End div navigation-bottom -->
+		</div> <!--End div navigation -->
+		<div class="content" id="main">
+			<div class="pr-Table">
+				<div class="pr-TableBody">
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Head medium">&nbsp</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Username">
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1-noborder">
+							<span class="pr-TableCell-Content-Username-1">Benutzername</span>
+						</div>
+						<div class="pr-TableCell pr-TableCell-col-2-noborder">
+							<span class="pr-TableCell-Content-Username-2" data-bind="text: nickname">Strassenschwalbe</span>
+						</div>
+					</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-realname">
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1">
+							<span class="pr-TableCell-Content-realname-1.1">Klarname</span>
+						</div>
+						<span  data-bind="ifnot: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2">
+								<span class="pr-TableCell-Content-realname-1.2">
+									<input type="text" id="realname" name="realname" data-bind="textInput: name, attr: { placeholder: name.length==0?'Namen eingeben':name}"/>
+								</span>
+							</div>
+						</span>
+						<span  data-bind="if: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2-noborder">
+								<span class="pr-TableCell-Content-realname-1.2" data-bind="text: name"/>
+							</div>
+						</span>
+					</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Telefon">
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1">
+							<span class="pr-TableCell-Content-Telefon-2.1">Telefon</span>
+						</div>
+						<span  data-bind="ifnot: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2">
+								<span class="pr-TableCell-Content-Telefon-2.2">
+									<input type="text" id="telefon" name="telefon" data-bind="textInput: phone, attr: { placeholder: phone.length==0?'Mobilnummer eingeben':phone}"/>
+								</span>
+							</div>
+						</span>
+						<span  data-bind="if: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2-noborder">
+								<span class="pr-TableCell-Content-Telefon-2.2" data-bind="text: phone"/>
+							</div>
+						</span>
+					</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Birthday">
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1">
+							<span class="pr-TableCell-Content-Birthday-1">Geburtstag</span>
+						</div>
+						<span  data-bind="ifnot: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2">
+								<span class="pr-TableCell-Content-Birthday-2">
+									<input data-bind="datepicker: birthday, datepickerOptions: {  dateFormat: 'dd.mm.yy', currentText: 'Heute', closeText: 'Fertig', yearRange: '1900:2015', changeMonth: true, changeYear: true, value: birthday }" />
+								</span> 
+							</div> 
+						</span>
+						<span data-bind="if: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2-noborder">
+								<span class="pr-TableCell-Content-Birthday-2.2" data-bind="text: makeDateString(birthday(),2)"/>
+							</div>
+						</span>
+					</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Adresse">
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1">
+							<span class="pr-TableCell-Content-Adresse-1">Adresse</span>
+						</div>
+						<span  data-bind="ifnot: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2">
+								<span class="pr-TableCell-Content-Adresse-2">
+									<input type="text" id="adresse" name="adresse" data-bind="textInput: adress, attr: { placeholder: adress.length==0?'Adresse eingeben':adress}"/>
+								</span>
+							</div>
+						</span>
+						<span  data-bind="if: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2-noborder">
+								<span class="pr-TableCell-Content-Adresse-2.2" data-bind="text: adress"/>
+							</div>
+						</span>
+					</div> <!-- div pr-TableRow ENDE -->
+					<span data-bind="if: actUser.nickname == me.nickname">
+						<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Email">
+							<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+							<div class="pr-TableCell pr-TableCell-col-1">
+								<span class="pr-TableCell-Content-Email-1">E-Mail-Adresse</span>
+							</div>
+							<div class="pr-TableCell pr-TableCell-col-2-noborder">
+								<span class="pr-TableCell-Content-Email-2" data-bind="text: sh(actUser.email)">Strassenschwalbe@fly.com</span>
+							</div>
+						</div> <!-- div pr-TableRow ENDE -->
+					</span>
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Letter">
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1-noborder">
+							<span class="pr-TableCell-Content-Letter-1">Tourletter</span>
+						</div>
+						<div class="pr-TableCell pr-TableCell-col-2-noborder">
+							<span class="pr-TableCell-Content-Letter-2">
+								<label for="check1">
+									<span data-bind="ifnot: readonly">
+										<input type="checkbox" id="tourletter" name="tourletter" value="tourletter" data-bind="checked: tourletter"/>
+									</span>
+									<span data-bind="if: readonly">
+										<input type="checkbox" id="tourletter1" name="tourletter1" value="tourletter1" disabled data-bind="checked: tourletter"/>
+									</span>
+								</label>
+							</span>
+						</div>
+					</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo">
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1">
+							<span class="pr-TableCell-Content-Tourinfo-1">
+								<input type="checkbox" id="cb_guidedToursNo" data-bind="click: function() {toggle('guidedToursNo'); return(true);}">geführte Touren</input>
+							</span>
+						</div>
+						<div class="pr-TableCell pr-TableCell-col-2-noborder">
+							<span class="pr-TableCell-Content-Tourinfo-2" data-bind="text: sh(actUser.guidedToursNo())">123</span>
+						</div>
+						<span id="guidedToursNo" style="display:none" data-bind="foreach: actUser.guidedTours">
+							<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo">
+								<div class="pr-TableCell pr-TableCell-col-2-noborder">
+								<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+								<div class="pr-TableCell pr-TableCell-col-1">&nbsp</div>
+									<span class="pr-TableCell-Content-Tourinfo-2" data-bind="text: data.getTour($data).shorttourDescription()">Beschreibung der geführten Tour</span>
+								</div>
+							</div>
+						</span>
+
+					</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo">
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1">				
+							<span class="pr-TableCell-Content-Tourinfo-1">
+								<input type="checkbox" id="cb_toursGuidedNo" data-bind="click: function() {toggle('toursGuidedNo'); return(true);}">mitgefahrene Touren
+							</span>
+						</div>
+						<div class="pr-TableCell pr-TableCell-col-2-noborder">
+							<span class="pr-TableCell-Content-Tourinfo-2" data-bind="text: sh(actUser.toursGuidedNo())">321</span>
+						</div>
+						<span id="toursGuidedNo" style="display:none" data-bind="foreach: actUser.toursGuided">
+							<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo">
+								<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+								<div class="pr-TableCell pr-TableCell-col-1">&nbsp</div>
+								<div class="pr-TableCell pr-TableCell-col-2-noborder">
+									<span class="pr-TableCell-Content-Tourinfo-2" data-bind="text: data.getTour($data).shorttourDescription()">Beschreibung der mitgefahrenen Tour</span>
+								</div>
+							</div>
+						</span>
+					</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo" data-bind="if: actUser.nickname == me.nickname" >
+						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-1">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-2-noborder">
+							<div id="pr-action">
+								<div id="pr-action-buttons">
+									<span data-bind="if: readonly">
+										<button id="btn-ok" data-bind="click: okProfile">OK</button>
+									</span>
+									<span data-bind="ifnot: readonly"> 
+										<button id="btn-cancel" data-bind="click: cancelProfile">Abbrechen</button>
+										<button id="btn-save" data-bind="click: saveProfile">Speichern</button>
+										<button id="btn-reset" data-bind="click: resetPreferences">Zurücksetzen der Präferenzen</button>
+									</span>
+								</div> <!--End div pr-action-buttons -->
+							</div> <!-- div pr-action ENDE -->
+						</div>
+					</div> <!-- div pr-TableRow ENDE -->
+					
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Foot medium">&nbsp</div> <!-- div pr-TableRow ENDE -->
+				</div> <!-- div pr-TableBody ENDE -->
+			</div> <!-- div pr-Table ENDE -->
+			</div> <!--End div content -->
+		<div id="footer" class="small">
+			<div id="version">
+				<a href="html/FAQ.php" target="_blank">FAQ</a>
+				<a href="html/disclaimer.php" target="_blank">Regeln</a>
+				<a href="html/impressum.php" target="_blank">Impressum</a>
+				<span data-bind="text: data.versioninfo" />
+			</div> <!--End div version -->
+		</div> <!--End div footer -->
+	</div> <!--End div total -->
+
+</body>
+</html>

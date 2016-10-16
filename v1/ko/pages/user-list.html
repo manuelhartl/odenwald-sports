@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-ul.css" />
+    <meta charset="UTF-8">
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+	<script type='text/javascript' >
+	
+	// view_use_strict 'use strict';
+	
+	// class to represent all users
+	var UsersViewModel = function() {
+		var self = this;
+		
+		self.data = getData();
+		self.me = getMe();
+
+		self.headers = [
+			{id:'ID_Nr', title:'Nr', asc: true, active: false},
+			{id:'ID_User', title:'User', sortPropertyName:'nickname', sortTitle:'Sortierung nach Nickname', asc: true, active: false},
+			{id:'ID_Mail', title:'Mail', asc: true, active: false},
+			{id:'ID_Name', title:'Namen', sortPropertyName:'name', sortTitle:'Sortierung nach Namen', asc: true, active: false},
+			{id:'ID_Telefon', title:'Telefon', sortPropertyName:'phone', sortTitle:'Sortierung nach Telefon', asc: true, active: false},
+			{id:'ID_Entfernung', title:'Entfernung zu mir', asc: true, active: false},
+			{id:'ID_Jahr', title:'Jahr', sortPropertyName:'birthday', sortTitle:'Sortierung nach Geburtsjahr', asc: true, active: false},
+			{id:'ID_G', title:'G', sortPropertyName:'guidedToursNo', sortTitle:'Sortierung nach Anzahl gef\u00fchrte Touren', asc: true, active: false},
+			{id:'ID_M', title:'M', sortPropertyName:'toursGuidedNo', sortTitle:'Sortierung nach Anzahl mitgefahrene Touren', asc: true, active: false},
+			{id:'ID_Register', title:'Register', sortPropertyName:'registration', sortTitle:'Sortierung nach Registrationsdatum', asc: true, active: false}
+		];
+
+		self.getHeader = function(title){ return(ko.utils.arrayFirst(self.headers, function(header) {return (header.title == title);})); };
+		
+		self.setHeader = function(item, members){
+			var clname;
+			var t;
+			if(item.id == "ID_Name"){
+				t = members + ' ' + item.title + ' angezeigt';
+			}else{
+				t = item.title;
+			}
+			clname = t;
+			if(item.sortPropertyName!=null){
+				if(item.active){
+					clname += (item.asc?" &#9650;":" &#9660;");
+				}else{
+					clname += " &#x29D7;"; // Rhombus  &#x29EB; //  Sanduhr &#x29D7; // Karte Karo &#9830; // Pfeile &#8661;
+				}
+			}
+			document.getElementById(item.id).innerHTML = clname;
+		};
+
+		// set the default sort
+		self.activeSort = ko.observable(function(){return 0;});
+		self.sort = function(header, event){
+			// if this header was just clicked a second time
+			if(header.active) {
+				header.asc = !header.asc; //toggle the direction of the sort
+			}
+			// make sure all other headers are set to inactive
+			ko.utils.arrayForEach(self.headers, function(item){ item.active = false; } );
+			// the header that was just clicked is now active
+			header.active = true; // our now-active header
+			// make sure all headers show correct sort direction
+			ko.utils.arrayForEach(self.headers, function(item){
+				self.setHeader(item, self.filteredUsers().length);
+			} );
+
+			var prop = header.sortPropertyName;
+			function ascSort(a,b){ 
+				var val1;
+				var val2;				
+				if(a[prop] instanceof Function){
+					if(isString(a[prop]())){
+						val1 = a[prop]().toLowerCase();
+						val2 = b[prop]().toLowerCase();
+					}else{
+						val1 = a[prop]();
+						val2 = b[prop]();
+					}
+				}else{
+					if(isString(a[prop])){
+						val1 = a[prop].toLowerCase();
+						val2 = b[prop].toLowerCase();
+					}else{
+						val1 = a[prop];
+						val2 = b[prop];
+					}
+				}
+				return(val1 > val2 ? -1 : val1 < val2 ? 1 : val1 == val2 ? 0 : 0);
+			}
+			
+			function descSort(a,b){ 
+				var val1;
+				var val2;				
+				if(a[prop] instanceof Function){
+					if(isString(a[prop])){
+						val1 = a[prop]().toLowerCase();
+						val2 = b[prop]().toLowerCase();
+					}else{
+						val1 = a[prop]();
+						val2 = b[prop]();
+					}
+				}else{
+					if(isString(a[prop])){
+						val1 = a[prop].toLowerCase();
+						val2 = b[prop].toLowerCase();
+					}else{
+						val1 = a[prop];
+						val2 = b[prop];
+					}
+				}
+				return(val1 < val2 ? -1 : val1 > val2 ? 1 : val1 == val2 ? 0 : 0);
+			}
+			var sortFunc = header.asc ? ascSort : descSort;
+
+			
+			// store the new active sort function
+			self.activeSort(sortFunc);
+		};
+		
+		// search/filter
+		var _showMore = ko.observable(getPreference("ul_showMore"));
+		self.showMore = ko.computed({
+			read: function() { return(_showMore());},
+			write: function (value) { _showMore(value); setPreference("ul_showMore", value)},
+			owner: self
+		});
+		var _showFilter = ko.observable(getPreference("ul_showFilter"));
+		self.showFilter = ko.computed({
+			read: function() { return(_showFilter());},
+			write: function (value) { _showFilter(value); setPreference("ul_showFilter", value)},
+			owner: self
+		});
+		self.searchUser = ko.observable("");
+		self.searchName = ko.observable("");
+		self.searchPhone = ko.observable("");
+		self.searchYear = ko.observable("");
+		self.filters = [
+			{title:'Alle', filter: null},
+			{title:'noch nie mitgefahren', filter: function(item){ return ((item.guidedToursNo() == 0) && (item.toursGuidedNo() == 0));}}
+		];
+		self.getFilter = function(title){ return((ko.utils.arrayFirst(self.filters, function(filter) {return (filter.title == title);})).filter); };
+		self.actFilter = ko.observable(self.getFilter('Alle'));
+
+		self.filteredUsers = ko.computed(function() {
+			var result = ko.utils.arrayFilter(self.data.users(), 
+				function(user) { 
+					var accept = user.nickname != self.me.nickname;
+					if(accept&&self.actFilter()){
+						accept = self.actFilter()(user);
+					}
+					if(accept){
+						var filter = self.searchUser().toLowerCase();
+						if(filter!=''){
+							if(user.nickname.toLowerCase().indexOf(filter) == -1){
+								return(false);
+							}
+						}
+						filter = self.searchName().toLowerCase();
+						if(filter!=''){
+							if(user.name.toLowerCase().indexOf(filter) == -1){
+								return(false);
+							}
+						}
+						filter = self.searchPhone();
+						if(filter!=''){
+							filter = self.searchPhone().replace(/\D/g,'');
+							var phone = user.phone.replace(/\D/g,'');
+							if(phone!=null){
+								if(phone.indexOf(filter) == -1){
+									return(false);
+								}
+							}
+						}
+						filter = self.searchYear().toLowerCase();
+						if(filter!=''){
+							if(user.birthday != filter){
+								return(false);
+							}
+						}
+					}
+					return (accept);
+				});
+				var x = result.sort(self.activeSort());
+				self.setHeader(self.getHeader("Namen"), x.length);
+			return(x);
+		});
+
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 10);
+		};
+
+		/* --------- Construction --------- */
+		// sort tour list by nickname
+		self.sort(self.getHeader('User'));
+		
+		// reset tour statistik
+		self.data.setStatistics(-1);
+	
+		// show message if available
+		var message = getMessage();
+		if( message != null && message != ""){
+			self.showMessage(message);
+		}		
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 10);
+		};
+	}
+	
+	</script>
+	<title>Sport2Gether (KnockOut)</title>
+</head>
+<body onload="ko.applyBindings(new UsersViewModel());">
+	<div class="total">
+		<div id="navigation">
+			<div id="navigation-top" class="small bigPortrait">
+				<div id="message"></div>
+				<div id="logo"></div>
+			</div> <!--End div navigation-top -->
+			<div id="navigation-bottom">
+				<div id="navigation-buttons">
+					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+					<span data-bind="if: me!=null" class="bigPortrait">
+						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					</span >
+				</div> <!--End div navigation-buttons -->
+				<div id="navigation-buttons-logout" data-bind="if: me!=null">
+					<button id="btn-logout" data-bind="click: Logout">Logout</button>
+					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
+				</div> <!--End div navigation-buttons-logout (logged in) -->
+				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
+					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+				</div> <!--End div navigation-buttons-in (logged out) -->
+			</div> <!--End div navigation-bottom -->
+		</div> <!--End div navigation -->
+		<div class="content" id="main">
+			<div id="userlisttools" class="small" data-bind="if: me!=null">
+				<div id="cb_tools">
+					<div id="cb_tools_top">
+						<label for="check5"><input name="cb_showMore" data-bind="checked: showMore" id="check6" type="checkbox">Mehr..</label>
+					</div> <!--End div cb_tools_top -->
+					<div id="cb_tools_bottom" data-bind="if: showMore" class="bigPortrait">
+						<label for="check6"><input name="cb_showFilter" data-bind="checked: showFilter" id="check6" type="checkbox">Filter</label>
+						<span data-bind="if: showFilter">
+							<select data-bind="options: filters,
+								optionsText: 'title',
+								optionsValue: 'filter',
+								value: actFilter,
+								optionsCaption: 'Wähle...'">
+						   </select>						
+						</span>
+					</div> <!--End div cb_tools_bottom -->
+				</div>  <!--End div cb_tools -->
+			</div>  <!--End div userlisttools -->
+
+			<div class="ul-Table">
+				<div class="ul-TableRow ul-TableHeading">
+					<div class="ul-TableHead ul-TableCell-Nummer"><span id="ID_Nr" class class="ul-TableHead-Content-Nummer" data-bind="text: getHeader('Nr').title"></span></div>
+					<div class="ul-TableHead ul-TableCell-User"><span id="ID_User" class class="ul-TableHead-Content-User" data-bind="click: sort.bind($data,getHeader('User')), attr: {title: getHeader('User').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Mail"><span id="ID_Mail" class class="ul-TableHead-Content-Mail" data-bind="attr: {title: getHeader('Mail').title}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Name"><span id="ID_Name" class class="ul-TableHead-Content-Name" data-bind="click: sort.bind($data,getHeader('Namen')), attr: {title: getHeader('Namen').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Telefon"><span id="ID_Telefon" class class="ul-TableHead-Content-Telefon" data-bind="click: sort.bind($data,getHeader('Telefon')), attr: {title: getHeader('Telefon').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Entfernung big"><span id="ID_Entfernung" class class="ul-TableHead-Content-Entfernung" data-bind="text: getHeader('Entfernung zu mir').title"></span></div>
+					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><span id="ID_Jahr" class class="ul-TableHead-Content-Geburtsjahr" data-bind="click: sort.bind($data,getHeader('Jahr')), attr: {title: getHeader('Jahr').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span id="ID_Register" class class="ul-TableHead-Content-Registrierung" data-bind="click: sort.bind($data,getHeader('Register')), attr: {title: getHeader('Register').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Guide medium"><span id="ID_G" class class="ul-TableHead-Content-Guide" data-bind="click: sort.bind($data,getHeader('G')), attr: {title: getHeader('G').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Mitfahrer medium"><span id="ID_M" class class="ul-TableHead-Content-Mitfahrer" data-bind="click: sort.bind($data,getHeader('M')), attr: {title: getHeader('M').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Scrollbar"><span>&nbsp;</span></div>
+				</div> <!-- div ul-TableRow ENDE -->
+				<!-- User me -->
+				<div class="ul-TableRow ul-TableHeading even">
+					<div class="ul-TableHead ul-TableCell-Nummer"><span class="ul-TableHead-Content-Nummer">&nbsp;</span></div>
+					<div class="ul-TableHead ul-TableCell-User"><span class="ul-TableHead-Content-User" ><a class="ul-a-member-profil" data-bind="text: sh(me.nickname), click:  go2ProfilPage.bind($data, me.nickname), attr: { title: me.userPhoneInfo()}">User</a></span></div>
+					<div class="ul-TableHead ul-TableCell-Mail">
+						<span class="ul-TableHead-Content-Mail ul-member">
+							<span class="ul-member-mail">
+								<span class="ul-icon-member-mail" data-bind="click: go2MailPage.bind($data, 'ma_2user', me.nickname, me.nickname, 'ul', 'ul'), attr: { title: sh(me.userMailTitle()) }"></span>
+							</span>
+						</span>
+					</div>
+					<div class="ul-TableHead ul-TableCell-Name"><span class="ul-TableHead-Content-Name" data-bind="text: sh($root.me.name)">name</span></div>
+					<div class="ul-TableHead ul-TableCell-Telefon"><span class="ul-TableHead-Content-Telefon" data-bind="text: sh($root.me.phone)">phone</span></div>
+					<div class="ul-TableHead ul-TableCell-Entfernung big"><span class="ul-TableHead-Content-Entfernung" data-bind="text: sh($root.me.adress)">adress</span></div>
+					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><span class="ul-TableHead-Content-Geburtsjahr" data-bind="text: sh($root.me.getBirthday())" >0000</span></div>
+					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span class="ul-TableHead-Content-Registrierung" data-bind="text: sh($root.me.getRegistration())">00.00.0000</span></div>
+					<div class="ul-TableHead ul-TableCell-Guide medium"><span class="ul-TableHead-Content-Guide" data-bind="text: sh($root.me.guidedToursNo())">123</span></div>
+					<div class="ul-TableHead ul-TableCell-Mitfahrer medium"><span class="ul-TableHead-Content-Mitfahrer" data-bind="text: sh($root.me.toursGuidedNo())">345</span></div>
+					<div class="ul-TableHead ul-TableCell-Scrollbar"><span>&nbsp;</span></div>
+				</div> <!-- div tl-TableRow ENDE -->
+				<div class="ul-TableRow ul-TableHeading" data-bind="if: showFilter">
+					<div class="ul-TableHead ul-TableCell-Nummer"><span>&nbsp;</span></div>
+					<div class="ul-TableHead ul-TableCell-User"><input class="searchfield" data-bind="value: $root.searchUser, valueUpdate: 'afterkeydown'" /></div>
+					<div class="ul-TableHead ul-TableCell-Mail"><span>&nbsp;</span></div>
+					<div class="ul-TableHead ul-TableCell-Name"><input class="searchfield" data-bind="value: $root.searchName, valueUpdate: 'afterkeydown'" /></div>
+					<div class="ul-TableHead ul-TableCell-Telefon"><input class="searchfield" data-bind="value: $root.searchPhone, valueUpdate: 'afterkeydown'" /></div>
+					<div class="ul-TableHead ul-TableCell-Entfernung big"><span>&nbsp;</span></div>
+					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><input class="searchfield" data-bind="value: $root.searchYear, valueUpdate: 'afterkeydown'" /></div>
+					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span>&nbsp;</span></div>
+					<div class="ul-TableHead ul-TableCell-Guide medium"><span>&nbsp;</span></div>
+					<div class="ul-TableHead ul-TableCell-Mitfahrer medium"><span>&nbsp;</span></div>
+					<div class="ul-TableHead ul-TableCell-Scrollbar"><span>&nbsp;</span></div>
+				</div> <!-- div ul-TableRow ENDE -->
+				<!-- User -->
+				<div class="ul-TableBody" data-bind="foreach: filteredUsers()">
+					<div class="ul-TableRow ul-TableRow-Content" data-bind="css: (($index()%2)==0)?'odd':'even'">
+						<div class="ul-TableCell ul-TableCell-Nummer"><span class="ul-TableHead-Content-Nummer" data-bind="text: ($index() + 1)"></span>&nbsp;</div>
+						<div class="ul-TableCell ul-TableCell-User"><span class="ul-TableHead-Content-User"><a class="ul-a-member-profil" data-bind="text: sh(nickname), click:  go2ProfilPage.bind($data, nickname), attr: { title: userPhoneInfo()}">User</a></span></div>
+						<div class="ul-TableCell ul-TableCell-Mail">
+							<span class="ul-TableCell-Content-Mail ul-member">
+								<span class="ul-member-mail"><a class="ul-icon-member-mail" data-bind="click: go2MailPage.bind($data, 'ma_2user', nickname, nickname, 'ul', 'ul'), attr: { title: sh(userMailTitle()) }"></a></span>
+							</span>
+						</div>
+						<div class="ul-TableCell ul-TableCell-Name"><span class="ul-TableCell-Content-Name" data-bind="text: sh(name)">name</span></div>
+						<div class="ul-TableCell ul-TableCell-Telefon"><span class="ul-TableCell-Content-Telefon" data-bind="text: sh(phone)">phone</span></div>
+						<div class="ul-TableCell ul-TableCell-Entfernung big"><span class="ul-TableCell-Content-Entfernung" data-bind="text: distance($root.me.latitude, $root.me.longitude)">distance(</span></div>
+						<div class="ul-TableCell ul-TableCell-Geburtsjahr medium"><span class="ul-TableCell-Content-Geburtsjahr" data-bind="text: sh(getBirthday())" >0000</span></div>
+						<div class="ul-TableCell ul-TableCell-Registrierung medium"><span class="ul-TableCell-Content-Registrierung" data-bind="text: sh(getRegistration())">00.00.0000</span></div>
+						<div class="ul-TableCell ul-TableCell-Guide medium"><span class="ul-TableCell-Content-Guide" data-bind="text: sh(guidedToursNo())">123</span></div>
+						<div class="ul-TableCell ul-TableCell-Mitfahrer medium"><span class="ul-TableCell-Content-Mitfahrer" data-bind="text: sh(toursGuidedNo())">345</span></div>
+					</div> <!-- div tl-TableRow ENDE -->
+				</div> <!-- div ul-TableBody ENDE -->
+			</div>  <!-- div tl-Table ENDE -->
+		</div> <!--End div content -->
+		<div id="footer" class="small">
+			<div id="version">
+				<a href="html/FAQ.php" target="_blank">FAQ</a>
+				<a href="html/disclaimer.php" target="_blank">Regeln</a>
+				<a href="html/impressum.php" target="_blank">Impressum</a>
+				<span data-bind="text: data.versioninfo" />
+			</div> <!--End div version -->
+		</div> <!--End div footer -->
+	</div> <!--End div total -->
+
+</body>
+</html>

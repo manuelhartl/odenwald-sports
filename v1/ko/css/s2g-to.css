@@ -1,0 +1,186 @@
+.to-TableBody{
+}
+
+
+/* Size: width */
+.to-TableCell-col-1{
+	width: 10em;
+}
+
+.to-TableCell-col-2-tini, .to-TableCell-col-3-tini, .to-TableCell-col-4-tini {
+	width: 5em;
+}
+.to-TableCell-col-2-small, .to-TableCell-col-3-small, .to-TableCell-col-4-small {
+	width: 10em;
+}
+.to-TableCell-col-2{
+	width: calc(( 40 * ( 100% - ( 8em ))) / 100 );
+	min-width: 5em;
+}
+.to-TableCell-col-2-large{
+	width: calc(( 80 * ( 100% - ( 8em ))) / 100 );
+	min-width: 5em;
+}
+
+/* col-2-tini + col-2 */
+.to-TableCell-col-2-3{
+	width: calc((( 40 * ( 100% - ( 8em ))) / 100) + 5em );
+	min-width: 15em;
+}
+
+.to-TableCell-col-3{
+	width: calc(( 40 * ( 100% - ( 8em ))) / 100 );
+	min-width: 10em;
+}
+.to-sport-select, .to-meetingpoint-select{
+	width: 100%;
+	border: none;
+}
+
+#to-wrap {
+   width:100%;
+   margin:0 auto;
+}
+#to-left-member {
+   float:left;
+   width:50%;
+}
+#to-right-member {
+   float:right;
+   width:50%;
+}
+
+.to-select-member {
+	height: 5;
+	width: 90%;
+	overflow:hidden;
+}
+
+.to-map{
+	width: 100%;
+	min-width: 100px; 
+	height: 400px;
+}
+
+/* size: height */
+.to-TableRow-Sport, .to-TableRow-Treffpunkt-1, .to-TableRow-Treffpunkt-2, .to-TableRow-Adresse, .to-TableRow-Datum, .to-TableRow-Pace, .to-TableRow-Technik, .to-TableRow-Distanz, .to-TableRow-Hoehenmeter, .to-TableRow-Dauer {
+	height: 3em;
+}
+.to-TableRow-Beschreibung{
+	height: 6em;
+}
+
+#editor{
+	height: calc( ( 50 * ( 100% - ( ( 10 * ( 3em + 0.2em ) ) ) ) ) / 100 );
+}
+img[id='Karte']{
+	height: calc( ( 50 * ( 100% - ( ( 10 * ( 3em + 0.2em ) ) ) ) ) / 100 );
+}
+#meetingpoint, #adress, #date, #time, #distance, #altitude, #duration{
+	height: 1.5em;
+	width: 99%;
+}
+
+
+/* input fields */
+#editor, #meetingpoint, #adress1, #adress2, #distance, #altitude, #duration{
+	height: 100%;
+	width: 99%;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	border: none;
+
+
+ 	/* resize baseline */
+    	vertical-align: text-top;
+    	margin-top: -1px; /* - (border-top-width + padding-top) */
+
+  	font-family: inherit;
+   	font-size: inherit;
+}
+
+.to-slider-left {
+ 	background: #ccc url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -15 * 25px ) no-repeat;
+}
+
+.to-slider-right {
+ 	background: #ccc url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -15 * 25px ) no-repeat;
+}
+
+.to-slider-left, .to-slider-right {
+	display: inline-block;
+	width: 50px;
+	height: 25px;
+	background-color: transparent;
+	background-repeat: no-repeat;
+}
+
+
+/* Text unterhalb Slider näher ranrücken */
+.ui-slider-horizontal.ui-slider-pips {
+    margin-bottom: 0.4em;
+}
+
+
+.to-TableRow-Content {
+	padding: 0.2em;
+}
+
+.to-TableCell-col-1{
+    padding-top: 3px; /* - margin-top of textarea */
+
+}
+
+.to-TableCell-border {
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border-style: solid;
+	border-width:thin medium;
+	padding: 0.2em;
+}
+
+
+/* responsive design */
+* big-screen */
+@media (min-width: 1281px){
+}
+
+/* medium--screen */
+@media (min-width: 901px) and (max-width: 1280px){
+}
+
+/* small-screen */
+@media (min-width: 301px) and (max-width: 900px){
+}
+
+
+/* mobil-screen */
+@media (max-width: 300px){
+
+html{
+	font-size: small;
+}
+
+}
+
+@media (max-height: 400px){
+
+.small {
+	display: none;
+}
+
+.to-TableRow-Sport, .to-TableRow-Treffpunkt-1, .to-TableRow-Treffpunkt-2, .to-TableRow-Adresse, .to-TableRow-Datum, .to-TableRow-Pace, .to-TableRow-Technik, .to-TableRow-Distanz, .to-TableRow-Hoehenmeter, .to-TableRow-Dauer {
+    height: 2em;
+}
+
+.to-TableBody {
+	height: 100%;
+	overflow-y: scroll;
+}
+
+}
+
+
+

@@ -1,0 +1,127 @@
+.ul-Table{
+}
+
+.ul-TableHeading {
+/* analog .even */
+	padding-top: 5px;
+}
+
+.ul-Tablerow-Content {
+	margin-top: 10px;
+}
+
+.ul-TableRow {
+	padding-left: 10px;
+	overflow-y: hidden;
+}
+
+/* Size */
+.ul-TableCell-Nummer {
+	width: 3em;
+}
+.ul-TableHeading .ul-TableCell-User {
+	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em + 17px ))) / 100 );
+}
+.ul-TableCell-User {
+	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em ))) / 100 );
+}
+.ul-TableCell-Mail {
+	width: 3em;
+}
+.ul-TableHeading .ul-TableCell-Name {
+	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em + 17px ))) / 100 );
+}
+.ul-TableCell-Name {
+	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em ))) / 100 );
+}
+.ul-TableCell-Telefon {
+	width: 10em;
+}
+.ul-TableCell-Entfernung {
+	width: 15em;
+}
+
+.ul-TableCell-Geburtsjahr {
+	width: 4em;
+}
+
+.ul-TableCell-Registrierung {
+	width: 7em;
+}
+
+.ul-TableCell-Mitfahrer, .ul-TableCell-Guide {
+	width: 3em;
+}
+.ul-TableHead-Content-Mitfahrer, .ul-TableHead-Content-Guide, .ul-TableCell-Content-Mitfahrer, .ul-TableCell-Content-Guide  {
+	float:right;
+	padding-right: 15px;
+}
+
+.ul-TableCell-Scrollbar {
+	width: 17px;
+}
+
+.odd-title, .even-title, .odd, .even {
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.ul-Table .odd {
+	background-color: lightgrey;
+}
+
+
+/* icons allgemein */
+.ul-icon-member-mail {
+	display: inline-block;
+	width: 35px;
+	height: 25px;
+	border: none;
+	background-color: transparent;
+}
+
+/* responsive design */
+/* big-screen */
+@media (min-width: 1281px){
+}
+
+/* medium--screen */
+@media (min-width: 901px) and (max-width: 1280px){
+.ul-TableHeading .ul-TableCell-User {
+	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em + 17px ))) / 100 );
+}
+.ul-TableCell-User {
+	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em ))) / 100 );
+}
+
+.ul-TableHeading .ul-TableCell-Name {
+	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em + 17px ))) / 100 );
+}
+.ul-TableCell-Name {
+	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em ))) / 100 );
+}
+}
+
+/* small-screen */
+@media (min-width: 301px) and (max-width: 900px){
+.ul-TableHeading .ul-TableCell-User {
+	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 17px ))) / 100 );
+}
+.ul-TableCell-User {
+	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em ))) / 100 );
+}
+.ul-TableHeading .ul-TableCell-Name {
+	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 17px ))) / 100 );
+}
+.ul-TableCell-Name {
+	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em ))) / 100 );
+}
+}
+
+@media (max-height: 300px){
+
+.tl-TableBody {
+	height: 100%;
+}
+}

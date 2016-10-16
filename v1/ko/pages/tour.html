@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="initial-scale=1.0">
+	<link rel="stylesheet" href="../script/css/jquery-ui.css">
+	<link rel="stylesheet" href="../script/css/jquery-ui-timepicker-addon.css">
+	<link rel="stylesheet" href="../script/css/jquery-ui-slider-pips.min.css">
+	<link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+	<link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
+	<link rel="stylesheet" type="text/css" href="../css/s2g-to.css" />
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/jquery-ui.min.js'></script>
+	<script type='text/javascript' src='../script/jquery-ui-timepicker-addon.js'></script>
+	<script type='text/javascript' src='../script/jquery-ui-slider-pips.min.js'></script>
+	<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+	<script type='text/javascript' src='../script/locationpicker.jquery.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+		
+	<script type='text/javascript' >
+
+	'use strict';
+
+	ko.bindingHandlers.datetimepicker = {
+			init: function(element, valueAccessor, allBindingsAccessor) {
+				var $el = $(element);
+				
+				// initialize datepicker with some optional options
+				var options = allBindingsAccessor().datetimepickerOptions || {};
+				$el.datetimepicker(options);
+
+				// handle the field changing
+				ko.utils.registerEventHandler(element, "change", function() {
+					var observable = valueAccessor();
+					observable($el.datetimepicker("getDate"));
+				});
+
+				// handle disposal (if KO removes by the template binding)
+				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+					$el.datetimepicker("destroy");
+				});
+			},
+			update: function(element, valueAccessor) {
+				var value = ko.utils.unwrapObservable(valueAccessor()),
+					$el = $(element),
+					current = $el.datetimepicker("getDate");
+				
+				if (value - current !== 0) {
+					$el.datetimepicker("setDate", value);   
+				}
+			}
+		};
+		
+		ko.bindingHandlers.slider = {
+			init: function (element, valueAccessor, allBindingsAccessor) {
+				var $el = $(element);
+				
+				// initialize slider with some optional options
+				var options = allBindingsAccessor().sliderOptions || {};
+				$el.slider(options);
+				var options1 = allBindingsAccessor().pipOptions || {};
+				$el.slider().slider("pips",options1.pips);
+				
+				ko.utils.registerEventHandler(element, "slidechange", function (event, ui) {
+					var observable = valueAccessor();
+					observable(ui.value);
+				});
+
+				// handle disposal (if KO removes by the template binding)
+				ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+					$el.slider("destroy");
+				});
+				ko.utils.registerEventHandler(element, "slide", function (event, ui) {
+					var observable = valueAccessor();
+					observable(ui.value);
+				});
+			},
+			update: function (element, valueAccessor, allBindingsAccessor) {
+				var value = ko.utils.unwrapObservable(valueAccessor());
+				var $el = $(element);
+				if (isNaN(value)) value = 0;
+				$el.slider("option", allBindingsAccessor().sliderOptions);
+				$el.slider().slider("option", allBindingsAccessor().pipOptions);
+				$el.slider("value", value);
+				$el.slider("pips", "refresh");
+			}
+		};
+				
+		ko.bindingHandlers.locationpicker = {
+			init: function (element, valueAccessor, allBindingsAccessor) {
+				var $el = $(element);
+				
+				// initialize locationpicker with some optional options
+				var options = allBindingsAccessor().locationpickerOptions || {};
+				$el.locationpicker(options);
+				
+					// handle disposal (if KO removes by the template binding)
+				ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+					$el.locationpicker("destroy");
+				});
+				ko.utils.registerEventHandler(element, "locationpicker", function (event, ui) {
+					var observable = valueAccessor();
+					observable(ui.value);
+				});
+			},
+			update: function (element, valueAccessor, allBindingsAccessor) {
+				var $el = $(element);
+				var value = ko.utils.unwrapObservable(valueAccessor());
+
+				$el.locationpicker("option", allBindingsAccessor().locationpickerOptions);
+				$el.locationpicker("value", value);
+			}
+		};
+						
+		jQuery(function($)
+		{
+			$.datepicker.regional['de'] = {clearText: 'l\u00f6schen', clearStatus: 'aktuelles Datum l�schen',
+			closeText: 'schlie\u00dfen', closeStatus: 'ohne \u00c4nderungen schlie�en',
+			prevText: '<zur\u00fcck', prevStatus: 'letzten Monat zeigen',
+			nextText: 'weiter>', nextStatus: 'n\u00e4chsten Monat zeigen',
+			currentText: 'heute', currentStatus: '',
+			monthNames: ['Januar','Februar','M�rz','April','Mai','Juni', 'Juli','August','September','Oktober','November','Dezember'],
+			monthNamesShort: ['Jan','Feb','M�r','Apr','Mai','Jun', 'Jul','Aug','Sep','Okt','Nov','Dez'],
+			monthStatus: 'anderen Monat anzeigen', yearStatus: 'anderes Jahr anzeigen',
+			weekHeader: 'Wo', weekStatus: 'Woche des Monats',
+			dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+			dayNamesShort: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+			dayNamesMin: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+			dayStatus: 'Setze DD als ersten Wochentag', dateStatus: 'W\u00e4hle D, M d',
+			dateFormat: 'dd.mm.yy', firstDay: 1, 
+			initStatus: 'W\u00e4hle ein Datum', isRTL: false};
+			$.datepicker.setDefaults($.datepicker.regional['de']);
+		});
+		
+
+		//$( document ).tooltip();
+
+	
+	</script>
+
+	<script type='text/javascript' >
+	
+ 	// view_use_strict 'use strict';
+	
+	var VariableSliderModel = function( value, formatValue, init_max_Size, max_Steps, max_Size){
+		var self = this;
+		
+		self.valueSL = ko.observable();									// value of the slider (without correction of max)
+		self.steps = ko.observable(1);									// size of steps
+		self.value = ko.computed({										// value with correction of max
+			read: function() { return(self.valueSL()); },
+			write: function (value) {
+				var val = Math.min(getInteger(value), max_Size);		// höchstens max Size
+				// setze Maxgröße
+				self.maxValue(2*val);
+				// setze den neuen Wert
+				self.valueSL(val);
+				
+			},
+			owner: self
+		});
+		self.displayValue = ko.computed(function() { return(formatValue(self.value(), false)); });
+		self.editingValue = ko.observable(false);
+		self.editValue = function() { self.editingValue(true) };
+		
+		var _maxValue = ko.observable();
+		self.subValue = function(){
+			self.maxValue( self.maxValue()/2 );
+			// correct steps
+			var steps = self.steps();
+			if(steps>1){
+				while( self.value()/steps < max_Steps){ steps = steps / 10; }
+				self.steps(steps);
+			}
+		};
+		self.addValue = function(){
+			self.maxValue( 2*self.maxValue() );
+			// correct steps
+			var steps = self.steps();
+			while(self.value()/steps > max_Steps){ steps = 10 * steps; }
+			self.steps(steps);
+		};
+		self.maxValue = ko.computed({									// max value with correction of max size
+			read: function() { return(_maxValue()); },
+			write: function (value) {
+				var val = Math.min(getInteger(value), max_Size); 		// höchstens max Size
+				// setze Maxgröße
+				if(val < 2*self.value()){
+					_maxValue(Math.max(2*self.value(), init_max_Size) );// mindestens doppelt so groß wie der Wert
+				}else{
+					_maxValue(Math.max(val, init_max_Size));
+				}
+			},
+			owner: self
+		});
+		
+		self.rightExtendTooltip = "Zum Erweitern des Bereiches hier klicken";
+		self.leftExtendTooltip = "Zum Verkleinern des Bereiches hier klicken";
+		
+		/* --------- Construction --------- */
+		self.value(value);
+
+	}
+		
+
+	// class to represent all tours
+	var TourViewModel = function() {
+		// default: for new tour , max: init slider
+		const default_distance = 20000, max_init_distance = 50000;
+		const default_duration = 90, max_init_duration = 240;
+		const default_up = 500, max_init_up = 2000;
+		const default_pace = 2, default_technic = 2;
+		const init_tourtype = "mtb", init_MeetingPoint= "Jugenheim, Vor der Villa Journal";
+		const max_steps = 100*1000, max_size = 10000 * 1000; // Number.MAX_SAFE_INTEGER
+				
+		var self = this;
+		var s_id = "tour";
+
+		self.data = getData();
+		self.me = getMe();
+		self.tourID = getTempStorage(s_id, "tourid");
+		self.modifiable = ko.observable(getTempStorage(s_id, "modifiable"));
+		self.memberModifiable = ko.observable(false);
+		
+		self.availableTourType = self.data.tourtypes;
+
+		self.availableMeetingPoints = [
+			{ popup: "nichts ausgew\u00e4hlt", info: "", meetingpoint: "", lat: "49.7557717", lon: "8.635616600000048" },
+			{ popup: "Villa", info: "Jugenheim", meetingpoint: "Jugenheim, Vor der Villa Journal", lat: "49.7557717", lon: "8.635616600000048" },
+			{ popup: "Malchen", info: "Malchen", meetingpoint: "Malchen, Gegen\u00fcber Friedhof", lat: "49.79002", lon: "8.64930000000004" },
+			{ popup: "B\u00f6lle", info: "Darmstadt", meetingpoint: "Darmstadt Restaurant B\u00f6lle", lat: "49.8521197", lon: "8.670550100000014" }
+		];
+		self.getMeetingPointFromMeetingpoint = function(meetingpoint){ return(ko.utils.arrayFirst(self.availableMeetingPoints, function(item) {return (item.meetingpoint == meetingpoint);})); };
+		// TODO:GW zurück in Preferenzen speichern
+		// set default value
+		self.predefinedmeetingpoint = ko.observable();
+
+		// checkbox
+		var _showMore = ko.observable(getPreference("to_showMore"));
+		self.showMore = ko.computed({
+			read: function() { return(_showMore());},
+			write: function (value) { _showMore(value); setPreference("to_showMore", value)},
+			owner: self
+		});
+		var _showMap = ko.observable(getPreference("to_showMap"));
+		self.showMap = ko.computed({
+			read: function() { return(_showMap());},
+			write: function (value) { _showMap(value); setPreference("to_showMap", value)},
+			owner: self
+		});
+		self.displayMap = ko.observable(self.showMap());
+		
+		self.handleMap = function(){
+			var predefined = self.predefinedmeetingpoint() != self.availableMeetingPoints[0];
+			if(predefined){
+				self.mp_popup(self.predefinedmeetingpoint().popup);
+				self.mp_meetingpoint(self.predefinedmeetingpoint().meetingpoint);
+				self.mp_adress("");
+				self.mp_lat(self.predefinedmeetingpoint().lat);
+				self.mp_lon(self.predefinedmeetingpoint().lon);
+			}
+			$('#map').locationpicker("location", { latitude: self.mp_lat(), longitude: self.mp_lon() });
+			self.displayMap(self.showMap() || !predefined);
+		};
+		
+		var _showSlider = ko.observable(getPreference("to_showSlider"));
+		self.showSlider = ko.computed({
+			read: function() { return(_showSlider());},
+			write: function (value) { _showSlider(value); setPreference("to_showSlider", value)},
+			owner: self
+		});
+
+		self.availableRate = self.data.rate;
+		
+		self.rightExtendTooltip = "Zum Erweitern des Bereiches hier klicken";
+		self.leftExtendTooltip = "Zum Verkleinern des Bereiches hier klicken";
+
+		// class to represent a tour
+		//             1    2      3         4        5          6       7     8      9		   10           11        12       13          14         15       16      17
+		//		 Tour(id, guide, members, datetime, duration, distance, up, pace, technic, meetingpoint. adresse, latitude, longitude, tourtype, description, night, active
+		
+		// declaration and helper functions
+		self.tour = null;
+		var _guide = ko.observable();																			// 2
+		self.guide = ko.computed({
+			read: function() { return(_guide());},
+			write: function (value) { 
+				_guide(value); 
+				for(var i = self.members.length - 1; i >= 0; i--) {
+					if(self.members[i] === value) {
+						self.members.splice(i, 1);
+					}
+				}
+			},
+			owner: self
+		});	
+		self.members = ko.observableArray([]);																	// 3
+		self.members4Guide = [];
+		self.selectedMembers = ko.observableArray([]);
+		self.removeMembers = function () {
+			ko.utils.arrayForEach(self.selectedMembers(), function(selectedMember) {
+				if ((selectedMember != "") && (self.potentialMembers.indexOf(selectedMember) < 0)) // Prevent blanks and duplicates
+				self.potentialMembers.push(selectedMember);
+				self.members.remove(selectedMember);
+			});
+			self.potentialMembers.sort();
+			self.selectedMembers([]); // Clear selection
+		};
+		self.potentialMembers = ko.observableArray([]);
+		self.selectedPotentialMembers = ko.observableArray([]);
+		self.addMembers = function () {
+			ko.utils.arrayForEach(self.selectedPotentialMembers(), function(selectedPotentialMember) {
+				if ((selectedPotentialMember != "") && (self.members.indexOf(selectedPotentialMember) < 0)) // Prevent blanks and duplicates
+				self.members.push(selectedPotentialMember);
+				self.potentialMembers.remove(selectedPotentialMember);
+			});
+			self.members.sort();
+			self.selectedPotentialMembers([]); // Clear selection
+		};
+
+		self.datetime = ko.observable();																		// 4
+		self.getMinDateTime = ko.observable(new Date((getDate()).getTime()+30*60*1000));		
+		
+		self.paceRate = ko.observable();																		// 8
+		self.technicRate = ko.observable();																		// 9
+		
+		self.mp_popup = ko.observable();
+		self.mp_meetingpoint = ko.observable(init_MeetingPoint);												// 10
+		self.mp_adress = ko.observable("");																		// 11
+		self.mp_lat = ko.observable("");																		// 12
+		self.mp_lon = ko.observable("");																		// 13
+		
+		self.actualTourType = ko.observable(self.data.getTourTypebyType(init_tourtype));						// 14
+
+		self.description = ko.observable();																		// 15
+		self.night = ko.observable(false);																		// 16
+		self.active = ko.observable(true);																		// 17
+		
+		self.init = function(){
+			if(self.tourID>0){
+				self.tour = cloneTour(self.data.getTour(self.tourID))
+			}else if(self.tourID==0){
+				self.tour =	new Tour(self.tourID, self.me.nickname, [], self.getMinDateTime(), default_duration, default_distance, default_up, default_pace, default_technic, self.mp_meetingpoint(), self.mp_adress(), self.mp_lat(), self.mp_lon(), self.actualTourType().tourtype, "", false, true);
+			}else{
+				var sourceTour =  self.data.getTour(-self.tourID);
+				self.tour = new Tour(0, self.me.nickname, [], self.getMinDateTime(), sourceTour.duration, sourceTour.distance, sourceTour.up, sourceTour.pace, sourceTour.technic, sourceTour.meetingpoint, sourceTour.adresse, sourceTour.latitude, sourceTour.longitude, sourceTour.tourtype, sourceTour.description, false, true);
+			}	
+	
+			_guide(self.tour.guide);
+			self.members4Guide.push(self.tour.guide);
+			for (var index = 0; index < self.tour.members.length; ++index){
+				self.members.push(self.tour.members[index]);
+				self.members4Guide.push(self.tour.members[index]);
+			}
+			self.selectedMembers = ko.observableArray([]);
+
+			self.potentialMembers = ko.observableArray([]);
+			// copy all user-list
+			for (var index = 0; index < data.users().length; ++index){
+				// skip actual members and guide
+				var user = data.users()[index].nickname;
+				if(self.members4Guide.indexOf(user)==-1)
+				{
+					self.potentialMembers.push(user);
+				}
+			}
+			self.selectedPotentialMembers = ko.observableArray([]);
+
+			self.date = ko.observable(self.tour.getDate());
+			self.time = ko.observable(self.tour.getTime());
+			self.datetime(self.tour.datetime);
+
+			self.paceRate = ko.observable(self.tour.pace);
+			self.technicRate = ko.observable(self.tour.technic);
+
+			self.distance = new VariableSliderModel( self.tour.distance, makeDistanceString, max_init_distance, max_steps, max_size );	// 5
+			self.up = new VariableSliderModel( self.tour.up, makeAltitudeString, max_init_up, max_steps, max_size );						// 6
+			self.duration = new VariableSliderModel( self.tour.duration, makeDurationString, max_init_duration, max_steps, max_size );					// 7
+
+			self.actualTourType(self.data.getTourTypebyType(self.tour.tourtype));
+			
+			// find correct meeting point
+			var mp = self.getMeetingPointFromMeetingpoint(self.tour.meetingpoint);
+			if(mp==null || self.tour.meetingpoint ==""){
+				self.mp_popup(self.availableMeetingPoints[0].popup);
+				self.mp_meetingpoint(self.tour.meetingpoint);
+				self.mp_adress(self.tour.adresse);
+				self.mp_lat(self.tour.latitude);
+				self.mp_lon(self.tour.longitude);
+			}
+			self.predefinedmeetingpoint(mp!=null?mp:self.availableMeetingPoints[0]);
+
+			self.handleMap();
+		
+			self.description(self.tour.description);
+			self.night(self.tour.night());
+			self.active(self.tour.active);
+		}
+		
+		self.changeGuide = function(){
+			if(me.nickname == self.guide()){
+				if(self.members.length>0){ return(true); }
+			}
+			return(false);
+		}
+
+		self.cancel = function(){
+			var destination = getTempStorage(s_id, "cancelDestination");
+			setMessage(self.tourID == 0?"neue Toureingabe wurde abgebrochen":"Tour\u00e4nderung wurde abgebrochen");
+			clearTempStorage(s_id);
+			go2Destination(destination);
+		}
+		self.save = function(){
+			var destination = getTempStorage(s_id, "okDestination");
+			clearTempStorage(s_id);
+			// save tour
+			saveTour(self.tourID, self.guide(), self.members(), self.datetime(), self.duration.value(), self.distance.value(), self.up.value(), self.paceRate(), self.technicRate(), self.mp_meetingpoint(), self.mp_adress(), self.mp_lat(), self.mp_lon(), self.actualTourType().tourtype, self.description(), self.night(), self.active(), destination)
+		}
+			
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 10);
+		};
+
+		/* --------- Construction --------- */
+		self.init();
+		
+		self.memberModifiable = ko.observable(self.modifiable() && self.tour.correctable());
+
+		// show message if available
+		var message = getMessage();
+		if( message != null && message != ""){
+			self.showMessage(message);
+		}		
+	};
+	
+	</script>
+	<title>Sport2Gether (KnockOut)</title>
+</head>
+<body onload="ko.applyBindings(new TourViewModel());">
+	<div class="total">
+		<div id="navigation">
+			<div id="navigation-top" class="small bigPortrait">
+				<div id="message"></div>
+				<div id="logo"></div>
+			</div> <!--End div navigation-top -->
+			<div id="navigation-bottom">
+				<div id="navigation-buttons">
+					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+					<span data-bind="if: me!=null" class="bigPortrait">
+						<button data-bind="click: go2StatisticPage">Statistik</button>
+					</span>
+				</div> <!--End div navigation-buttons -->
+				<div id="navigation-buttons-logout" data-bind="if: me!=null">
+					<button id="btn-logout" data-bind="click: Logout">Logout</button>
+					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
+				</div> <!--End div navigation-buttons-logout (logged in) -->
+				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
+					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+				</div> <!--End div navigation-buttons-in (logged out) -->
+				<div id="cb_tools">
+					<div id="cb_tools_top">
+						<label for="check5"><input name="cb_showMore" data-bind="checked: showMore" id="check6" type="checkbox">Mehr..</label>
+					</div> <!--End div cb_tools_top -->
+					<div id="cb_tools_bottom" data-bind="if: showMore" class="bigPortrait">
+						<input name="cb_showMap" data-bind="checked: showMap, click: function() { handleMap(); return(true);}" id="cb_showMap" type="checkbox"><label for="cb_showMap">Zeige Karte</label>
+				<!--		<input name="cb_showSlider" data-bind="checked: showSlider" id="cb_showSlider" type="checkbox"><label for="cb_showSlider">für Sabine</label> -->
+					</div> <!--End div cb_tools_bottom -->
+				</div>  <!--End div cb_tools -->
+				
+			</div> <!--End div navigation-bottom -->
+		</div> <!--End div navigation -->
+		<div class="content" id="main">
+			<div class="to-Table">
+				<div class="to-TableBody">
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Guide">
+						<div class="to-TableCell to-TableCell-col-1">
+							<span class="to-TableCell-Content-Sport-1">Guide</span>
+						</div>
+						<div class="to-TableCell to-TableCell-col-2-tini">
+							<div data-bind="ifnot: changeGuide">
+								<div data-bind="text: guide"></div>					
+							</div>
+							<div data-bind="if: changeGuide">
+								<div data-bind="if: modifiable() && members().length>0">
+									<select name="guide_select" class="to-guide-select" data-bind="options: members4Guide, value: guide" ></select>				
+								</div>
+								<div data-bind="ifnot: modifiable() && members().length>0">
+									<div data-bind="text: guide"></div>					
+								</div>
+							</div>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Members" data-bind="if: members().length>0">
+						<div class="to-TableCell to-TableCell-col-1">
+							<span class="to-TableCell-Content-members-1">Mitfahrer</span>
+						</div>
+						<div class="to-TableCell to-TableCell-col-2" data-bind="if: memberModifiable">
+							<div class="to-wrap">
+								<div id="to-left-member">
+									<div><select class="to-select-member" multiple="multiple" data-bind="options:members, selectedOptions:selectedMembers"></select></div>
+									<div><button data-bind="click: removeMembers, enable: selectedMembers().length > 0">Lösche Mitfahrer</button></div>
+
+								</div>
+								<div id="to-right-member">
+									<div><select class="to-select-member"multiple="multiple"data-bind="options:potentialMembers, selectedOptions:selectedPotentialMembers"></select></div>
+									<div><button data-bind="click: addMembers, enable: selectedPotentialMembers().length > 0">Neuer Mitfahrer</button></div>
+								</div>
+							</div>
+						</div>
+						<div class="to-TableCell to-TableCell-col-2" data-bind="ifnot: memberModifiable">
+							<div data-bind="text: tour.getMembersString(false)"></div>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					
+					
+					
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Sport">
+						<div class="to-TableCell to-TableCell-col-1">
+							<span class="to-TableCell-Content-Sport-1">Sport</span>
+						</div>
+						<div class="to-TableCell to-TableCell-col-2-tini">
+							<span class="wrapIcon">
+								<div data-bind="css: actualTourType().icon"></div>					
+							</span> <!-- div class=wrapIcon" --> 
+						</div>
+						<div class="to-TableCell to-TableCell-col-3-small">
+							<span class="to-TableCell-Content-Sport-3">
+								<div data-bind="if: modifiable">
+									<select name="sport" class="to-sport-select" data-bind="options: availableTourType, optionsText: 'tourart', value: actualTourType" ></select>
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<div data-bind="text: actualTourType().actualTourType"></div>	
+								</div>
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Treffpunkt-1">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Treffpunkt-1-1">Treffpunkt</span></div>
+						<div class="to-TableCell to-TableCell-col-2-small to-TableCell-border">
+							<span class="to-TableCell-Content-Treffpunkt-1-2">
+								<div data-bind="if: modifiable">
+									<select name="predefinedmeetingpoint" class="to-meetingpoint-select" data-bind="options: availableMeetingPoints, optionsText: 'popup', value: predefinedmeetingpoint, click: handleMap"></select>
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<div data-bind="text: predefinedmeetingpoint().popup"></div>	
+								</div>
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Treffpunkt-2">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Treffpunkt-2-1">&nbsp</span></div>
+						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
+							<span class="to-TableCell-Content-Treffpunkt-2-2">
+								<div data-bind="if: modifiable">
+									<input type="text" id="meetingpoint" class="to-input" name="meetingpoint" maxlength="80" data-bind="textInput: mp_meetingpoint">
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<div data-bind="text: mp_meetingpoint"></div>	
+								</div>
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div data-bind="if: displayMap">
+						<div class="to-TableRow to-TableRow-Content to-TableRow-Adresse">
+							<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Adresse-1">&nbsp</span></div>
+							<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
+								<span class="to-TableCell-Content-Adresse-2">
+									<div data-bind="if: modifiable">
+										<input type="text" id="adress" class="to-input" name="adress" data-bind="text: mp_adress, attr: {placeholder: 'Adresse eingeben'}"/>
+									</div>
+									<div data-bind="ifnot: modifiable">
+										<div data-bind="text: (mp_adress().length>0)?mp_adress:'keine Angabe'"></div>	
+									</div>
+									<input type="hidden" id="lat" class="to-input" name="lat" data-bind="value: mp_lat"/>
+									<input type="hidden" id="lon" class="to-input" name="lon" data-bind="value: mp_lon"/>
+								</span>
+							</div>
+						</div> <!-- div to-TableRow ENDE -->
+						<div class="to-TableRow to-TableRow-Content to-TableRow-Karte small">
+							<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Karte-1">&nbsp</span></div>
+							<div class="to-TableCell to-TableCell-col-2-large">
+								<div class="to-TableCell-Content-Karte-2" >
+									<div id="map" class="to-map" data-bind="locationpicker: mp_adress, locationpickerOptions: { radius: 0, location: {latitude: mp_lat(), longitude:mp_lon()}, 
+																	inputBinding: {	locationNameInput: $('#adress'),latitudeInput: $('#lat'),longitudeInput: $('#lon')}, enableAutocomplete: modifiable() , draggable: modifiable() }" ></div>	
+								</div>
+							</div>
+						</div> <!-- div to-TableRow ENDE -->
+					</div>
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Beschreibung">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Beschreibung-1">Beschreibung</span></div>
+						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
+							<span class="to-TableCell-Content-Beschreibung-2">
+								<div data-bind="if: modifiable">
+									<textarea id="editor" name="editor" data-bind="value: description"></textarea>
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<textarea id="editor" name="editor" readonly data-bind="value: description"></textarea>
+								</div>
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Datum">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Datum-1">Datum / Uhrzeit</span></div>
+						<div class="to-TableCell to-TableCell-col-2-small to-TableCell-border">
+							<span class="to-TableCell-Content-Datum-2">
+								<div data-bind="if: modifiable">
+									<input class="to-input" data-bind="datetimepicker: datetime, datetimepickerOptions: {  showWeek: true, dateFormat: 'dd.mm.yy', currentText: 'Sofort', closeText: 'Fertig', timeText: 'Startzeit', hourText: 'Stunde', minDateTime: getMinDateTime(), value: datetime, minuteGrid: 15, timeFormat: 'HH:mm' }" />
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<div data-bind="text: makeDateString(datetime(),4)"></div>	
+								</div>
+							</span>
+						</div>
+						<div class="to-TableCell to-TableCell-col-3">
+							<span class="to-TableCell-Content-Night-3">
+								<div data-bind="if: modifiable">
+									<input id="cb_night" name="cb_night" data-bindd="checked: night()" type="checkbox" /><label for="cb_night">Nachttour</label>
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<input id="cb_night" name="cb_night" data-bind="checked: night()" type="checkbox" disabled="disabled" /><label for="cb_night">Nachttour</label>
+								</div>
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Pace">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Pace-1">Pace</span></div>
+						<div class="to-TableCell to-TableCell-col-2-tini">
+							<span class="to-TableCell-Content-Pace-2">
+								<div class="wrapIcon">
+									<span data-bind="css: data.getRateFromRatetype(paceRate()).icon"></span>	
+								</div> <!-- div class=wrapIcon" --> 
+							</span>
+						</div>
+						<div class="to-TableCell to-TableCell-col-3">
+							<span class="to-TableCell-Content-Pace-3">
+								<div data-bind="if: modifiable">
+									<div data-bind="slider: paceRate, pipOptions: {pips: {first: 'pip', last: 'pip'}}, sliderOptions: {min: 1, max: 6, range: 'min', step: 1, value: paceRate()}"> </div>
+								</div>
+								<span data-bind="text: data.getRateFromRatetype(paceRate()).speed" />
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Technik">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Technik-1">Technik</span></div>
+						<div class="to-TableCell to-TableCell-col-2-tini">
+							<span class="to-TableCell-Content-Technik-2">
+								<div class="wrapIcon">
+									<span data-bind="css: data.getRateFromRatetype(technicRate()).icon"></span>	
+								</div> <!-- div class=wrapIcon" --> 
+							</span>
+						</div>
+						<div class="to-TableCell to-TableCell-col-3">
+							<span class="to-TableCell-Content-Technik-3">
+								<div data-bind="if: modifiable">
+									<div data-bind="slider: technicRate, pipOptions: {pips: {first: 'pip', last: 'pip'}}, sliderOptions: {min: 1, max: 6, range: 'min', step: 1, value: technicRate()}"> </div>
+								</div>
+								<span data-bind="text: data.getSTKDescription(data.getRateFromRatetype(technicRate()))" />
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Distanz">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Distanz-1">Distanz</span></div>
+						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
+							<div class="oben" data-bind="if: modifiable()&&showSlider()">
+								<div class="links to-slider-left" id="btn-subDistance" data-bind="click: distance.subValue, attr: {title: distance.leftExtendTooltip}"></div>
+								<div class="mitte" data-bind="slider: distance.valueSL, step: distance.steps, pipOptions: {pips: {suffix: '&#x202F;m'}}, sliderOptions: {min: 0, max: distance.maxValue(), range: 'min', value: distance.value}"> </div>
+								<div class="rechts to-slider-right" id="btn-addDistance" data-bind="click: distance.addValue, attr: {title: distance.rightExtendTooltip}"></div>
+							</div>
+							<div class="unten">
+								<div data-bind="if: modifiable">
+									<div data-bind="text: distance.displayValue, visible: !distance.editingValue(), click: distance.editValue"></div>
+									<input type="text" id="distanceInput" class="to-distance" name="distanceInput" data-bind="textInput: distance.value, visible: distance.editingValue(), hasfocus: distance.editingValue">
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<div data-bind="text: distance.displayValue"></div>
+								</div>							
+							</div>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Hoehenmeter">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Hoehenmenter-1">H&ouml;henmeter</span></div>
+						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
+							<div class="oben" data-bind="if: modifiable()&&showSlider()">
+								<div class="links to-slider-left" id="btn-subUp" data-bind="click: up.subValue, attr: {title: up.leftExtendTooltip}"></div>
+								<div class="mitte" data-bind="slider: up.valueSL, step: up.steps, pipOptions: {pips: {suffix: '&#x202F;m'}}, sliderOptions: {min: 0, max: up.maxValue(), range: 'min', textInput: up.value}"> </div>
+								<div class="rechts to-slider-right" id="btn-addUp" data-bind="click: up.addValue, attr: {title: up.rightExtendTooltip}"></div>
+							</div>
+							<div class="unten">
+								<div data-bind="if: modifiable">
+									<div data-bind="text: up.displayValue, visible: !up.editingValue(), click: up.editValue"></div>
+									<input type="text" id="upInput" class="to-up" name="upInput" data-bind="textInput: up.value, visible: up.editingValue(), hasfocus: up.editingValue">
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<div data-bind="text: up.displayValue"></div>
+								</div>							
+							</div>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Dauer">
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Dauer-1">Dauer</span></div>
+						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
+							<div class="oben" data-bind="if: modifiable()&&showSlider()">
+								<div class="links to-slider-left" id="btn-subDuration" data-bind="click: duration.subValue, attr: {title: duration.leftExtendTooltip}"></div>
+								<div class="mitte" data-bind="slider: duration.valueSL, step: duration.steps, pipOptions: {pips: {suffix: '&#x202F;min'}}, sliderOptions: {min: 0, max: duration.maxValue(), range: 'min', value: duration.value}"> </div>
+								<div class="rechts to-slider-right" id="btn-addDuration" data-bind="click: duration.addValue, attr: {title: duration.rightExtendTooltip}"></div>
+							</div>
+							<div class="unten">
+								<div data-bind="if: modifiable">
+									<div data-bind="text: duration.displayValue, visible: !duration.editingValue(), click: duration.editValue"></div>
+									<input type="text" id="durationInput" class="to-duration" name="durationInput" data-bind="textInput: duration.value, visible: duration.editingValue(), hasfocus: duration.editingValue">
+								</div>
+								<div data-bind="ifnot: modifiable">
+									<div data-bind="text: duration.displayValue"></div>
+								</div>							
+							</div>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
+					<div class="to-TableRow to-TableRow-Content to-TableRow-Save">
+						<div class="to-TableCell to-TableCell-col-0 big">&nbsp</div>
+						<div class="to-TableCell to-TableCell-col-1">&nbsp</div>
+						<div class="to-TableCell to-TableCell-Content-Send-1">
+							<span class="to-TableCell-Content-Save-2">
+								<button id="btncancel" data-bind="click: cancel">Abbrechen</button>
+							</span>
+							<span data-bind="if: modifiable">
+								<span class="ma-TableCell-Content-Save-3">
+									<button id="btnsave" data-bind="click: save">Speichern</button>
+								</span>
+							</span>
+						</div>
+					</div> <!-- div ma-TableRow ENDE -->
+				</div> <!-- div to-TableBody ENDE -->
+			</div>  <!-- div to-Table ENDE -->
+
+		</div> <!--End div content -->
+		<div id="footer" class="small">
+			<div id="version">
+				<a href="html/FAQ.php" target="_blank">FAQ</a>
+				<a href="html/disclaimer.php" target="_blank">Regeln</a>
+				<a href="html/impressum.php" target="_blank">Impressum</a>
+				<span data-bind="text: data.versioninfo" />
+			</div> <!--End div version -->
+		</div> <!--End div footer -->
+	</div> <!--End div total -->
+
+</body>
+</html>

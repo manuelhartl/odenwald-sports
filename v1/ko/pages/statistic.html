@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-st.css" />
+    <meta charset="UTF-8">
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+	<script type='text/javascript' >
+	
+	// view_use_strict 'use strict';
+	
+	var StatisticViewModel = function() {
+		var self = this;
+
+		self.data = getData();
+		self.me = getMe();
+		
+		self.headers = [
+			{id: "ID_User", title:'User', sortPropertyName:'nickname', sortTitle:'Sortierung nach Nickname', asc: true, active: false},
+			{id: "ID_Mail", title:'Mail', asc: true, active: false},
+			{id: "ID_GuidedTours", title:'gef\u00fchrte Touren', sortPropertyName:'guidedToursNo', sortTitle:'Sortierung nach Anzahl gef\u00fchrte Touren', asc: true, active: false},
+			{id: "ID_ToursGuide", title:'mitgefahrene Touren', sortPropertyName:'toursGuidedNo', sortTitle:'Sortierung nach Anzahl mitgefahrene Touren', asc: true, active: false}
+		];
+
+		self.getHeader = function(title){
+			var hd = ko.utils.arrayFirst(self.headers, function(header) {return (header.title == title);});
+			return(hd);
+		};
+
+		self.setHeader = function(item, members){
+			var clname;
+			var t;
+			if(item.id == "ID_User"){
+				t = members + ' ' + item.title + ' angezeigt';
+			}else{
+				t = item.title;
+			}
+			clname = t;
+			if(item.sortPropertyName!=null){
+				if(item.active){
+					clname += (item.asc?" &#9650;":" &#9660;");
+				}else{
+					clname += " &#x29D7;"; // Rhombus  &#x29EB; //  Sanduhr &#x29D7; // Karte Karo &#9830; // Pfeile &#8661;
+				}
+			}
+			document.getElementById(item.id).innerHTML = clname;
+		};
+
+		//set the default sort
+		self.activeSort = ko.observable(function(){return 0;});
+		self.sort = function(header, event){
+			// if this header was just clicked a second time
+			if(header.active) {
+				header.asc = !header.asc; //toggle the direction of the sort
+			}
+			// make sure all other headers are set to inactive
+			ko.utils.arrayForEach(self.headers, function(item){ item.active = false; } );
+			// the header that was just clicked is now active
+			header.active = true; // our now-active header
+			// make sure all headers or properly set class
+			ko.utils.arrayForEach(self.headers, function(item){
+				self.setHeader(item, self.filteredUsers().length);
+			} );
+
+			var prop = header.sortPropertyName;
+			function ascSort(a,b){ 
+				var val1;
+				var val2;				
+				if(a[prop] instanceof Function){
+					if(isString(a[prop]())){
+						val1 = a[prop]().toLowerCase();
+						val2 = b[prop]().toLowerCase();
+					}else{
+						val1 = a[prop]();
+						val2 = b[prop]();
+					}
+				}else{
+					if(isString(a[prop])){
+						val1 = a[prop].toLowerCase();
+						val2 = b[prop].toLowerCase();
+					}else{
+						val1 = a[prop];
+						val2 = b[prop];
+					}
+				}
+				return(val1 > val2 ? -1 : val1 < val2 ? 1 : val1 == val2 ? 0 : 0);
+			}
+			
+			function descSort(a,b){ 
+				var val1;
+				var val2;				
+				if(a[prop] instanceof Function){
+					if(isString(a[prop])){
+						val1 = a[prop]().toLowerCase();
+						val2 = b[prop]().toLowerCase();
+					}else{
+						val1 = a[prop]();
+						val2 = b[prop]();
+					}
+				}else{
+					if(isString(a[prop])){
+						val1 = a[prop].toLowerCase();
+						val2 = b[prop].toLowerCase();
+					}else{
+						val1 = a[prop];
+						val2 = b[prop];
+					}
+				}
+				return(val1 < val2 ? -1 : val1 > val2 ? 1 : val1 == val2 ? 0 : 0);
+			}
+			var sortFunc = header.asc ? ascSort : descSort;
+
+			// store the new active sort function
+			self.activeSort(sortFunc);
+		};
+
+		// search/filter
+		var _showFilter = ko.observable(getPreference("st_showFilter"));
+		self.showFilter = ko.computed({
+			read: function() { return(_showFilter());},
+			write: function (value) { _showFilter(value); setPreference("st_showFilter", value)},
+			owner: self
+		});
+		self.searchUser = ko.observable("");
+		self.filters = [
+			{title:'Alle', 					filter: null, 																					prepare: function(){ self.data.setStatistics(-1);	} },
+			{title:'ohne Tourerfahrung', 	filter: function(item){ return ((item.guidedToursNo() == 0) && (item.toursGuidedNo() == 0));},	prepare: function(){ self.data.setStatistics(-1); 	} },
+			{title:'mit Tourerfahrung',		filter: function(item){ return ((item.guidedToursNo() > 0) || (item.toursGuidedNo() > 0));},	prepare: function(){ self.data.setStatistics(-1); 	} },
+			{title:'Touren 2015', 			filter: function(item){ return ((item.guidedToursNo() > 0) || (item.toursGuidedNo() > 0));},	prepare: function(){ self.data.setStatistics(2015); } },
+			{title:'Touren 2016', 			filter: function(item){ return ((item.guidedToursNo() > 0) || (item.toursGuidedNo() > 0));},	prepare: function(){ self.data.setStatistics(2016); } }
+		];
+		self.getFilter = function(title){ return(ko.utils.arrayFirst(self.filters, function(filter) {return (filter.title == title);})); };
+		self.actFilter = ko.observable(self.getFilter('Alle'));
+		
+		self.filteredUsers = ko.computed(function() {
+			// prepare statistic data
+			self.actFilter().prepare();
+
+			var result = ko.utils.arrayFilter(self.data.users(), 
+				function(user) { 
+					var accept = true;
+					if(accept&&self.actFilter()&&self.actFilter().filter){
+						accept = self.actFilter().filter(user);
+					}
+					if(accept){
+						var filter = self.searchUser().toLowerCase();
+						if(filter!=''){
+							var filter = self.searchUser().toLowerCase();
+							if(user.nickname.toLowerCase().indexOf(filter) == -1){
+								return(false);
+							}
+						}
+					}
+					return (accept);
+				});
+				var x = result.sort(self.activeSort());
+				self.setHeader(self.getHeader("User"), x.length);
+			return(x);
+		});
+
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 10);
+		};
+
+		/* --------- Construction --------- */
+		// show message if available
+		var message = getMessage();
+		if( message != null && message != ""){
+			self.showMessage(message);
+		}		
+		
+		// sort user list by nickname
+		self.sort(self.getHeader('User'));
+	}
+	
+	</script>
+	<title>Sport2Gether (KnockOut)</title>
+</head>
+<body onload="ko.applyBindings(new StatisticViewModel());">
+	<div class="total">
+		<div id="navigation">
+			<div id="navigation-top" class="small bigPortrait">
+				<div id="message"></div>
+				<div id="logo"></div>
+			</div> <!--End div navigation-top -->
+			<div id="navigation-bottom">
+				<div id="navigation-buttons">
+					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+					<span data-bind="if: me!=null" class="bigPortrait">
+						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					</span >
+				</div> <!--End div navigation-buttons -->
+				<div id="navigation-buttons-logout" data-bind="if: me!=null">
+					<button id="btn-logout" data-bind="click: Logout">Logout</button>
+					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
+				</div> <!--End div navigation-buttons-logout (logged in) -->
+				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
+					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+				</div> <!--End div navigation-buttons-in (logged out) -->
+			</div> <!--End div navigation-bottom -->
+		</div> <!--End div navigation -->
+		<div class="content" id="main">
+			<div id=statistictools" class="small" data-bind="if: me!=null">
+				<div id="st_tools">
+					<div id="st_tools_top">
+						<form name="showFilter" action="" method="post">
+							<input name="action" value="showFilter" type="hidden">
+							<fieldset>
+								<label for="check1">
+									<input name="cb_showFilter" data-bind="checked: showFilter" id="check1" type="checkbox">
+										Filter
+								</label>
+							</fieldset>
+						</form>
+						<span data-bind="if: showFilter">
+							<select data-bind="options: filters, optionsText: 'title', value: actFilter"> </select>						
+						</span>
+					</div> <!--End div cb_tools_top -->
+				</div>  <!--End div cb_tools -->
+			</div>  <!--End div userlisttools -->
+			<div class="st-Table">
+				<div class="st-TableRow st-TableHeading">
+					<div class="st-TableHead st-TableCell-Mail"><span id="ID_Mail" class="st-TableHead-Content-Mail" data-bind="text: getHeader('Mail').title"></span></div>
+					<div class="st-TableHead st-TableCell-User"><span id="ID_User" class="st-TableHead-Content-User" data-bind="click: sort.bind($data,getHeader('User')), attr: {title: getHeader('User').sortTitle}"></span></div>
+					<div class="st-TableHead st-TableCell-GuidedTours"><span id="ID_GuidedTours" class="st-TableHead-Content-GuidedTours" data-bind="click: sort.bind($data,getHeader('geführte Touren')), attr: {title: getHeader('geführte Touren').sortTitle}"></span></div>
+					<div class="st-TableHead st-TableCell-ToursGuide"><span id="ID_ToursGuide" class="st-TableHead-Content-ToursGuide" data-bind="click: sort.bind($data,getHeader('mitgefahrene Touren')), attr: {title: getHeader('mitgefahrene Touren').sortTitle}"></span></div>
+					<div class="st-TableHead st-TableCell-Scrollbar"><span>&nbsp;</span></div>
+				</div> <!-- div st-TableRow ENDE -->
+		<!-- User me -->
+				<div class="st-TableRow st-TableHeading even" data-bind="if: $root.me!=null">
+					<div class="st-TableHead st-TableCell-Mail">
+						<span class="st-TableCell-Content-Mail st-member">
+							<span class="st-member-mail"><a class="st-icon-member-mail" data-bind="click: go2MailPage.bind($data, 'ma_2user', me.nickname, me.nickname, 'st', 'st'), attr: { title: sh(me.userMailTitle()) }"></a></span>
+						</span>
+					</div>
+					<div class="st-TableHead st-TableCell-User">
+						<span class="st-TableHead-Content-User"><a class="st-a-member-profil" data-bind="text: sh($root.me.nickname), click: go2ProfilPage.bind($data,$root.me.nickname), attr: { title: $root.me.userPhoneInfo() }">User</a></span>
+					</div>
+					<div class="st-TableHead st-TableCell-GuidedTours"><span class="st-TableHead-Content-GuidedTours" data-bind="text: $root.me.guidedToursNo()"></span>&nbsp;</div>
+					<div class="st-TableHead st-TableCell-ToursGuide"><span class="st-TableHead-Content-ToursGuide" data-bind="text: $root.me.toursGuidedNo()"></span>&nbsp;</div>
+				</div> <!-- div tl-TableRow ENDE -->	
+				<div class="tl-TableRow st-TableHeading" data-bind="if: showFilter">
+					<div class="st-TableHead st-TableCell-Mail"<span>&nbsp;</span></div>
+					<div class="st-TableHead st-TableCell-User"><input class="searchfield" data-bind="value: $root.searchUser, valueUpdate: 'afterkeydown'" /></div>
+					<div class="st-TableHead st-TableCell-GuidedTours"<span>&nbsp;</span></div>
+					<div class="st-TableHead st-TableCell-ToursGuide"<span>&nbsp;</span></div>					
+				</div> <!-- div tl-TableRow ENDE -->	
+
+				<div class="st-TableBody" data-bind="foreach: filteredUsers()">
+		<!-- User -->
+					<div class="st-TableRow st-TableRow-Content" data-bind="css: (($index()%2)==0)?'odd':'even'">
+						<div class="st-TableCell st-TableCell-Mail"><span class="st-TableCell-Content-Mail st-member">
+							<span class="st-member-mail"><a class="st-icon-member-mail" data-bind="click: go2MailPage.bind($data, 'ma_2user', nickname, nickname, 'st', 'st'), attr: { title: sh(userMailTitle()) }"></a></span>
+						</div>
+						<div class="st-TableCell st-TableCell-User">
+							<span class="st-TableHead-Content-User"><a class="st-a-member-profil" data-bind="text: sh(nickname), click: go2ProfilPage.bind($data,nickname), attr: { title: userPhoneInfo() }">User</a></span>
+						</div>
+						<div class="st-TableCell st-TableCell-GuidedTours"><span class="st-TableHead-Content-GuidedTours" data-bind="text: guidedToursNo()"></span>&nbsp;</div>
+						<div class="st-TableCell st-TableCell-ToursGuide"><span class="st-TableHead-Content-ToursGuide" data-bind="text: toursGuidedNo()"></span>&nbsp;</div>
+					</div> <!-- div tl-TableRow ENDE -->
+				</div> <!-- div st-TableBody ENDE -->
+			</div>  <!-- div tl-Table ENDE -->
+
+		</div> <!--End div content -->
+		<div id="footer" class="small">
+			<div id="version">
+				<a href="html/FAQ.php" target="_blank">FAQ</a>
+				<a href="html/disclaimer.php" target="_blank">Regeln</a>
+				<a href="html/impressum.php" target="_blank">Impressum</a>
+				<span data-bind="text: data.versioninfo" />
+			</div> <!--End div version -->
+		</div> <!--End div footer -->
+	</div> <!--End div total -->
+
+</body>
+</html>

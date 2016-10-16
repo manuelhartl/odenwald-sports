@@ -1,0 +1,98 @@
+#navigation-top {
+	height: 50px;
+}
+#navigation-bottom {
+	height: 40px;
+}
+
+button, a[id=rssbutton], a[id=firstbutton], a[id=nextbutton], a[id=prevbutton], a[id=lastbutton] {
+  background: #669999;
+  -webkit-border-radius: 8;
+  -moz-border-radius: 8;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 2px 5px 2px 5px;
+  text-decoration: none;
+}
+
+button[id=btn-logout] {
+  background: #c63635;
+}
+
+
+button:hover,  a[id=rssbutton]:hover, a[id=firstbutton]:hover, a[id=prevbutton]:hover, a[id=nextbutton]:hover, a[id=lastbutton]:hover {
+  background: #78c2c1;
+  text-decoration: none;
+}
+
+button[id=btn-logout]:hover {
+  background: #ed2833;
+}
+
+fieldset{
+	border: 0px none;
+	padding: 0px;
+}
+label {
+    display: inline-block;
+}
+
+#version {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	min-height: 10px;
+	max-height: 10px;
+	float: right;
+	color: #999999;
+}
+
+#version a {
+	background-color: inherit;
+	color: #7F7F96;
+	padding: 3px 7px;
+	border-width: 0;
+}
+
+#version a:HOVER {
+	background-color: #BDC3BA;
+	text-decoration: none;
+}
+
+#message {
+	font-size: 14px;
+	font-weight: 600;
+	height: 42px;
+	min-width: 20vH;
+	max-width: 80vH;
+	float: left;
+	display: inline-block;
+}
+
+#logo {
+	background: transparent url('../img/s2g.sprite.png') calc( 0 * 25px ) calc( -11 * 25px ) no-repeat;
+	width: 250px;
+	height: 50px;
+	float: right;
+}
+
+#navigation-top {
+	width: 100%;
+	min-width: 100%;
+	border-bottom: solid 2px #37607c;
+}
+
+#navigation-bottom {
+	width: 100%;
+	min-width: 100%;
+	padding-top: 5px;
+}
+
+#navigation-buttons {
+	float: left;
+}
+
+#navigation-buttons-logout ,#navigation-buttons-login {
+	float: right;
+}

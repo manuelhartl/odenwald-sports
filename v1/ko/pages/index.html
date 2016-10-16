@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-tl.css" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+	<script type='text/javascript' >
+	
+	// class to represent all tours
+	var IndexViewModel = function() {
+		var self = this;
+		self.data = getData();
+		self.me = null;
+
+		self.showMessage = function(info){
+			showMessage(info, document, 'message', 30);
+		};
+		
+		/* --------- Construction --------- */
+		if(self.data==null){
+			self.showMessage("konnte keine Daten laden");
+		}else{
+			removeAllSessionStorage();
+			self.showMessage("Alles gut");
+		}		
+	};
+	
+	</script>
+	<title>Sport2Gether (KnockOut)</title>
+</head>
+<body onload="ko.applyBindings(new IndexViewModel());">
+	<div class="total">
+		<div id="navigation">
+			<div id="navigation-top" class="small">
+				<div id="message"></div>
+				<div id="logo"></div>
+			</div> <!--End div navigation-top -->
+			<div id="navigation-bottom">
+				<div id="navigation-buttons">
+					<button id="btn-tour-list"  data-bind="click: go2TourlistPage">Touren</button>
+					<button id="btn-user-list"  data-bind="click: go2UserlistPage">Benutzerliste</button>
+					<span data-bind="if: me!=null">
+						<button data-bind="click: go2StatisticPage">Statistik</button>
+					</span >
+				</div> <!--End div navigation-buttons -->
+				<div id="navigation-buttons-logout" data-bind="if: me!=null">
+					<button id="btn-logout" data-bind="click: Logout">Logout</button>
+					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
+				</div> <!--End div navigation-buttons-logout (logged in) -->
+				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
+					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+				</div> <!--End div navigation-buttons-in (logged out) -->
+			</div> <!--End div navigation-bottom -->
+		</div> <!--End div navigation -->
+		<div class="content" id="main">
+			<span data-bind="click: go2LoginPage">Login</span><p>
+			<span data-bind="click: go2MailPage">Mail</span><p>
+			<span data-bind="click: go2RegisterPage">Register</span><p>
+			<span data-bind="click: go2ProfilPage.bind($data, me)">Profil</span><p>
+			<span data-bind="click: go2StatisticPage">Statistik</span><p>
+			<span data-bind="click: go2TourPage.bind($data,0,true,'tl','tl')">Tour</span><p>
+			<span data-bind="click: go2TourlistPage">Tourlist</span><p>
+			<span data-bind="click: go2UserlistPage">Userlist</span><p>
+
+			<ul>
+					
+				<li>Änderungen</li>
+
+				<li>tV9</li>
+					<li>Entfernungen werden jetzt lokal berechnet</li>
+					
+			</ul>
+			
+			
+			
+		</div> <!--End div content -->
+
+		<div id="footer" class="small">
+			<div id="version">
+				<a href="html/FAQ.php" target="_blank">FAQ</a>
+				<a href="html/disclaimer.php" target="_blank">Regeln</a>
+				<a href="html/impressum.php" target="_blank">Impressum</a>
+			</div> <!--End div version -->
+		</div> <!--End div footer -->
+	</div> <!--End div total -->
+</body>
+</html>
