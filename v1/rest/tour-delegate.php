@@ -32,7 +32,8 @@ if (! $tour) {
 				if (tourChangeGuide ( $pdo, $tourid, $guideid )) {
 					http_response_code ( 200 );
 					tourLeave($pdo, $guideid, $tourid);
-					tourJoin($pdo, $tour->guide->id, $tourid);
+					// adding the old guide as new member?
+					//tourJoin($pdo, $tour->guide->id, $tourid);
 					break;
 				}
 			}
