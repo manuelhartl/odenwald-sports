@@ -9,7 +9,7 @@ function sendActivationMail($username, $token, $email) {
 }
 function sendPasswordresetMail($username, $token, $email) {
 	$text = '<html>body><a href="' . getUrlPrefix () . '/passwordreset.php?token=' . urlencode ( $token ) . '">Password reset</a></body><html>';
-	$subject = 'Passwortreset angefodert f&uuml;r Touren-Kontos von ' . $username;
+	$subject = 'Passwortreset angefodert f&uuml;r Touren-Konto von ' . $username;
 	sendmail ( $email, $subject, $text, false );
 }
 function createUserProfilLink($user, $style, $tooltip = "Profil anzeigen") {
