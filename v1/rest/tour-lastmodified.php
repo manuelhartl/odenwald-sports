@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/restlib.php';
-jsonCheckAuth ();
 
 if ($_SERVER ['REQUEST_METHOD'] != 'GET') {
 	http_response_code ( 500 );

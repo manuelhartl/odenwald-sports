@@ -7,8 +7,8 @@ function sendActivationMail($username, $token, $email) {
 	$subject = 'Aktivierung des Touren-Kontos von ' . $username;
 	sendmail ( $email, $subject, $text, false );
 }
-function sendPasswordresetMail($username, $token, $email) {
-	$text = '<html>body><a href="' . getUrlPrefix () . '/passwordreset.php?token=' . urlencode ( $token ) . '">Password reset</a></body><html>';
+function sendPasswordresetMail($username, $token, $email, $forwardTo = '/passwordreset.php') {
+	$text = '<html>body><a href="' . getUrlPrefix () . $forwardTo . '?token=' . urlencode ( $token ) . '">Password reset</a></body><html>';
 	$subject = 'Passwortreset angefodert f&uuml;r Touren-Konto von ' . $username;
 	sendmail ( $email, $subject, $text, false );
 }
