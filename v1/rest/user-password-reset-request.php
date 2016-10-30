@@ -28,7 +28,7 @@ if (! validateEmail ( $email )) {
 } else {
 	$token = bin2hex ( openssl_random_pseudo_bytes ( 16 ) );
 	addPasswordresetToken ( $pdo, $userid, $token );
-	sendPasswordresetMail ( $username, $token, $email, '/ko/pages/requestpassword.html' );
+	sendPasswordresetMail ( $username, $token, $email, '/../ko/pages/requestpassword.html' );
 	$result ['result'] = "ok";
 	http_response_code ( 200 );
 }

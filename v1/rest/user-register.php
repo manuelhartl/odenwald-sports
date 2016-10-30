@@ -34,11 +34,11 @@ if (! preg_match ( "/^([\w])([_\-\w]+)$/", $username )) {
 // check if email already registered
 if (userExists ( $pdo, $username )) {
 	$result ['text'] = $username . ' ist schon registriert';
-} else { 
-// check if name is already registered
-// if (emailExists ( $pdo, $email )) {
-// 	$result ['text'] = $email . ' is schon registriert';
-// } else {
+} else {
+	// check if name is already registered
+	// if (emailExists ( $pdo, $email )) {
+	// $result ['text'] = $email . ' is schon registriert';
+	// } else {
 	// register
 	$hashedPassword = password_hash ( $password, PASSWORD_BCRYPT );
 	$token = bin2hex ( openssl_random_pseudo_bytes ( 16 ) );
@@ -47,7 +47,7 @@ if (userExists ( $pdo, $username )) {
 		$result ['text'] = "could not store user";
 	} else {
 		addActivationToken ( $pdo, $userId, $token );
-		sendActivationMail ( $username, $token, $email );
+		sendActivationMail ( $username, $token, $email, '/../activate.php' );
 		$result ['result'] = "ok";
 		http_response_code ( 200 );
 	}
