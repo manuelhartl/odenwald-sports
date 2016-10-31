@@ -20,13 +20,23 @@ http_response_code ( 400 );
 $destination = $body ['destination'];
 $mailsubject = $body ['subject'];
 $mailbody = $body ['body'];
-if ($destination == 'user') {
+
+if (empty ( $mailsubject )) {
+	$result ['text'] = 'mail subject cannot be empty';
+} else if (empty ( $mailbody )) {
+	$result ['text'] = 'mail body cannot be empty';
+} else if ($destination == 'user') {
 	if (! array_key_exists ( 'userid', $body )) {
 		$result ['text'] = 'userid not specified';
 		echo json_encode ( $result );
 		exit ();
 	}
 	$userid = $body ['userid'];
+	if (authUser ()->username == $userid) {
+		$result ['text'] = 'users cannot write mails to themselves: ' . $userid;
+		echo json_encode ( $result );
+		exit ();
+	}
 	$touser = getUserByName ( $pdo, $userid );
 	if (! $touser) {
 		$result ['text'] = 'user not found: ' . $userid;
