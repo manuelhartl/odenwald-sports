@@ -22,7 +22,7 @@ foreach ( $tours as $tour ) {
 	$isNew = true;
 	if (array_key_exists ( 'id', $tour )) {
 		$dbtour = getDBTourById ( $pdo, $tour ['id'] );
-		if ($dbtour->guide->id != authUser()->id) {
+		if ($dbtour->guide->id != authUser ()->id) {
 			http_response_code ( 401 );
 			exit ();
 		}
@@ -55,7 +55,7 @@ foreach ( $tours as $tour ) {
 	$dbtour->speed = $tour ['speed'];
 	$dbtour->distance = $tour ['distance'];
 	$dbtour->elevation = $tour ['elevation'];
-	$dbtour->bringlight = $tour ['bringlight']=='true';
+	$dbtour->bringlight = $tour ['bringlight'] == 'true';
 	
 	if ($isNew) {
 		if ($dbtour->id = insertTour ( $pdo, $dbtour )) {
@@ -67,9 +67,11 @@ foreach ( $tours as $tour ) {
 			exit ();
 		}
 	} else {
-		if (!updateTour ( $pdo, $dbtour )) {
+		if (! updateTour ( $pdo, $dbtour )) {
 			http_response_code ( 500 );
 			exit ();
+		} else {
+			updateTour ( $pdo, $dbtour );
 		}
 	}
 	
