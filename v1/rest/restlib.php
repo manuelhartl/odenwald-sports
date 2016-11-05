@@ -2,6 +2,18 @@
 require_once __DIR__ . '/../lib/global.php';
 require_once __DIR__ . '/../lib/tours.php';
 require_once __DIR__ . '/../lib/db_tours.php'; // for dbgps...
+function htmlHeader($redirect, $to = 'index.php') {
+	?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="refresh"
+	content="<?php echo $redirect.'; url='.$to ?>">
+<title>Touren</title>
+</head>
+<body>
+<?php
+}
 function jsonCheckAuth() {
 	if (! hasAuth ()) {
 		$json ['authenticated'] = hasAuth ();
@@ -15,7 +27,7 @@ function getTourLastModified($pdo) {
 	$stmt = $pdo->prepare ( 'select modifydate from tour ORDER BY modifydate DESC LIMIT 1' );
 	ex2er ( $stmt, array () );
 	$row = $stmt->fetch ( PDO::FETCH_ASSOC );
-	return $row['modifydate'];
+	return $row ['modifydate'];
 }
 function getTourStmt($pdo, $id = -1) {
 	$reference = getDBPlaceById ( $pdo, 1 );
