@@ -14,7 +14,7 @@ function getRestMailText(DBTour $tour, $attendees = 0) {
 '<tr><td>Beschreibung:</td><td>' . htmlspecialchars ( $tour->description ) . '</td></tr>' . //
 '</table>' . //
 '<a href="' . getUrlPrefix () . '/../ko/pages/tour-list.html?action=tour-join&tourid=' . $tour->id . '">Mich bei dieser Tour anmelden</a><br/>' . //
-'<a href="' . getUrlPrefix () . '/../ko/pages/tour-list.html?action=tour-view&tourid=' . $tour->id . '">Diese Tour anzeigen</a><br/>' . //
+'<a href="' . getUrlPrefix () . '/../ko/pages/tour.html?action=tour-view&tourid=' . $tour->id . '">Diese Tour anzeigen</a><br/>' . //
 '<a href="' . getUrlPrefix () . '/../ko/pages/tour-list.html?action=tour-list">Touren auflisten</a>' . //
 '</body><html>'; //
 }
