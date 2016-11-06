@@ -17,60 +17,62 @@
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 
-	'use strict';
+		'use strict';
 
-	ko.bindingHandlers.multiselect = {
-		init: function (element, valueAccessor, allBindingAccessors) {
-			var options = valueAccessor();
+		ko.bindingHandlers.multiselect = {
+			init: function (element, valueAccessor, allBindingAccessors) {
+				var options = valueAccessor();
 
-			ko.bindingHandlers.options.update(
-				element,
-				function() { return options.options; },
-				allBindingAccessors
-			);
+				ko.bindingHandlers.options.update(
+					element,
+					function() { return options.options; },
+					allBindingAccessors
+				);
 
-			ko.bindingHandlers.selectedOptions.init(
-				element,
-				function() { return options.selectedOptions; },
-				allBindingAccessors
-			);
+				ko.bindingHandlers.selectedOptions.init(
+					element,
+					function() { return options.selectedOptions; },
+					allBindingAccessors
+				);
 
-			ko.bindingHandlers.selectedOptions.update(
-				element,
-				function() { return options.selectedOptions; },
-				allBindingAccessors
-			);
+				ko.bindingHandlers.selectedOptions.update(
+					element,
+					function() { return options.selectedOptions; },
+					allBindingAccessors
+				);
 
-			$(element).multiselect(options.config);
+				$(element).multiselect(options.config);
 
-			//make view model know about select/deselect changes
-			$(element).bind("multiselectcheckall", function () { $(element).trigger("change"); });
-			$(element).bind("multiselectuncheckall", function () { $(element).trigger("change"); });
-		},
-		update: function (element, valueAccessor, allBindingAccessors) {
-			var options = valueAccessor();
-			//update html if items set through code
-			ko.bindingHandlers.selectedOptions.update(
-				element,
-				function () { return options.selectedOptions; },
-				allBindingAccessors
-			);
+				//make view model know about select/deselect changes
+				$(element).bind("multiselectcheckall", function () { $(element).trigger("change"); });
+				$(element).bind("multiselectuncheckall", function () { $(element).trigger("change"); });
+			},
+			update: function (element, valueAccessor, allBindingAccessors) {
+				var options = valueAccessor();
+				//update html if items set through code
+				ko.bindingHandlers.selectedOptions.update(
+					element,
+					function () { return options.selectedOptions; },
+					allBindingAccessors
+				);
 
-			$(element).multiselect("refresh");
-		}
-	};
+				$(element).multiselect("refresh");
+			}
+		};
 
 	</script>
 
 	<script type='text/javascript' >
 	
-	// view_use_strict 'use strict';
+	// 'use strict';	// view_dont_use_strict
 	
 	// class to represent all tours
 	var ToursViewModel = function() {
 		const minutesHistory = 1*60;
+		const s_id = "tour-list";
+
 		var self = this;
-		
+	
 		self.data = getData();
 		self.me = getMe();
 		self.now = getDate();
@@ -257,7 +259,7 @@
 		self.filteredTours = ko.computed(function() {
 			var result;
 			result = ko.utils.arrayFilter(self.tours(), function(tour) {
-				var accept = ((self.showActiveTours()&&!tour.oldTour(self.now)) || (self.showOldTours()&&tour.oldTour(self.now))) && ((self.showDeactivateTours()&&!tour.active)||(tour.active)) && ((self.showNightlyTours()&&tour.night())||(!tour.night()));
+				var accept = ((self.showActiveTours()&&!tour.oldTour(self.now)) || (self.showOldTours()&&tour.oldTour(self.now))) && ((self.showDeactivateTours()&&!tour.active)||(tour.active)) && ((self.showNightlyTours()&&tour.night)||(!tour.night));
 
 				if(self.showActiveTours()&&!accept){
 					// show active and some of the old tours
@@ -396,7 +398,7 @@
 		};
 		
 		self.getTours = function(){
-			clearData();
+			//clearData();
 			go2TourlistPage();
 		}
 		
@@ -432,6 +434,35 @@
 		// sort tour list by date time
 		self.sort(self.getHeader('Sport'));
 		
+		// check if add tour
+		const ACTION = 'action';
+		const TOURID = 'tourid';
+		var action = getTempStorage(s_id, ACTION);
+		if(action=='tour-join'){
+			var tourid =  getTempStorage(s_id, TOURID);
+			checkAutentification('tl','tl');
+			if(getMe()!=null){
+				add2Tour(tourid, self.me.nickname);
+				removeTempStorage(s_id, ACTION);
+				removeTempStorage(s_id, TOURID);
+			}
+		}else{
+			var action = get_url_param(ACTION);
+			if(action=='tour-join'){
+				var tourid = get_url_param(TOURID);
+				setTempStorage(s_id, ACTION, action);
+				setTempStorage(s_id, TOURID, tourid);
+
+				// if logged out, login and add tour, otherwise go direct to tour list
+				checkAutentification('tl','tl');
+				if(getMe()!=null){
+					add2Tour(tourid, self.me.nickname);
+					removeTempStorage(s_id, ACTION);
+					removeTempStorage(s_id, TOURID);
+				}
+			}
+		}
+
 		// show message if available
 		var message = getMessage();
 		if( message != null && message != ""){
@@ -470,7 +501,7 @@
 				</div> <!--End div navigation-buttons-logout (logged in) -->
 				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
 					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
 				</div> <!--End div navigation-buttons-in (logged out) -->
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
@@ -500,7 +531,7 @@
 						<label for="check6"><input name="cb_showFilter" data-bind="checked: showFilter" id="check6" type="checkbox">Filter</label>
 						<span data-bind="if: showFilter">
 							<select data-bind="options: filters, optionsText: 'title', optionsValue: 'filter', value: actFilter, optionsCaption: 'Wähle...'"></select>
-							<select multiple="multiple" data-bind="multiselect: { config:  {noneSelectedText:'Wähle Tourart', checkAllText:'Alle Tourarten' ,uncheckAllText:'keine Tourarten', selectedText: getTourSelection()}, options: options, selectedOptions: selectedOptions }"></select>
+							<select multiple="multiple" data-bind="multiselect: { config:  {noneSelectedText:'Wähle Tourart', checkAllText:'Alle Tourarten', uncheckAllText:'keine Tourarten', selectedText: getTourSelection()}, options: options, selectedOptions: selectedOptions }"></select>
 						</span>
 					</div> <!--End div cb_tools_bottom -->
 				</div>  <!--End div cb_tools -->

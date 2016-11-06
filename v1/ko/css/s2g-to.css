@@ -100,6 +100,10 @@ img[id='Karte']{
    	font-size: inherit;
 }
 
+.xxInput{
+	border-style: ridge;
+}
+
 .to-slider-left {
  	background: #ccc url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -15 * 25px ) no-repeat;
 }

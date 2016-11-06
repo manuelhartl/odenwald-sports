@@ -13,29 +13,46 @@
 	<script type='text/javascript' >
 
 	
-	// view_use_strict 'use strict';
+	// 'use strict';	// view_dont_use_strict
 
-	// class to represent a single user	
+	// class to represent a login	
 	var LoginViewModel = function() {
 		var self = this;
+		var s_id = "login";
 
-		self.data = null;
 		self.me = null;
+		
+		self.isRequestPW = ko.observable(false);
 
 		self.loginPassword = function(){
-			Login($('#username').val(),  $('#password').val(), "tl", "lo");
+			var okDestination = getTempStorage(s_id, "okDestination");
+			var cancelDestination = getTempStorage(s_id, "cancelDestination");
+			if(okDestination==null||okDestination.length==0){ okDestination = 'tl'; }
+			if(cancelDestination==null||cancelDestination.length==0){ cancelDestination = 'tl'; }
+
+			Login($('#username').val(),  $('#password').val(), okDestination, cancelDestination);
 		}
 		
-		self.cancelPassword = function(){
+		self.cancelPW = function(){
 			setMessage("Login abgebrochen");
 			// no session info to reset
-			go2TourlistPage();
+			var cancelDestination = getTempStorage(s_id, "cancelDestination");
+			go2Destination(cancelDestination);
 		}
 		
-		self.resetPassword = function(){
+		self.requestPW = function(){
 			var username = $('#username');
+			var email = $('#email');
+			var okDestination = getTempStorage(s_id, "okDestination");
+			var cancelDestination = getTempStorage(s_id, "cancelDestination");
+			if(okDestination==null||okDestination.length==0){ okDestination = 'tl'; }
+			if(cancelDestination==null||cancelDestination.length==0){ cancelDestination = 'tl'; }
 			// no session info to reset
-			ResetPassword(username.val(), "tl", "lo");
+			RequestPassword(username.val(), email.val(), okDestination, cancelDestination);
+		}
+		
+		self.requestPWInput = function(){
+			self.isRequestPW(true);
 		}
 		self.showMessage = function(info){
 			showMessage(info, document, 'message', 10);
@@ -43,8 +60,6 @@
 
 		/* --------- Construction --------- */
 		removeAllSessionStorage();
-		self.data = getData();
-		self.me = getMe();
 		
 		// show message if available
 		var message = getMessage();
@@ -77,7 +92,7 @@
 				</div> <!--End div navigation-buttons-logout (logged in) -->
 				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
 					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
 				</div> <!--End div navigation-buttons-in (logged out) -->
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
@@ -96,7 +111,7 @@
 							</span>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Username">
+					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Username" data-bind="ifnot: isRequestPW">
 						<div class="lo-TableCell lo-TableCell-col-0 big ">&nbsp</div>
 						<div class="lo-TableCell lo-TableCell-col-1">
 							<span class="lo-TableCell-Content-Password-1">Passwort</span>
@@ -107,15 +122,29 @@
 							</span>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
+					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Email" data-bind="if: isRequestPW">
+						<div class="lo-TableCell lo-TableCell-col-0 big ">&nbsp</div>
+						<div class="lo-TableCell lo-TableCell-col-1">
+							<span class="lo-TableCell-Content-Email-1">Email</span>
+						</div>
+						<div class="lo-TableCell lo-TableCell-col-2">
+							<span class="lo-TableCell-Content-Email-2">
+								<input type="email" id="email" name="email" placeholder="Deine  Email der Registrierung" />
+							</span>
+							<span class="lo-TableCell-Content-Email-2">
+								<button id="btn-requestpassword" data-bind="click: requestPW">Passwort anfordern</button>
+							</span>
+						</div>
+					</div> <!-- div to-TableRow ENDE -->
 					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Login">
 						<div class="lo-TableCell lo-TableCell-col-0 big">&nbsp</div>
 						<div class="lo-TableCell lo-TableCell-col-1">&nbsp</div>
 						<div class="lo-TableCell lo-TableCell-Content-Login-1">
 							<span class="lo-TableCell-Content-Login-2">
-								<button id="btn-missingpassword" data-bind="click: resetPassword">Passwort vergessen</button>
+								<button id="btn-resetpassword" data-bind="click: requestPWInput">Passwort vergessen</button>
 							</span>
 							<span class="lo-TableCell-Content-Login-3">
-								<button id="btncancel" data-bind="click: cancelPassword">Abbrechen</button>
+								<button id="btncancel" data-bind="click: cancelPW">Abbrechen</button>
 							</span>
 							<span class="lo-TableCell-Content-Login-4">
 								<button id="btnlogin" data-bind="click: loginPassword">Anmelden</button>
@@ -132,7 +161,6 @@
 				<a href="html/FAQ.php" target="_blank">FAQ</a>
 				<a href="html/disclaimer.php" target="_blank">Regeln</a>
 				<a href="html/impressum.php" target="_blank">Impressum</a>
-				<span data-bind="text: data.versioninfo" />
 			</div> <!--End div version -->
 		</div> <!--End div footer -->
 	</div> <!--End div total -->

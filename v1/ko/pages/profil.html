@@ -9,14 +9,15 @@
 	<meta charset="UTF-8">
 	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
 	<script type='text/javascript' src='../script/jquery-ui.min.js'></script>
+	<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+	<script type='text/javascript' src='../script/locationpicker.jquery.js'></script>
 	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
 	<script type='text/javascript' src='../script/memorystorage.js'></script>
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 	
-		'use strict';
+		'use strict';	// view_use_strict
 
-	
 		ko.bindingHandlers.datepicker = {
 			init: function(element, valueAccessor, allBindingsAccessor) {
 				var $el = $(element);
@@ -47,6 +48,32 @@
 			}
 		};
 		
+		ko.bindingHandlers.locationpicker = {
+			init: function (element, valueAccessor, allBindingsAccessor) {
+				var $el = $(element);
+				
+				// initialize locationpicker with some optional options
+				var options = allBindingsAccessor().locationpickerOptions || {};
+				$el.locationpicker(options);
+				
+					// handle disposal (if KO removes by the template binding)
+				ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+					$el.locationpicker("destroy");
+				});
+				ko.utils.registerEventHandler(element, "locationpicker", function (event, ui) {
+					var observable = valueAccessor();
+					observable(ui.value);
+				});
+			},
+			update: function (element, valueAccessor, allBindingsAccessor) {
+				var $el = $(element);
+				var value = ko.utils.unwrapObservable(valueAccessor());
+
+				$el.locationpicker("option", allBindingsAccessor().locationpickerOptions);
+				$el.locationpicker("value", value);
+			}
+		};
+
 		jQuery(function($)
 		{
 			$.datepicker.regional['de'] = {clearText: 'löschen', clearStatus: 'aktuelles Datum löschen',
@@ -71,7 +98,7 @@
 
 	<script type='text/javascript' >
 
-	// view_use_strict 'use strict';
+	// 'use strict';	// view_dont_use_strict
 	
 	// class to represent a single user	
 	var ProfileViewModel = function() {
@@ -90,6 +117,8 @@
 		
 		self.birthday = ko.observable(self.actUser.birthday);
 		self.adress = ko.observable(self.actUser.adress);
+		self.latitude = ko.observable(self.actUser.latitude.length==0?"49.7557717":self.actUser.latitude);
+		self.longitude = ko.observable(self.actUser.longitude.length==0?"8.635616600000048":self.actUser.longitude);
 		self.tourletter = ko.observable(self.actUser.tourletter);
 
 		self.okProfile = function(){
@@ -103,9 +132,17 @@
 			go2TourlistPage();
 		}	
 		self.saveProfile = function(){
-			// verify birthday
-			var b = self.birthday();
-			SetProfile(self.me.nickname, self.name(), self.phone(), b, self.adress(), self.tourletter(), "tl", "pr");
+			var latitude = "";
+			var longitude = "";
+
+			updateUser(self.me.nickname, self.birthday(), self.name(), self.adress(), self.latitude(), self.longitude(), self.tourletter(), self.phone(), "tl", "pr" );
+			self.actUser.birthday = self.birthday();
+			self.actUser.name = self.name();
+			self.actUser.adress = self.adress();
+			self.actUser.latitude = self.latitude();
+			self.actUser.longitude = self.longitude();
+			self.actUser.tourletter = self.tourletter();
+			self.actUser.phone = self.phone();
 		}
 		
 		self.resetPreferences = function(){
@@ -118,6 +155,9 @@
 		};
 
 		/* --------- Construction --------- */
+		// if logged out, login and stay, otherwise goto tour list
+		checkAutentification('pr','tl');
+		
 		// show message if available
 		var message = getMessage();
 		if( message != null && message != ""){
@@ -148,7 +188,7 @@
 				</div> <!--End div navigation-buttons-logout (logged in) -->
 				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
 					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
 				</div> <!--End div navigation-buttons-in (logged out) -->
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
@@ -224,19 +264,43 @@
 						<div class="pr-TableCell pr-TableCell-col-1">
 							<span class="pr-TableCell-Content-Adresse-1">Adresse</span>
 						</div>
-						<span  data-bind="ifnot: readonly">
+						<span data-bind="ifnot: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2">
 								<span class="pr-TableCell-Content-Adresse-2">
-									<input type="text" id="adresse" name="adresse" data-bind="textInput: adress, attr: { placeholder: adress.length==0?'Adresse eingeben':adress}"/>
+
+
+
+								<input type="text" id="adress" name="adress" data-bind="textInput: adress, attr: { placeholder: adress.length==0?'Adresse eingeben':adress}"/>
+									<input type="hidden" id="lat" class="to-input" name="lat" data-bind="value: latitude"/>
+									<input type="hidden" id="lon" class="to-input" name="lon" data-bind="value: longitude"/>
+
+
+
+
 								</span>
 							</div>
 						</span>
-						<span  data-bind="if: readonly">
+						<span data-bind="if: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2-noborder">
 								<span class="pr-TableCell-Content-Adresse-2.2" data-bind="text: adress"/>
 							</div>
 						</span>
 					</div> <!-- div pr-TableRow ENDE -->
+					
+					<span data-bind="ifnot: readonly">
+						<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Karte small">
+							<div class="pr-TableCell pr-TableCell-col-1"><span class="pr-TableCell-Content-Karte-1">&nbsp</span></div>
+							<div class="pr-TableCell pr-TableCell-col-2-large">
+								<div class="pr-TableCell-Content-Karte-2" >
+									<div id="map" class="pr-map" data-bind="locationpicker: adress, locationpickerOptions: { radius: 0, location: {latitude: latitude(), longitude:longitude()}, 
+																	inputBinding: {	locationNameInput: $('#adress'),latitudeInput: $('#lat'),longitudeInput: $('#lon')}, enableAutocomplete: true , draggable: true }" ></div>	
+								</div>
+							</div>
+						</div> <!-- div pr-TableRow ENDE -->
+					</span>
+					
+					
+					
 					<span data-bind="if: actUser.nickname == me.nickname">
 						<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Email">
 							<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>

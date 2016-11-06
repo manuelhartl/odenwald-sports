@@ -12,9 +12,9 @@
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 
-	// view_use_strict 'use strict';
+	// 'use strict';	// view_dont_use_strict
 	
-	// class to represent all mails
+	// class to represent a mail
 	var MailViewModel = function() {
 		var self = this;
 		var s_id = "mail";
@@ -25,13 +25,19 @@
 		self.sender = ko.observable(self.me.nickname);		
 		self.recipe = ko.observable("Empfängerliste");
 		self.subject = ko.observable("Mail an alle");
-		self.mailcontent = ko.observable("leer");
+		self.mailcontent = ko.observable("");
+		
+		self.tourID = ko.observable(0);
 		
 		self.init = function(){
+			// if logged out, login and stay, otherwise goto tour list
+			checkAutentification('ma','tl');
+		
 			var type = getTempStorage(s_id, "type");
 			var source = getTempStorage(s_id, "source");
 			var subsource = getTempStorage(s_id, "subsource");
 			
+			self.tourID(source);
 			if(type == "2tourmember"){
 				var tour = self.data.getTour(source);
 				self.recipe(subsource);
@@ -42,7 +48,13 @@
 				self.subject(tour.tourMail2Guide(self.me.nickname));				
 			}else if(type == "2tourall"){
 				var tour = self.data.getTour(source);
-				self.recipe(tour.getMembersString());
+				var recipes;
+				if(self.me.nickname == tour.guide){
+					recipes = tour.getMembersString();
+				}else{
+					recipes = tour.getMembersString().replace(self.me.nickname, tour.guide);
+				}
+				self.recipe(recipes);
 				self.subject(tour.tourMail2Tour(self.me.nickname));				
 			} else if(type == "2user"){
 				var user = self.data.getUser(subsource);
@@ -59,10 +71,29 @@
 		}
 		
 		self.send = function(){
-			var destination = getTempStorage(s_id, "destination_success");
-			setMessage("Mail erfolgreich an " + self.recipe() + " geschickt" + " [" + self.subject() + " - " + self.mailcontent() + "]");
-			clearTempStorage(s_id);
-			go2Destination(destination);
+			if(self.subject()!="" && self.mailcontent()!=""){
+				var destination_success = getTempStorage(s_id, "destination_success");
+				var destination_cancel = getTempStorage(s_id, "destination_cancel");
+				var type = getTempStorage(s_id, "type");
+
+				clearTempStorage(s_id);
+				
+				if(type == "2tourmember"){
+					SendMail2User(self.recipe(), self.subject(), self.mailcontent(), destination_success, destination_cancel);				
+				}else if(type == "2tourguide"){
+					SendMail2User(self.recipe(), self.subject(), self.mailcontent(), destination_success, destination_cancel);				
+				}else if(type == "2tourall"){
+					SendMail2Tour(self.tourID(), self.subject(), self.mailcontent(), destination_success, destination_cancel);				
+				} else if(type == "2user"){
+					SendMail2User(self.recipe(), self.subject(), self.mailcontent(), destination_success, destination_cancel);				
+				}
+			}else{
+				if(self.subject()==""){
+					setMessage("Bitte Betreff ausfüllen");
+				}else if(self.mailcontent()==""){
+					setMessage("Bitte Text ausfüllen");
+				}
+			}
 		}
 		
 		self.showMessage = function(info){
@@ -103,7 +134,7 @@
 				</div> <!--End div navigation-buttons-logout (logged in) -->
 				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
 					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
 				</div> <!--End div navigation-buttons-in (logged out) -->
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
@@ -138,7 +169,7 @@
 						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Editor-1">Inhalt</span></div>
 						<div class="ma-TableCell ma-TableCell-col-2-large">
 							<span class="ma-TableCell-Content-Editor-2">
-								<textarea id="Editor" name="editor" data-bind="textInput: mailcontent"></textarea>
+								<textarea id="Editor" name="editor" placeholder="Bitte Mailtext eingeben" data-bind="textInput: mailcontent"></textarea>
 							</span>
 						</div>
 					</div> <!-- div ma-TableRow ENDE -->

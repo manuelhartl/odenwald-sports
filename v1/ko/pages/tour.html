@@ -116,13 +116,13 @@
 						
 		jQuery(function($)
 		{
-			$.datepicker.regional['de'] = {clearText: 'l\u00f6schen', clearStatus: 'aktuelles Datum löschen',
-			closeText: 'schlie\u00dfen', closeStatus: 'ohne \u00c4nderungen schließen',
+			$.datepicker.regional['de'] = {clearText: 'l\u00f6schen', clearStatus: 'aktuelles Datum l\u00f6schen',
+			closeText: 'schlie\u00dfen', closeStatus: 'ohne \u00c4nderungen schlie\u00dfen',
 			prevText: '<zur\u00fcck', prevStatus: 'letzten Monat zeigen',
 			nextText: 'weiter>', nextStatus: 'n\u00e4chsten Monat zeigen',
 			currentText: 'heute', currentStatus: '',
-			monthNames: ['Januar','Februar','März','April','Mai','Juni', 'Juli','August','September','Oktober','November','Dezember'],
-			monthNamesShort: ['Jan','Feb','Mär','Apr','Mai','Jun', 'Jul','Aug','Sep','Okt','Nov','Dez'],
+			monthNames: ['Januar','Februar','M\u00e4rz','April','Mai','Juni', 'Juli','August','September','Oktober','November','Dezember'],
+			monthNamesShort: ['Jan','Feb','M\u00e4r','Apr','Mai','Jun', 'Jul','Aug','Sep','Okt','Nov','Dez'],
 			monthStatus: 'anderen Monat anzeigen', yearStatus: 'anderes Jahr anzeigen',
 			weekHeader: 'Wo', weekStatus: 'Woche des Monats',
 			dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
@@ -142,7 +142,7 @@
 
 	<script type='text/javascript' >
 	
- 	// view_use_strict 'use strict';
+	// 'use strict';	// view_dont_use_strict
 	
 	var VariableSliderModel = function( value, formatValue, init_max_Size, max_Steps, max_Size){
 		var self = this;
@@ -204,6 +204,24 @@
 
 	}
 		
+	function limitChars(textarea, limit, limitinfo)
+	{  
+		var text = textarea.value;	  
+		var textlength = text.length;  
+		var info = document.getElementById(limitinfo);
+
+		if(textlength > limit)  
+		{  
+			info.innerHTML = 'Nicht mehr als '+limit+' Zeichen!';  
+			textarea.value = text.substr(0,limit);  
+			return false;  
+		}  
+		else  
+		{  
+			info.innerHTML = 'Noch '+ (limit - textlength) +' Zeichen Ã¼brig.';  
+			return true;  
+		}  
+	}  
 
 	// class to represent all tours
 	var TourViewModel = function() {
@@ -214,14 +232,14 @@
 		const default_pace = 2, default_technic = 2;
 		const init_tourtype = "mtb", init_MeetingPoint= "Jugenheim, Vor der Villa Journal";
 		const max_steps = 100*1000, max_size = 10000 * 1000; // Number.MAX_SAFE_INTEGER
+		const s_id = "tour";
 				
 		var self = this;
-		var s_id = "tour";
 
 		self.data = getData();
 		self.me = getMe();
-		self.tourID = getTempStorage(s_id, "tourid");
-		self.modifiable = ko.observable(getTempStorage(s_id, "modifiable"));
+		self.tourID = null;
+		self.modifiable = ko.observable();
 		self.memberModifiable = ko.observable(false);
 		
 		self.availableTourType = self.data.tourtypes;
@@ -334,11 +352,13 @@
 		
 		self.actualTourType = ko.observable(self.data.getTourTypebyType(init_tourtype));						// 14
 
-		self.description = ko.observable();																		// 15
+		self.description = ko.observable("");																	// 15
 		self.night = ko.observable(false);																		// 16
 		self.active = ko.observable(true);																		// 17
 		
 		self.init = function(){
+			self.tourID = getTempStorage(s_id, "tourid");
+			self.modifiable(getTempStorage(s_id, "modifiable"));
 			if(self.tourID>0){
 				self.tour = cloneTour(self.data.getTour(self.tourID))
 			}else if(self.tourID==0){
@@ -395,7 +415,7 @@
 			self.handleMap();
 		
 			self.description(self.tour.description);
-			self.night(self.tour.night());
+			self.night(self.tour.night);
 			self.active(self.tour.active);
 		}
 		
@@ -424,6 +444,21 @@
 		};
 
 		/* --------- Construction --------- */
+	
+		// check if triggered by mail
+		const ACTION = 'action';
+		const TOURID = 'tourid';
+		var action = get_url_param(ACTION);
+		if(action=='tour-view'){
+			var tourid = get_url_param(TOURID);
+			setTempStorage(s_id, "okDestination", "tl");
+			setTempStorage(s_id, "cancelDestination", "tl");
+			setTempStorage(s_id, "tourid", tourid);
+			setTempStorage(s_id, "modifiable", false);
+		}
+		// if logged out, login and stay, otherwise goto tour list
+		checkAutentification('to','tl');
+
 		self.init();
 		
 		self.memberModifiable = ko.observable(self.modifiable() && self.tour.correctable());
@@ -459,7 +494,7 @@
 				</div> <!--End div navigation-buttons-logout (logged in) -->
 				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
 					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
 				</div> <!--End div navigation-buttons-in (logged out) -->
 				<div id="cb_tools">
 					<div id="cb_tools_top">
@@ -516,8 +551,6 @@
 							<div data-bind="text: tour.getMembersString(false)"></div>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
-					
-					
 					
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Sport">
 						<div class="to-TableCell to-TableCell-col-1">
@@ -596,8 +629,10 @@
 						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
 							<span class="to-TableCell-Content-Beschreibung-2">
 								<div data-bind="if: modifiable">
-									<textarea id="editor" name="editor" data-bind="value: description"></textarea>
+									<textarea id="editor" name="editor" onkeyup="limitChars(this, 2000, 'charlimitinfo')" placeholder="Bitte Tourtext eingeben" data-bind="value: description"></textarea>
+									<span id="charlimitinfo" >Max. 2000 Zeichen</span>
 								</div>
+								
 								<div data-bind="ifnot: modifiable">
 									<textarea id="editor" name="editor" readonly data-bind="value: description"></textarea>
 								</div>
@@ -619,10 +654,10 @@
 						<div class="to-TableCell to-TableCell-col-3">
 							<span class="to-TableCell-Content-Night-3">
 								<div data-bind="if: modifiable">
-									<input id="cb_night" name="cb_night" data-bindd="checked: night()" type="checkbox" /><label for="cb_night">Nachttour</label>
+									<input id="cb_night" name="cb_night" data-bind="checked: night" type="checkbox" /><label for="cb_night">Nachttour</label>
 								</div>
 								<div data-bind="ifnot: modifiable">
-									<input id="cb_night" name="cb_night" data-bind="checked: night()" type="checkbox" disabled="disabled" /><label for="cb_night">Nachttour</label>
+									<input id="cb_night" name="cb_night" data-bind="checked: night" type="checkbox" disabled="disabled" /><label for="cb_night">Nachttour</label>
 								</div>
 							</span>
 						</div>
@@ -673,7 +708,7 @@
 							</div>
 							<div class="unten">
 								<div data-bind="if: modifiable">
-									<div data-bind="text: distance.displayValue, visible: !distance.editingValue(), click: distance.editValue"></div>
+									<div class="xxInput" data-bind="text: distance.displayValue, visible: !distance.editingValue(), click: distance.editValue"></div>
 									<input type="text" id="distanceInput" class="to-distance" name="distanceInput" data-bind="textInput: distance.value, visible: distance.editingValue(), hasfocus: distance.editingValue">
 								</div>
 								<div data-bind="ifnot: modifiable">
@@ -692,7 +727,7 @@
 							</div>
 							<div class="unten">
 								<div data-bind="if: modifiable">
-									<div data-bind="text: up.displayValue, visible: !up.editingValue(), click: up.editValue"></div>
+									<div class="xxInput" data-bind="text: up.displayValue, visible: !up.editingValue(), click: up.editValue"></div>
 									<input type="text" id="upInput" class="to-up" name="upInput" data-bind="textInput: up.value, visible: up.editingValue(), hasfocus: up.editingValue">
 								</div>
 								<div data-bind="ifnot: modifiable">
@@ -711,7 +746,7 @@
 							</div>
 							<div class="unten">
 								<div data-bind="if: modifiable">
-									<div data-bind="text: duration.displayValue, visible: !duration.editingValue(), click: duration.editValue"></div>
+									<div class="xxInput" data-bind="text: duration.displayValue, visible: !duration.editingValue(), click: duration.editValue"></div>
 									<input type="text" id="durationInput" class="to-duration" name="durationInput" data-bind="textInput: duration.value, visible: duration.editingValue(), hasfocus: duration.editingValue">
 								</div>
 								<div data-bind="ifnot: modifiable">

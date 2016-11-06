@@ -12,7 +12,7 @@
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 	
-	// view_use_strict 'use strict';
+	// 'use strict';	// view_dont_use_strict
 	
 	// class to represent all users
 	var UsersViewModel = function() {
@@ -23,7 +23,7 @@
 
 		self.headers = [
 			{id:'ID_Nr', title:'Nr', asc: true, active: false},
-			{id:'ID_User', title:'User', sortPropertyName:'nickname', sortTitle:'Sortierung nach Nickname', asc: true, active: false},
+			{id:'ID_User', title:'User', sortPropertyName:'nickname', sortTitle:'Sortierung nach Nickname', asc: false, active: false},
 			{id:'ID_Mail', title:'Mail', asc: true, active: false},
 			{id:'ID_Name', title:'Namen', sortPropertyName:'name', sortTitle:'Sortierung nach Namen', asc: true, active: false},
 			{id:'ID_Telefon', title:'Telefon', sortPropertyName:'phone', sortTitle:'Sortierung nach Telefon', asc: true, active: false},
@@ -197,7 +197,10 @@
 		};
 
 		/* --------- Construction --------- */
-		// sort tour list by nickname
+		// if logged out, login and stay, otherwise goto tour list
+		checkAutentification('ul','tl');
+
+			// sort tour list by nickname
 		self.sort(self.getHeader('User'));
 		
 		// reset tour statistik
@@ -237,7 +240,7 @@
 				</div> <!--End div navigation-buttons-logout (logged in) -->
 				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
 					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
 				</div> <!--End div navigation-buttons-in (logged out) -->
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
@@ -282,7 +285,7 @@
 					<div class="ul-TableHead ul-TableCell-Mail">
 						<span class="ul-TableHead-Content-Mail ul-member">
 							<span class="ul-member-mail">
-								<span class="ul-icon-member-mail" data-bind="click: go2MailPage.bind($data, 'ma_2user', me.nickname, me.nickname, 'ul', 'ul'), attr: { title: sh(me.userMailTitle()) }"></span>
+								<span class="ul-icon-member-mail" ></span>
 							</span>
 						</span>
 					</div>
@@ -315,7 +318,7 @@
 						<div class="ul-TableCell ul-TableCell-User"><span class="ul-TableHead-Content-User"><a class="ul-a-member-profil" data-bind="text: sh(nickname), click:  go2ProfilPage.bind($data, nickname), attr: { title: userPhoneInfo()}">User</a></span></div>
 						<div class="ul-TableCell ul-TableCell-Mail">
 							<span class="ul-TableCell-Content-Mail ul-member">
-								<span class="ul-member-mail"><a class="ul-icon-member-mail" data-bind="click: go2MailPage.bind($data, 'ma_2user', nickname, nickname, 'ul', 'ul'), attr: { title: sh(userMailTitle()) }"></a></span>
+								<span class="ul-member-mail"><a class="ul-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2user', nickname, nickname, 'ul', 'ul'), attr: { title: sh(userMailTitle()) }"></a></span>
 							</span>
 						</div>
 						<div class="ul-TableCell ul-TableCell-Name"><span class="ul-TableCell-Content-Name" data-bind="text: sh(name)">name</span></div>

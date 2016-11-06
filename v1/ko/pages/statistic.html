@@ -12,7 +12,7 @@
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 	
-	// view_use_strict 'use strict';
+	// 'use strict';	// view_dont_use_strict
 	
 	var StatisticViewModel = function() {
 		var self = this;
@@ -21,7 +21,7 @@
 		self.me = getMe();
 		
 		self.headers = [
-			{id: "ID_User", title:'User', sortPropertyName:'nickname', sortTitle:'Sortierung nach Nickname', asc: true, active: false},
+			{id: "ID_User", title:'User', sortPropertyName:'nickname', sortTitle:'Sortierung nach Nickname', asc: false, active: false},
 			{id: "ID_Mail", title:'Mail', asc: true, active: false},
 			{id: "ID_GuidedTours", title:'gef\u00fchrte Touren', sortPropertyName:'guidedToursNo', sortTitle:'Sortierung nach Anzahl gef\u00fchrte Touren', asc: true, active: false},
 			{id: "ID_ToursGuide", title:'mitgefahrene Touren', sortPropertyName:'toursGuidedNo', sortTitle:'Sortierung nach Anzahl mitgefahrene Touren', asc: true, active: false}
@@ -168,7 +168,10 @@
 		};
 
 		/* --------- Construction --------- */
-		// show message if available
+		// if logged out, login and stay, otherwise goto tour list
+		checkAutentification('st','tl');
+
+			// show message if available
 		var message = getMessage();
 		if( message != null && message != ""){
 			self.showMessage(message);
@@ -202,7 +205,7 @@
 				</div> <!--End div navigation-buttons-logout (logged in) -->
 				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
 					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage">Login</button>
+					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
 				</div> <!--End div navigation-buttons-in (logged out) -->
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
@@ -237,7 +240,7 @@
 				<div class="st-TableRow st-TableHeading even" data-bind="if: $root.me!=null">
 					<div class="st-TableHead st-TableCell-Mail">
 						<span class="st-TableCell-Content-Mail st-member">
-							<span class="st-member-mail"><a class="st-icon-member-mail" data-bind="click: go2MailPage.bind($data, 'ma_2user', me.nickname, me.nickname, 'st', 'st'), attr: { title: sh(me.userMailTitle()) }"></a></span>
+							<span class="st-member-mail"><a class="st-icon-member-mail"></a></span>
 						</span>
 					</div>
 					<div class="st-TableHead st-TableCell-User">
@@ -257,7 +260,7 @@
 		<!-- User -->
 					<div class="st-TableRow st-TableRow-Content" data-bind="css: (($index()%2)==0)?'odd':'even'">
 						<div class="st-TableCell st-TableCell-Mail"><span class="st-TableCell-Content-Mail st-member">
-							<span class="st-member-mail"><a class="st-icon-member-mail" data-bind="click: go2MailPage.bind($data, 'ma_2user', nickname, nickname, 'st', 'st'), attr: { title: sh(userMailTitle()) }"></a></span>
+							<span class="st-member-mail"><a class="st-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2user', nickname, nickname, 'st', 'st'), attr: { title: sh(userMailTitle()) }"></a></span>
 						</div>
 						<div class="st-TableCell st-TableCell-User">
 							<span class="st-TableHead-Content-User"><a class="st-a-member-profil" data-bind="text: sh(nickname), click: go2ProfilPage.bind($data,nickname), attr: { title: userPhoneInfo() }">User</a></span>
