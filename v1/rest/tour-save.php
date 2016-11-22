@@ -90,8 +90,7 @@ foreach ( $tours as $tour ) {
 	$dbtour->guide = authUser ();
 	$dbtour->description = $tour ['desc'];
 	$dbtour->duration = $tour ['duration'];
-	$dbtour->sport = new DBSport ();
-	$dbtour->sport->sportsubid = $tour ['sport'] ['id'];
+	$dbtour->sport = getSport($pdo, $tour ['sport'] ['id']);
 	$dbtour->meetingPoint = $tour ['meetingpoint'] ['name'];
 	$dbtour->meetingPoint_desc = $tour ['meetingpoint'] ['desc'];
 	$dbtour->meetingPoint_lat = $tour ['meetingpoint'] ['lat'];

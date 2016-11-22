@@ -114,10 +114,10 @@ CREATE TABLE IF NOT EXISTS `tour_attendee` (
 
 CREATE TABLE IF NOT EXISTS `user` (
   `id` mediumint(9) NOT NULL,
-  `username` varchar(30) COLLATE utf8_bin NOT NULL,
+  `username` varchar(30) COLLATE utf8_bin DEFAULT NULL,
   `hashedpassword` varchar(100) COLLATE utf8_bin NOT NULL,
-  `email` varchar(200) COLLATE utf8_bin NOT NULL,
-  `status` enum('registered','verified') COLLATE utf8_bin NOT NULL,
+  `email` varchar(100) COLLATE utf8_bin DEFAULT NULL,
+  `status` enum('registered','verified','deleted') COLLATE utf8_bin NOT NULL,
   `register_date` datetime NOT NULL,
   `modifydate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
