@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<meta name="viewport" content="initial-scale=1.0">
+	<meta name="viewport" content="width=900">
 	<link rel="stylesheet" href="../script/css/jquery-ui.css">
 	<link rel="stylesheet" href="../script/css/jquery-ui-timepicker-addon.css">
 	<link rel="stylesheet" href="../script/css/jquery-ui-slider-pips.min.css">
@@ -24,115 +24,115 @@
 	'use strict';
 
 	ko.bindingHandlers.datetimepicker = {
-			init: function(element, valueAccessor, allBindingsAccessor) {
-				var $el = $(element);
-				
-				// initialize datepicker with some optional options
-				var options = allBindingsAccessor().datetimepickerOptions || {};
-				$el.datetimepicker(options);
+		init: function(element, valueAccessor, allBindingsAccessor) {
+			var $el = $(element);
+			
+			// initialize datepicker with some optional options
+			var options = allBindingsAccessor().datetimepickerOptions || {};
+			$el.datetimepicker(options);
 
-				// handle the field changing
-				ko.utils.registerEventHandler(element, "change", function() {
-					var observable = valueAccessor();
-					observable($el.datetimepicker("getDate"));
-				});
+			// handle the field changing
+			ko.utils.registerEventHandler(element, "change", function() {
+				var observable = valueAccessor();
+				observable($el.datetimepicker("getDate"));
+			});
 
+			// handle disposal (if KO removes by the template binding)
+			ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+				$el.datetimepicker("destroy");
+			});
+		},
+		update: function(element, valueAccessor) {
+			var value = ko.utils.unwrapObservable(valueAccessor()),
+				$el = $(element),
+				current = $el.datetimepicker("getDate");
+			
+			if (value - current !== 0) {
+				$el.datetimepicker("setDate", value);   
+			}
+		}
+	};
+	
+	ko.bindingHandlers.slider = {
+		init: function (element, valueAccessor, allBindingsAccessor) {
+			var $el = $(element);
+			
+			// initialize slider with some optional options
+			var options = allBindingsAccessor().sliderOptions || {};
+			$el.slider(options);
+			var options1 = allBindingsAccessor().pipOptions || {};
+			$el.slider().slider("pips",options1.pips);
+			
+			ko.utils.registerEventHandler(element, "slidechange", function (event, ui) {
+				var observable = valueAccessor();
+				observable(ui.value);
+			});
+
+			// handle disposal (if KO removes by the template binding)
+			ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+				$el.slider("destroy");
+			});
+			ko.utils.registerEventHandler(element, "slide", function (event, ui) {
+				var observable = valueAccessor();
+				observable(ui.value);
+			});
+		},
+		update: function (element, valueAccessor, allBindingsAccessor) {
+			var value = ko.utils.unwrapObservable(valueAccessor());
+			var $el = $(element);
+			if (isNaN(value)) value = 0;
+			$el.slider("option", allBindingsAccessor().sliderOptions);
+			$el.slider().slider("option", allBindingsAccessor().pipOptions);
+			$el.slider("value", value);
+			$el.slider("pips", "refresh");
+		}
+	};
+			
+	ko.bindingHandlers.locationpicker = {
+		init: function (element, valueAccessor, allBindingsAccessor) {
+			var $el = $(element);
+			
+			// initialize locationpicker with some optional options
+			var options = allBindingsAccessor().locationpickerOptions || {};
+			$el.locationpicker(options);
+			
 				// handle disposal (if KO removes by the template binding)
-				ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-					$el.datetimepicker("destroy");
-				});
-			},
-			update: function(element, valueAccessor) {
-				var value = ko.utils.unwrapObservable(valueAccessor()),
-					$el = $(element),
-					current = $el.datetimepicker("getDate");
-				
-				if (value - current !== 0) {
-					$el.datetimepicker("setDate", value);   
-				}
-			}
-		};
-		
-		ko.bindingHandlers.slider = {
-			init: function (element, valueAccessor, allBindingsAccessor) {
-				var $el = $(element);
-				
-				// initialize slider with some optional options
-				var options = allBindingsAccessor().sliderOptions || {};
-				$el.slider(options);
-				var options1 = allBindingsAccessor().pipOptions || {};
-				$el.slider().slider("pips",options1.pips);
-				
-				ko.utils.registerEventHandler(element, "slidechange", function (event, ui) {
-					var observable = valueAccessor();
-					observable(ui.value);
-				});
+			ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+				$el.locationpicker("destroy");
+			});
+			ko.utils.registerEventHandler(element, "locationpicker", function (event, ui) {
+				var observable = valueAccessor();
+				observable(ui.value);
+			});
+		},
+		update: function (element, valueAccessor, allBindingsAccessor) {
+			var $el = $(element);
+			var value = ko.utils.unwrapObservable(valueAccessor());
 
-				// handle disposal (if KO removes by the template binding)
-				ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
-					$el.slider("destroy");
-				});
-				ko.utils.registerEventHandler(element, "slide", function (event, ui) {
-					var observable = valueAccessor();
-					observable(ui.value);
-				});
-			},
-			update: function (element, valueAccessor, allBindingsAccessor) {
-				var value = ko.utils.unwrapObservable(valueAccessor());
-				var $el = $(element);
-				if (isNaN(value)) value = 0;
-				$el.slider("option", allBindingsAccessor().sliderOptions);
-				$el.slider().slider("option", allBindingsAccessor().pipOptions);
-				$el.slider("value", value);
-				$el.slider("pips", "refresh");
-			}
-		};
-				
-		ko.bindingHandlers.locationpicker = {
-			init: function (element, valueAccessor, allBindingsAccessor) {
-				var $el = $(element);
-				
-				// initialize locationpicker with some optional options
-				var options = allBindingsAccessor().locationpickerOptions || {};
-				$el.locationpicker(options);
-				
-					// handle disposal (if KO removes by the template binding)
-				ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
-					$el.locationpicker("destroy");
-				});
-				ko.utils.registerEventHandler(element, "locationpicker", function (event, ui) {
-					var observable = valueAccessor();
-					observable(ui.value);
-				});
-			},
-			update: function (element, valueAccessor, allBindingsAccessor) {
-				var $el = $(element);
-				var value = ko.utils.unwrapObservable(valueAccessor());
-
-				$el.locationpicker("option", allBindingsAccessor().locationpickerOptions);
-				$el.locationpicker("value", value);
-			}
-		};
-						
-		jQuery(function($)
-		{
-			$.datepicker.regional['de'] = {clearText: 'l\u00f6schen', clearStatus: 'aktuelles Datum l\u00f6schen',
-			closeText: 'schlie\u00dfen', closeStatus: 'ohne \u00c4nderungen schlie\u00dfen',
-			prevText: '<zur\u00fcck', prevStatus: 'letzten Monat zeigen',
-			nextText: 'weiter>', nextStatus: 'n\u00e4chsten Monat zeigen',
-			currentText: 'heute', currentStatus: '',
-			monthNames: ['Januar','Februar','M\u00e4rz','April','Mai','Juni', 'Juli','August','September','Oktober','November','Dezember'],
-			monthNamesShort: ['Jan','Feb','M\u00e4r','Apr','Mai','Jun', 'Jul','Aug','Sep','Okt','Nov','Dez'],
-			monthStatus: 'anderen Monat anzeigen', yearStatus: 'anderes Jahr anzeigen',
-			weekHeader: 'Wo', weekStatus: 'Woche des Monats',
-			dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
-			dayNamesShort: ['So','Mo','Di','Mi','Do','Fr','Sa'],
-			dayNamesMin: ['So','Mo','Di','Mi','Do','Fr','Sa'],
-			dayStatus: 'Setze DD als ersten Wochentag', dateStatus: 'W\u00e4hle D, M d',
-			dateFormat: 'dd.mm.yy', firstDay: 1, 
-			initStatus: 'W\u00e4hle ein Datum', isRTL: false};
-			$.datepicker.setDefaults($.datepicker.regional['de']);
-		});
+			$el.locationpicker("option", allBindingsAccessor().locationpickerOptions);
+			$el.locationpicker("value", value);
+		}
+	};
+					
+	jQuery(function($)
+	{
+		$.datepicker.regional['de'] = {clearText: 'l\u00f6schen', clearStatus: 'aktuelles Datum l\u00f6schen',
+		closeText: 'schlie\u00dfen', closeStatus: 'ohne \u00c4nderungen schlie\u00dfen',
+		prevText: '<zur\u00fcck', prevStatus: 'letzten Monat zeigen',
+		nextText: 'weiter>', nextStatus: 'n\u00e4chsten Monat zeigen',
+		currentText: 'heute', currentStatus: '',
+		monthNames: ['Januar','Februar','M\u00e4rz','April','Mai','Juni', 'Juli','August','September','Oktober','November','Dezember'],
+		monthNamesShort: ['Jan','Feb','M\u00e4r','Apr','Mai','Jun', 'Jul','Aug','Sep','Okt','Nov','Dez'],
+		monthStatus: 'anderen Monat anzeigen', yearStatus: 'anderes Jahr anzeigen',
+		weekHeader: 'Wo', weekStatus: 'Woche des Monats',
+		dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+		dayNamesShort: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+		dayNamesMin: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+		dayStatus: 'Setze DD als ersten Wochentag', dateStatus: 'W\u00e4hle D, M d',
+		dateFormat: 'dd.mm.yy', firstDay: 1, 
+		initStatus: 'W\u00e4hle ein Datum', isRTL: false};
+		$.datepicker.setDefaults($.datepicker.regional['de']);
+	});
 		
 
 		//$( document ).tooltip();
@@ -152,12 +152,18 @@
 		self.value = ko.computed({										// value with correction of max
 			read: function() { return(self.valueSL()); },
 			write: function (value) {
-				var val = Math.min(getInteger(value), max_Size);		// höchstens max Size
+			// TODO: GW 20161122 handle blanks
+				if (!isInteger(value)) {
+					value = getInteger(value);
+					if (value==Number.MAX_SAFE_INTEGER) {
+						value = 0;
+					}
+				}		
+				var val = Math.min(value, max_Size);	// höchstens max Size
 				// setze Maxgröße
 				self.maxValue(2*val);
 				// setze den neuen Wert
 				self.valueSL(val);
-				
 			},
 			owner: self
 		});
@@ -240,6 +246,7 @@
 		self.me = getMe();
 		self.tourID = null;
 		self.modifiable = ko.observable();
+		self.isPC = ko.observable(!isMobile());
 		self.memberModifiable = ko.observable(false);
 		
 		self.availableTourType = self.data.tourtypes;
@@ -280,7 +287,7 @@
 				self.mp_lon(self.predefinedmeetingpoint().lon);
 			}
 			$('#map').locationpicker("location", { latitude: self.mp_lat(), longitude: self.mp_lon() });
-			self.displayMap(self.showMap() || !predefined);
+			self.displayMap(self.showMap());
 		};
 		
 		var _showSlider = ko.observable(getPreference("to_showSlider"));
@@ -339,7 +346,7 @@
 		};
 
 		self.datetime = ko.observable();																		// 4
-		self.getMinDateTime = ko.observable(new Date((getDate()).getTime()+30*60*1000));		
+		self.getMinDateTime = ko.computed( function() { return(self.datetime()!=null?self.datetime():new Date((getDate()).getTime()+30*60*1000+ (self.isPC()?0:60*60*1000) ))});		
 		
 		self.paceRate = ko.observable();																		// 8
 		self.technicRate = ko.observable();																		// 9
@@ -436,11 +443,18 @@
 			var destination = getTempStorage(s_id, "okDestination");
 			clearTempStorage(s_id);
 			// save tour
+			if(!self.isPC()){
+				if(!isDateObj(self.datetime())){
+					var d = new Date(self.datetime());
+					self.datetime(new Date(d.getTime()-1000*60*60));
+				}
+			}
+			
 			saveTour(self.tourID, self.guide(), self.members(), self.datetime(), self.duration.value(), self.distance.value(), self.up.value(), self.paceRate(), self.technicRate(), self.mp_meetingpoint(), self.mp_adress(), self.mp_lat(), self.mp_lon(), self.actualTourType().tourtype, self.description(), self.night(), self.active(), destination)
 		}
 			
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', 10);
+			showMessage(info, document, 'message', durationShowMail);
 		};
 
 		/* --------- Construction --------- */
@@ -469,6 +483,10 @@
 			self.showMessage(message);
 		}		
 	};
+
+	window.onerror = function (msg, url, line, col, error) {
+		return(globalError(msg, url, line, col, error));
+	};
 	
 	</script>
 	<title>Sport2Gether (KnockOut)</title>
@@ -476,17 +494,17 @@
 <body onload="ko.applyBindings(new TourViewModel());">
 	<div class="total">
 		<div id="navigation">
-			<div id="navigation-top" class="small bigPortrait">
+			<div id="navigation-top" class="minimum-V-big">
 				<div id="message"></div>
 				<div id="logo"></div>
 			</div> <!--End div navigation-top -->
 			<div id="navigation-bottom">
 				<div id="navigation-buttons">
 					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-					<span data-bind="if: me!=null" class="bigPortrait">
-						<button data-bind="click: go2StatisticPage">Statistik</button>
-					</span>
+					<span data-bind="if: me!=null" class="minimum-V-medium">
+						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
+					</span >
 				</div> <!--End div navigation-buttons -->
 				<div id="navigation-buttons-logout" data-bind="if: me!=null">
 					<button id="btn-logout" data-bind="click: Logout">Logout</button>
@@ -495,23 +513,27 @@
 				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
 					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
 					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
-				</div> <!--End div navigation-buttons-in (logged out) -->
-				<div id="cb_tools">
-					<div id="cb_tools_top">
-						<label for="check5"><input name="cb_showMore" data-bind="checked: showMore" id="check6" type="checkbox">Mehr..</label>
-					</div> <!--End div cb_tools_top -->
-					<div id="cb_tools_bottom" data-bind="if: showMore" class="bigPortrait">
-						<input name="cb_showMap" data-bind="checked: showMap, click: function() { handleMap(); return(true);}" id="cb_showMap" type="checkbox"><label for="cb_showMap">Zeige Karte</label>
-				<!--		<input name="cb_showSlider" data-bind="checked: showSlider" id="cb_showSlider" type="checkbox"><label for="cb_showSlider">für Sabine</label> -->
-					</div> <!--End div cb_tools_bottom -->
-				</div>  <!--End div cb_tools -->
-				
+				</div> <!--End div navigation-buttons-in (logged out) -->				
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
 		<div class="content" id="main">
+			<div id="tourtools" class="minimum-V-medium" data-bind="if: me!=null">
+				<div id="cb_tools">
+					<div id="cb_tools_top" >
+						<label for="cb_showMore"><input name="cb_showMore" data-bind="checked: showMore" id="cb_showMore" type="checkbox">Mehr..</label>
+					</div> <!--End div cb_tools_top -->
+					<div id="cb_tools_bottom" data-bind="if: showMore" >
+						<label for="cb_showMap"><input name="cb_showMap" data-bind="checked: showMap, click: function() { handleMap(); return(true);}" id="cb_showMap" type="checkbox">Zeige Karte</label>
+						<div data-bind="ifnot: isPC">
+							<label for="cb_showSlider"><input name="cb_showSlider" data-bind="checked: showSlider" id="cb_showSlider" type="checkbox">Schieberegler</label>
+						</div>
+					</div> <!--End div cb_tools_bottom -->
+				</div>  <!--End div cb_tools -->
+			</div>
 			<div class="to-Table">
 				<div class="to-TableBody">
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Guide">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1">
 							<span class="to-TableCell-Content-Sport-1">Guide</span>
 						</div>
@@ -531,6 +553,7 @@
 					</div> <!-- div to-TableRow ENDE -->
 					
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Members" data-bind="if: members().length>0">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1">
 							<span class="to-TableCell-Content-members-1">Mitfahrer</span>
 						</div>
@@ -542,7 +565,7 @@
 
 								</div>
 								<div id="to-right-member">
-									<div><select class="to-select-member"multiple="multiple"data-bind="options:potentialMembers, selectedOptions:selectedPotentialMembers"></select></div>
+									<div><select class="to-select-member" multiple="multiple" data-bind="options:potentialMembers, selectedOptions:selectedPotentialMembers"></select></div>
 									<div><button data-bind="click: addMembers, enable: selectedPotentialMembers().length > 0">Neuer Mitfahrer</button></div>
 								</div>
 							</div>
@@ -553,69 +576,74 @@
 					</div> <!-- div to-TableRow ENDE -->
 					
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Sport">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1">
 							<span class="to-TableCell-Content-Sport-1">Sport</span>
 						</div>
 						<div class="to-TableCell to-TableCell-col-2-tini">
-							<span class="wrapIcon">
-								<div data-bind="css: actualTourType().icon"></div>					
-							</span> <!-- div class=wrapIcon" --> 
+							<div class="wrapIcon">
+								<span data-bind="css: actualTourType().icon"></span>					
+							</div> <!-- div class=wrapIcon" --> 
 						</div>
 						<div class="to-TableCell to-TableCell-col-3-small">
-							<span class="to-TableCell-Content-Sport-3">
+							<div class="to-TableCell-Content-Sport-3">
 								<div data-bind="if: modifiable">
 									<select name="sport" class="to-sport-select" data-bind="options: availableTourType, optionsText: 'tourart', value: actualTourType" ></select>
 								</div>
 								<div data-bind="ifnot: modifiable">
 									<div data-bind="text: actualTourType().actualTourType"></div>	
 								</div>
-							</span>
+							</div>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Treffpunkt-1">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Treffpunkt-1-1">Treffpunkt</span></div>
 						<div class="to-TableCell to-TableCell-col-2-small to-TableCell-border">
-							<span class="to-TableCell-Content-Treffpunkt-1-2">
+							<div class="to-TableCell-Content-Treffpunkt-1-2">
 								<div data-bind="if: modifiable">
 									<select name="predefinedmeetingpoint" class="to-meetingpoint-select" data-bind="options: availableMeetingPoints, optionsText: 'popup', value: predefinedmeetingpoint, click: handleMap"></select>
 								</div>
 								<div data-bind="ifnot: modifiable">
 									<div data-bind="text: predefinedmeetingpoint().popup"></div>	
 								</div>
-							</span>
+							</div>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Treffpunkt-2">
-						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Treffpunkt-2-1">&nbsp</span></div>
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
+						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Treffpunkt-2-1">&nbsp;</span></div>
 						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
-							<span class="to-TableCell-Content-Treffpunkt-2-2">
+							<div class="to-TableCell-Content-Treffpunkt-2-2">
 								<div data-bind="if: modifiable">
-									<input type="text" id="meetingpoint" class="to-input" name="meetingpoint" maxlength="80" data-bind="textInput: mp_meetingpoint">
+									<input type="text" id="meetingpoint" class="to-input" name="meetingpoint" maxlength="80" data-bind="textInput: mp_meetingpoint, attr: {placeholder: 'Treffpunkt eingeben'}">
 								</div>
 								<div data-bind="ifnot: modifiable">
 									<div data-bind="text: mp_meetingpoint"></div>	
 								</div>
-							</span>
+							</div>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div data-bind="if: displayMap">
 						<div class="to-TableRow to-TableRow-Content to-TableRow-Adresse">
-							<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Adresse-1">&nbsp</span></div>
+							<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
+							<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Adresse-1">&nbsp;</span></div>
 							<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
-								<span class="to-TableCell-Content-Adresse-2">
+								<div class="to-TableCell-Content-Adresse-2">
 									<div data-bind="if: modifiable">
-										<input type="text" id="adress" class="to-input" name="adress" data-bind="text: mp_adress, attr: {placeholder: 'Adresse eingeben'}"/>
+										<input type="text" id="adress" class="to-input" name="adress" maxlength="80" data-bind="textInput: mp_adress, attr: {placeholder: 'Adresse eingeben'}"/>
 									</div>
 									<div data-bind="ifnot: modifiable">
 										<div data-bind="text: (mp_adress().length>0)?mp_adress:'keine Angabe'"></div>	
 									</div>
 									<input type="hidden" id="lat" class="to-input" name="lat" data-bind="value: mp_lat"/>
 									<input type="hidden" id="lon" class="to-input" name="lon" data-bind="value: mp_lon"/>
-								</span>
+								</div>
 							</div>
 						</div> <!-- div to-TableRow ENDE -->
-						<div class="to-TableRow to-TableRow-Content to-TableRow-Karte small">
-							<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Karte-1">&nbsp</span></div>
+						<div class="to-TableRow to-TableRow-Content to-TableRow-Karte minimum-V-medium">
+							<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
+							<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Karte-1">&nbsp;</span></div>
 							<div class="to-TableCell to-TableCell-col-2-large">
 								<div class="to-TableCell-Content-Karte-2" >
 									<div id="map" class="to-map" data-bind="locationpicker: mp_adress, locationpickerOptions: { radius: 0, location: {latitude: mp_lat(), longitude:mp_lon()}, 
@@ -625,80 +653,86 @@
 						</div> <!-- div to-TableRow ENDE -->
 					</div>
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Beschreibung">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Beschreibung-1">Beschreibung</span></div>
 						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
-							<span class="to-TableCell-Content-Beschreibung-2">
+							<div class="to-TableCell-Content-Beschreibung-2">
 								<div data-bind="if: modifiable">
-									<textarea id="editor" name="editor" onkeyup="limitChars(this, 2000, 'charlimitinfo')" placeholder="Bitte Tourtext eingeben" data-bind="value: description"></textarea>
+									<textarea id="editor1" name="editor1" onkeyup="limitChars(this, 2000, 'charlimitinfo')" placeholder="Bitte Tourtext eingeben" data-bind="value: description"></textarea>
 									<span id="charlimitinfo" >Max. 2000 Zeichen</span>
-								</div>
-								
+								</div>								
 								<div data-bind="ifnot: modifiable">
-									<textarea id="editor" name="editor" readonly data-bind="value: description"></textarea>
+									<textarea id="editor2" name="editor2" readonly data-bind="value: description"></textarea>
 								</div>
-							</span>
+							</div>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Datum">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Datum-1">Datum / Uhrzeit</span></div>
 						<div class="to-TableCell to-TableCell-col-2-small to-TableCell-border">
-							<span class="to-TableCell-Content-Datum-2">
+							<div class="to-TableCell-Content-Datum-2">
 								<div data-bind="if: modifiable">
-									<input class="to-input" data-bind="datetimepicker: datetime, datetimepickerOptions: {  showWeek: true, dateFormat: 'dd.mm.yy', currentText: 'Sofort', closeText: 'Fertig', timeText: 'Startzeit', hourText: 'Stunde', minDateTime: getMinDateTime(), value: datetime, minuteGrid: 15, timeFormat: 'HH:mm' }" />
+									<div data-bind="if: isPC">
+										<input class="to-input" data-bind="datetimepicker: datetime, datetimepickerOptions: { showWeek: true, dateFormat: 'dd.mm.yy', currentText: 'Sofort', closeText: 'Fertig', timeText: 'Startzeit', hourText: 'Stunde', minDateTime: getMinDateTime(), value: datetime, minuteGrid: 15, timeFormat: 'HH:mm' }" />
+									</div>
+									<div class="to-input1" data-bind="ifnot: isPC">
+										<input type="datetime-local" data-bind="value: datetime, attr: { min: getMinDateTime }"/>
+									</div>
 								</div>
 								<div data-bind="ifnot: modifiable">
 									<div data-bind="text: makeDateString(datetime(),4)"></div>	
 								</div>
-							</span>
+							</div>
 						</div>
 						<div class="to-TableCell to-TableCell-col-3">
-							<span class="to-TableCell-Content-Night-3">
-								<div data-bind="if: modifiable">
-									<input id="cb_night" name="cb_night" data-bind="checked: night" type="checkbox" /><label for="cb_night">Nachttour</label>
+							<div class="to-TableCell-Content-Night-3">
+								<div data-bind="if: modifiable">   
+									<label for="cb_night"><input id="cb_night" name="cb_night" data-bind="checked: night, enable : modifiable()" type="checkbox" />Nachttour</label>
 								</div>
-								<div data-bind="ifnot: modifiable">
-									<input id="cb_night" name="cb_night" data-bind="checked: night" type="checkbox" disabled="disabled" /><label for="cb_night">Nachttour</label>
-								</div>
-							</span>
+							</div>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Pace">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Pace-1">Pace</span></div>
 						<div class="to-TableCell to-TableCell-col-2-tini">
-							<span class="to-TableCell-Content-Pace-2">
+							<div class="to-TableCell-Content-Pace-2">
 								<div class="wrapIcon">
 									<span data-bind="css: data.getRateFromRatetype(paceRate()).icon"></span>	
 								</div> <!-- div class=wrapIcon" --> 
-							</span>
+							</div>
 						</div>
 						<div class="to-TableCell to-TableCell-col-3">
-							<span class="to-TableCell-Content-Pace-3">
+							<div class="to-TableCell-Content-Pace-3">
 								<div data-bind="if: modifiable">
 									<div data-bind="slider: paceRate, pipOptions: {pips: {first: 'pip', last: 'pip'}}, sliderOptions: {min: 1, max: 6, range: 'min', step: 1, value: paceRate()}"> </div>
 								</div>
-								<span data-bind="text: data.getRateFromRatetype(paceRate()).speed" />
-							</span>
+								<span data-bind="text: data.getRateFromRatetype(paceRate()).speed" ></span>
+							</div>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Technik">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Technik-1">Technik</span></div>
 						<div class="to-TableCell to-TableCell-col-2-tini">
-							<span class="to-TableCell-Content-Technik-2">
+							<div class="to-TableCell-Content-Technik-2">
 								<div class="wrapIcon">
 									<span data-bind="css: data.getRateFromRatetype(technicRate()).icon"></span>	
 								</div> <!-- div class=wrapIcon" --> 
-							</span>
+							</div>
 						</div>
 						<div class="to-TableCell to-TableCell-col-3">
-							<span class="to-TableCell-Content-Technik-3">
+							<div class="to-TableCell-Content-Technik-3">
 								<div data-bind="if: modifiable">
 									<div data-bind="slider: technicRate, pipOptions: {pips: {first: 'pip', last: 'pip'}}, sliderOptions: {min: 1, max: 6, range: 'min', step: 1, value: technicRate()}"> </div>
 								</div>
-								<span data-bind="text: data.getSTKDescription(data.getRateFromRatetype(technicRate()))" />
-							</span>
+								<span data-bind="text: data.getSTKDescription(data.getRateFromRatetype(technicRate()))" ></span>
+							</div>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Distanz">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Distanz-1">Distanz</span></div>
 						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
 							<div class="oben" data-bind="if: modifiable()&&showSlider()">
@@ -709,7 +743,7 @@
 							<div class="unten">
 								<div data-bind="if: modifiable">
 									<div class="xxInput" data-bind="text: distance.displayValue, visible: !distance.editingValue(), click: distance.editValue"></div>
-									<input type="text" id="distanceInput" class="to-distance" name="distanceInput" data-bind="textInput: distance.value, visible: distance.editingValue(), hasfocus: distance.editingValue">
+									<input type="text" class="to-distance" name="to-distance" onfocus="this.setSelectionRange(0, 9999);" data-bind="textInput: distance.value, visible: distance.editingValue(), hasfocus: distance.editingValue">
 								</div>
 								<div data-bind="ifnot: modifiable">
 									<div data-bind="text: distance.displayValue"></div>
@@ -718,6 +752,7 @@
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Hoehenmeter">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Hoehenmenter-1">H&ouml;henmeter</span></div>
 						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
 							<div class="oben" data-bind="if: modifiable()&&showSlider()">
@@ -728,7 +763,7 @@
 							<div class="unten">
 								<div data-bind="if: modifiable">
 									<div class="xxInput" data-bind="text: up.displayValue, visible: !up.editingValue(), click: up.editValue"></div>
-									<input type="text" id="upInput" class="to-up" name="upInput" data-bind="textInput: up.value, visible: up.editingValue(), hasfocus: up.editingValue">
+									<input type="text" class="to-up" name="to-up" onfocus="setSelectionRange(0, 9999);" data-bind="textInput: up.value, visible: up.editingValue(), hasfocus: up.editingValue">
 								</div>
 								<div data-bind="ifnot: modifiable">
 									<div data-bind="text: up.displayValue"></div>
@@ -737,6 +772,7 @@
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Dauer">
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-col-1"><span class="to-TableCell-Content-Dauer-1">Dauer</span></div>
 						<div class="to-TableCell to-TableCell-col-2-large to-TableCell-border">
 							<div class="oben" data-bind="if: modifiable()&&showSlider()">
@@ -747,7 +783,7 @@
 							<div class="unten">
 								<div data-bind="if: modifiable">
 									<div class="xxInput" data-bind="text: duration.displayValue, visible: !duration.editingValue(), click: duration.editValue"></div>
-									<input type="text" id="durationInput" class="to-duration" name="durationInput" data-bind="textInput: duration.value, visible: duration.editingValue(), hasfocus: duration.editingValue">
+									<input type="text" class="to-duration" name="to-duration" onfocus="this.setSelectionRange(0, 9999);" data-bind="textInput: duration.value, visible: duration.editingValue(), hasfocus: duration.editingValue">
 								</div>
 								<div data-bind="ifnot: modifiable">
 									<div data-bind="text: duration.displayValue"></div>
@@ -756,29 +792,30 @@
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="to-TableRow to-TableRow-Content to-TableRow-Save">
-						<div class="to-TableCell to-TableCell-col-0 big">&nbsp</div>
-						<div class="to-TableCell to-TableCell-col-1">&nbsp</div>
+						<div class="to-TableCell to-TableCell-col-0 minimum-H-big">&nbsp;</div>
+						<div class="to-TableCell to-TableCell-col-1">&nbsp;</div>
 						<div class="to-TableCell to-TableCell-Content-Send-1">
 							<span class="to-TableCell-Content-Save-2">
 								<button id="btncancel" data-bind="click: cancel">Abbrechen</button>
 							</span>
 							<span data-bind="if: modifiable">
-								<span class="ma-TableCell-Content-Save-3">
+								<span class="to-TableCell-Content-Save-3">
 									<button id="btnsave" data-bind="click: save">Speichern</button>
 								</span>
 							</span>
 						</div>
-					</div> <!-- div ma-TableRow ENDE -->
+					</div> <!-- div to-TableRow ENDE -->
 				</div> <!-- div to-TableBody ENDE -->
 			</div>  <!-- div to-Table ENDE -->
 
 		</div> <!--End div content -->
-		<div id="footer" class="small">
+		<div id="footer" class="minimum-V-big">
 			<div id="version">
 				<a href="html/FAQ.php" target="_blank">FAQ</a>
 				<a href="html/disclaimer.php" target="_blank">Regeln</a>
 				<a href="html/impressum.php" target="_blank">Impressum</a>
-				<span data-bind="text: data.versioninfo" />
+				<span data-bind="text: data.versioninfo"> </span> 
+				[<span data-bind="text: makeDateString(data.lastUpdate,4)"></span>]
 			</div> <!--End div version -->
 		</div> <!--End div footer -->
 	</div> <!--End div total -->

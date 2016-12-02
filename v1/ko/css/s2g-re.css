@@ -7,13 +7,15 @@
 }
 
 .re-TableCell-col-1{
-    	padding-top: 3px; /* - margin-top of textarea */
+    padding-top: 3px; /* - margin-top of textarea */
 	width: 12em;
 }
 
 .re-TableCell-col-2{
-	width: calc(( 40 * ( 100% - ( 12em ))) / 100 );
-	min-width: 12em;
+	width: calc(( 60 * ( 100% - ( 12em ))) / 100 );
+	max-width: 50em;
+	min-width: 10em;
+	margin-right: 5px; /* Abstand Info neben Eingabefelder */
 }
 
 /* Abstand Button zu Eingabefelder */
@@ -41,18 +43,16 @@
 	border: none;
 
 	/* resize baseline */
-    	vertical-align: text-top;
-    	margin-top: -1px; /* - (border-top-width + padding-top) */
+    vertical-align: text-top;
+    margin-top: -1px; 				/* - (border-top-width + padding-top) */
 
   	font-family: inherit;
    	font-size: inherit;
 }
 
-
 .re-TableRow-Content{
 	padding: 0.2em;
 }
-
 
 .re-TableCell-col-2{
 	-webkit-border-radius: 10px;
@@ -62,7 +62,6 @@
 	border-width:thin medium;
 	padding: 5px;
 }
-
 
 /* responsive design */
 /* big-screen */
@@ -89,13 +88,6 @@ html{
 
 @media (max-height: 450px){
 
-.small {
-	display: none;
-}
-
-.re-TableBody {
-	height: 100%;
-	overflow-y: scroll;
 }
 
 }

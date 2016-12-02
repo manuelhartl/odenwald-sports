@@ -12,7 +12,6 @@
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 
-	
 	// 'use strict';	// view_dont_use_strict
 
 	// class to represent a login	
@@ -55,7 +54,7 @@
 			self.isRequestPW(true);
 		}
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', 10);
+			showMessage(info, document, 'message', durationShowMail);
 		};
 
 		/* --------- Construction --------- */
@@ -67,6 +66,10 @@
 			self.showMessage(message);
 		}		
 	}
+
+	window.onerror = function (msg, url, line, col, error) {
+		return(globalError(msg, url, line, col, error));
+	};
 	
 	</script>
 	<title>Sport2Gether (KnockOut)</title>
@@ -74,16 +77,16 @@
 <body onload="ko.applyBindings(new LoginViewModel());">
 	<div class="total">
 		<div id="navigation">
-			<div id="navigation-top" class="small bigPortrait">
+			<div id="navigation-top" class="minimum-V-big">
 				<div id="message"></div>
 				<div id="logo"></div>
 			</div> <!--End div navigation-top -->
 			<div id="navigation-bottom">
 				<div id="navigation-buttons">
 					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-					<span data-bind="if: me!=null" class="bigPortrait">
-						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					<span data-bind="if: me!=null" class="minimum-V-medium">
+						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
 					</span >
 				</div> <!--End div navigation-buttons -->
 				<div id="navigation-buttons-logout" data-bind="if: me!=null">
@@ -99,9 +102,9 @@
 		<div class="content" id="main">
 			<div class="lo-Table">
 				<div class="lo-TableBody">
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Head small">&nbsp</div> <!-- div lo-TableRow ENDE -->
+					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Head minimum-V-medium">&nbsp;</div> <!-- div lo-TableRow ENDE -->
 					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Username">
-						<div class="lo-TableCell lo-TableCell-col-0 big">&nbsp</div>
+						<div class="lo-TableCell lo-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="lo-TableCell lo-TableCell-col-1">
 							<span class="lo-TableCell-Content-Username-1">Benutzername</span>
 						</div>
@@ -112,7 +115,7 @@
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Username" data-bind="ifnot: isRequestPW">
-						<div class="lo-TableCell lo-TableCell-col-0 big ">&nbsp</div>
+						<div class="lo-TableCell lo-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="lo-TableCell lo-TableCell-col-1">
 							<span class="lo-TableCell-Content-Password-1">Passwort</span>
 						</div>
@@ -123,40 +126,40 @@
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Email" data-bind="if: isRequestPW">
-						<div class="lo-TableCell lo-TableCell-col-0 big ">&nbsp</div>
+						<div class="lo-TableCell lo-TableCell-col-0 minimum-H-big ">&nbsp;</div>
 						<div class="lo-TableCell lo-TableCell-col-1">
 							<span class="lo-TableCell-Content-Email-1">Email</span>
 						</div>
 						<div class="lo-TableCell lo-TableCell-col-2">
 							<span class="lo-TableCell-Content-Email-2">
-								<input type="email" id="email" name="email" placeholder="Deine  Email der Registrierung" />
-							</span>
-							<span class="lo-TableCell-Content-Email-2">
-								<button id="btn-requestpassword" data-bind="click: requestPW">Passwort anfordern</button>
+								<input type="email" id="email" name="email" placeholder="Deine Email der Registrierung" />
 							</span>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
 					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Login">
-						<div class="lo-TableCell lo-TableCell-col-0 big">&nbsp</div>
-						<div class="lo-TableCell lo-TableCell-col-1">&nbsp</div>
-						<div class="lo-TableCell lo-TableCell-Content-Login-1">
-							<span class="lo-TableCell-Content-Login-2">
+						<div class="lo-TableCell lo-TableCell-col-0 minimum-H-big">&nbsp;</div>
+						<div class="lo-TableCell lo-TableCell-col-1">&nbsp;</div>
+						<div class="lo-TableCell lo-TableCell-Content-Login-1">							
+							<span class="lo-TableCell-Content-Login-2" data-bind="ifnot: isRequestPW">
 								<button id="btn-resetpassword" data-bind="click: requestPWInput">Passwort vergessen</button>
-							</span>
+							</span>							
+							<span class="lo-TableCell-Content-Login-2" data-bind="if: isRequestPW">
+								<button id="btn-requestpassword" data-bind="click: requestPW">Passwort anfordern</button>
+							</span>							
 							<span class="lo-TableCell-Content-Login-3">
 								<button id="btncancel" data-bind="click: cancelPW">Abbrechen</button>
 							</span>
-							<span class="lo-TableCell-Content-Login-4">
+							<span class="lo-TableCell-Content-Login-4" data-bind="ifnot: isRequestPW">
 								<button id="btnlogin" data-bind="click: loginPassword">Anmelden</button>
 							</span>
 						</div>
 					</div> <!-- div to-TableRow ENDE -->
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Foot small">&nbsp</div> <!-- div lo-TableRow ENDE -->
+					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Foot minimum-V-medium">&nbsp;</div> <!-- div lo-TableRow ENDE -->
 				</div> <!-- div lo-TableBody ENDE -->
 			</div> <!-- div lo-Table ENDE -->
 
 		</div> <!--End div content -->
-		<div id="footer" class="small">
+		<div id="footer" class="minimum-V-big">
 			<div id="version">
 				<a href="html/FAQ.php" target="_blank">FAQ</a>
 				<a href="html/disclaimer.php" target="_blank">Regeln</a>

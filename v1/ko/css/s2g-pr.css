@@ -1,12 +1,6 @@
-.pr-TableBody{
-	min-height: 100%; /* Mindesthöhe auf 100 % (bei modernen Browsern) */
-	height: auto !important; /* important Behelf (bei modernen Browsern */
-}
-
-
 /* Size: width */
 .pr-TableCell-col-0{
-	width: 100px;
+	width: 10em;
 }
 
 .pr-TableCell-col-1, .pr-TableCell-col-1-noborder{
@@ -14,13 +8,17 @@
 }
 
 .pr-TableCell-col-2{
-	width: calc(( 40 * ( 100% - ( 12em ))) / 100 );
+	width: calc(( 80 * ( 100% - ( 10em + 12em ))) / 100 );
+	min-width: 12em;
+}
+.pr-TableCell-col-2-large{
+	width: calc(( 90 * ( 100% - ( 10em + 12em ))) / 100 );
 	min-width: 12em;
 }
 
 
 /* size: height */
-#telefon, #birthday, #adresse, #realname{
+#telefon, #birthday, #adress, #realname{
 	height: 1.5em;
 }
 
@@ -30,8 +28,8 @@
 
 
 /* input fields */
-#telefon, #birthday, #adresse, #realname{
-	width:  100%;
+#telefon, #birthday, #adress, #realname{
+	width:  98%;
 	resize: none;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
@@ -75,14 +73,6 @@
 	border-radius: 10px;
 	border-style: solid;
 	border-width:thin medium;
-}
-.pr-TableCell-col-2{
-	width: calc(( 40 * ( 100% - ( 8em ))) / 100 );
-	min-width: 5em;
-}
-.pr-TableCell-col-2-large{
-	width: calc(( 80 * ( 100% - ( 8em ))) / 100 );
-	min-width: 5em;
 }
 
 #adress{

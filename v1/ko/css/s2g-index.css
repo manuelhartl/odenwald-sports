@@ -1,14 +1,30 @@
 #navigation-top {
 	height: 50px;
+	width: 100%;
+	min-width: 100%;
+	border-bottom: solid 2px #37607c;
 }
+
 #navigation-bottom {
 	height: 40px;
+	width: 100%;
+	min-width: 100%;
+	padding-top: 5px;
+}
+
+
+#navigation-buttons {
+	float: left;
+}
+
+#navigation-buttons-logout ,#navigation-buttons-login {
+	float: right;
 }
 
 button, a[id=rssbutton], a[id=firstbutton], a[id=nextbutton], a[id=prevbutton], a[id=lastbutton] {
   background: #669999;
-  -webkit-border-radius: 8;
-  -moz-border-radius: 8;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
   border-radius: 8px;
   color: #ffffff;
   font-weight: 500;
@@ -20,7 +36,6 @@ button, a[id=rssbutton], a[id=firstbutton], a[id=nextbutton], a[id=prevbutton], 
 button[id=btn-logout] {
   background: #c63635;
 }
-
 
 button:hover,  a[id=rssbutton]:hover, a[id=firstbutton]:hover, a[id=prevbutton]:hover, a[id=nextbutton]:hover, a[id=lastbutton]:hover {
   background: #78c2c1;
@@ -40,17 +55,14 @@ label {
 }
 
 #version {
-	margin-top: 10px;
-	margin-bottom: 10px;
-	min-height: 10px;
-	max-height: 10px;
+	margin-right: 20px;
 	float: right;
-	color: #999999;
+	color: #555555;
 }
 
 #version a {
 	background-color: inherit;
-	color: #7F7F96;
+	color: #555555;
 	padding: 3px 7px;
 	border-width: 0;
 }
@@ -73,26 +85,8 @@ label {
 #logo {
 	background: transparent url('../img/s2g.sprite.png') calc( 0 * 25px ) calc( -11 * 25px ) no-repeat;
 	width: 250px;
-	height: 50px;
+	height: 48px;
 	float: right;
 }
 
-#navigation-top {
-	width: 100%;
-	min-width: 100%;
-	border-bottom: solid 2px #37607c;
-}
 
-#navigation-bottom {
-	width: 100%;
-	min-width: 100%;
-	padding-top: 5px;
-}
-
-#navigation-buttons {
-	float: left;
-}
-
-#navigation-buttons-logout ,#navigation-buttons-login {
-	float: right;
-}

@@ -12,7 +12,8 @@
 }
 
 .lo-TableCell-col-2{
-	width: calc(( 40 * ( 100% - ( 8em ))) / 100 );
+	width: calc(( 80 * ( 100% - ( 10em ))) / 100 );
+	max-width: 50em;
 	min-width: 10em;
 }
 
@@ -22,7 +23,7 @@
 }
 
 /* size: height */
-#username, #password{
+#username, #password, #email{
 	height: 1.5em;
 }
 
@@ -32,7 +33,7 @@
 
 
 /* input fields */
-#username, #password{
+#username, #password, #email{
 	width:  100%;
 	resize: none;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */

@@ -5,7 +5,7 @@
 	<link rel="stylesheet" type="text/css" href="../css/s2g.css" />
 	<link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
 	<link rel="stylesheet" type="text/css" href="../css/s2g-ma.css" />
-	<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+	<meta charset="UTF-8">
 	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
 	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
 	<script type='text/javascript' src='../script/memorystorage.js'></script>
@@ -23,7 +23,7 @@
 		self.me = getMe();
 		
 		self.sender = ko.observable(self.me.nickname);		
-		self.recipe = ko.observable("Empfängerliste");
+		self.recipe = ko.observable("Empf\u00e4ngerliste");
 		self.subject = ko.observable("Mail an alle");
 		self.mailcontent = ko.observable("");
 		
@@ -56,10 +56,14 @@
 				}
 				self.recipe(recipes);
 				self.subject(tour.tourMail2Tour(self.me.nickname));				
-			} else if(type == "2user"){
+			}else if(type == "2user"){
 				var user = self.data.getUser(subsource);
 				self.recipe(subsource);
 				self.subject(user.userMail(self.me.nickname));				
+			}else if(type == "2webmaster"){
+				self.recipe(subsource);
+				self.subject("Fehlermeldung von "+ self.me.nickname);				
+				self.mailcontent(source);				
 			}
 		}
 		
@@ -84,20 +88,22 @@
 					SendMail2User(self.recipe(), self.subject(), self.mailcontent(), destination_success, destination_cancel);				
 				}else if(type == "2tourall"){
 					SendMail2Tour(self.tourID(), self.subject(), self.mailcontent(), destination_success, destination_cancel);				
-				} else if(type == "2user"){
+				}else if(type == "2user"){
+					SendMail2User(self.recipe(), self.subject(), self.mailcontent(), destination_success, destination_cancel);				
+				}else if(type == "2webmaster"){
 					SendMail2User(self.recipe(), self.subject(), self.mailcontent(), destination_success, destination_cancel);				
 				}
 			}else{
 				if(self.subject()==""){
-					setMessage("Bitte Betreff ausfüllen");
+					self.showMessage("Bitte Betreff ausf\u00fcllen");
 				}else if(self.mailcontent()==""){
-					setMessage("Bitte Text ausfüllen");
+					self.showMessage("Bitte Text ausf\u00fcllen");
 				}
 			}
 		}
 		
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', 10);
+			showMessage(info, document, 'message', durationShowMail);
 		};
 
 		/* --------- Construction --------- */
@@ -116,16 +122,16 @@
 <body onload="ko.applyBindings(new MailViewModel());">
 	<div class="total">
 		<div id="navigation">
-			<div id="navigation-top" class="small bigPortrait">
+			<div id="navigation-top" class="minimum-V-big">
 				<div id="message"></div>
 				<div id="logo"></div>
 			</div> <!--End div navigation-top -->
 			<div id="navigation-bottom">
 				<div id="navigation-buttons">
 					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-					<span data-bind="if: me!=null" class="bigPortrait">
-						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					<span data-bind="if: me!=null" class="minimum-V-medium">
+						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
 					</span >
 				</div> <!--End div navigation-buttons -->
 				<div id="navigation-buttons-logout" data-bind="if: me!=null">
@@ -142,6 +148,7 @@
 			<div class="ma-Table">
 				<div class="ma-TableBody">
 					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Absender">
+						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Absender-2-1">Von</span></div>
 						<div class="ma-TableCell ma-TableCell-col-2-large">
 							<span class="ma-TableCell-Content-Absender-2-2">
@@ -150,6 +157,7 @@
 						</div>
 					</div> <!-- div ma-TableRow ENDE -->
 					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Empfaenger">
+						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Empfaenger-1">An</span></div>
 						<div class="ma-TableCell ma-TableCell-col-2-large">
 							<span class="ma-TableCell-Content-Empfaenger-2">
@@ -158,14 +166,16 @@
 						</div>
 					</div> <!-- div ma-TableRow ENDE -->
 					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Betreff">
+						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Betreff-1">Betreff</span></div>
 						<div class="ma-TableCell ma-TableCell-col-2-large">
 							<span class="ma-TableCell-Content-Betreff-2">
-								<input type="text" id="Betreff" data-bind="textInput: subject"></input>
+								<input type="text" id="Betreff" data-bind="textInput: subject" />
 							</span>
 						</div>
 					</div> <!-- div ma-TableRow ENDE -->
 					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Editor">
+						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Editor-1">Inhalt</span></div>
 						<div class="ma-TableCell ma-TableCell-col-2-large">
 							<span class="ma-TableCell-Content-Editor-2">
@@ -174,8 +184,8 @@
 						</div>
 					</div> <!-- div ma-TableRow ENDE -->
 					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Send">
-						<div class="ma-TableCell ma-TableCell-col-0 big">&nbsp</div>
-						<div class="ma-TableCell ma-TableCell-col-1">&nbsp</div>
+						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
+						<div class="ma-TableCell ma-TableCell-col-1">&nbsp;</div>
 						<div class="ma-TableCell ma-TableCell-Content-Send-1">
 							<span class="ma-TableCell-Content-Send-2">
 								<button id="btncancel" data-bind="click: cancel">Abbrechen</button>
@@ -189,12 +199,12 @@
 			</div>  <!-- div ma-Table ENDE -->
 
 		</div> <!--End div content -->
-		<div id="footer" class="small">
+		<div id="footer" class="minimum-V-big">
 			<div id="version">
 				<a href="html/FAQ.php" target="_blank">FAQ</a>
 				<a href="html/disclaimer.php" target="_blank">Regeln</a>
 				<a href="html/impressum.php" target="_blank">Impressum</a>
-				<span data-bind="text: data.versioninfo" />
+				<span data-bind="text: data.versioninfo" ></span>
 			</div> <!--End div version -->
 		</div> <!--End div footer -->
 	</div> <!--End div total -->

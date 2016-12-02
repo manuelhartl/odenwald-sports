@@ -3,6 +3,10 @@
 
 
 /* Size: width */
+.ma-TableCell-col-0{
+	width: 0em;
+}
+
 .ma-TableCell-col-1{
 	width: 8em;
 }

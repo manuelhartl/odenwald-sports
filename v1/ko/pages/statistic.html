@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta name="viewport" content="initial-scale=1.0">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=600">
     <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
     <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
     <link rel="stylesheet" type="text/css" href="../css/s2g-st.css" />
-    <meta charset="UTF-8">
 	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
 	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
 	<script type='text/javascript' src='../script/memorystorage.js'></script>
@@ -164,7 +164,7 @@
 		});
 
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', 10);
+			showMessage(info, document, 'message', durationShowMail);
 		};
 
 		/* --------- Construction --------- */
@@ -187,16 +187,16 @@
 <body onload="ko.applyBindings(new StatisticViewModel());">
 	<div class="total">
 		<div id="navigation">
-			<div id="navigation-top" class="small bigPortrait">
+			<div id="navigation-top"  class="minimum-V-big">
 				<div id="message"></div>
 				<div id="logo"></div>
 			</div> <!--End div navigation-top -->
 			<div id="navigation-bottom">
 				<div id="navigation-buttons">
 					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-					<span data-bind="if: me!=null" class="bigPortrait">
-						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					<span data-bind="if: me!=null" class="minimum-V-medium">
+						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
 					</span >
 				</div> <!--End div navigation-buttons -->
 				<div id="navigation-buttons-logout" data-bind="if: me!=null">
@@ -210,18 +210,10 @@
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
 		<div class="content" id="main">
-			<div id=statistictools" class="small" data-bind="if: me!=null">
+			<div id="statistictools" class="minimum-V-medium" data-bind="if: me!=null">
 				<div id="st_tools">
 					<div id="st_tools_top">
-						<form name="showFilter" action="" method="post">
-							<input name="action" value="showFilter" type="hidden">
-							<fieldset>
-								<label for="check1">
-									<input name="cb_showFilter" data-bind="checked: showFilter" id="check1" type="checkbox">
-										Filter
-								</label>
-							</fieldset>
-						</form>
+						<label for="check1"><input name="cb_showFilter" data-bind="checked: showFilter" id="check1" type="checkbox">Filter</label>
 						<span data-bind="if: showFilter">
 							<select data-bind="options: filters, optionsText: 'title', value: actFilter"> </select>						
 						</span>
@@ -250,16 +242,16 @@
 					<div class="st-TableHead st-TableCell-ToursGuide"><span class="st-TableHead-Content-ToursGuide" data-bind="text: $root.me.toursGuidedNo()"></span>&nbsp;</div>
 				</div> <!-- div tl-TableRow ENDE -->	
 				<div class="tl-TableRow st-TableHeading" data-bind="if: showFilter">
-					<div class="st-TableHead st-TableCell-Mail"<span>&nbsp;</span></div>
+					<div class="st-TableHead st-TableCell-Mail"><span>&nbsp;</span></div>
 					<div class="st-TableHead st-TableCell-User"><input class="searchfield" data-bind="value: $root.searchUser, valueUpdate: 'afterkeydown'" /></div>
-					<div class="st-TableHead st-TableCell-GuidedTours"<span>&nbsp;</span></div>
-					<div class="st-TableHead st-TableCell-ToursGuide"<span>&nbsp;</span></div>					
+					<div class="st-TableHead st-TableCell-GuidedTours"><span>&nbsp;</span></div>
+					<div class="st-TableHead st-TableCell-ToursGuide"><span>&nbsp;</span></div>					
 				</div> <!-- div tl-TableRow ENDE -->	
 
 				<div class="st-TableBody" data-bind="foreach: filteredUsers()">
 		<!-- User -->
 					<div class="st-TableRow st-TableRow-Content" data-bind="css: (($index()%2)==0)?'odd':'even'">
-						<div class="st-TableCell st-TableCell-Mail"><span class="st-TableCell-Content-Mail st-member">
+						<div class="st-TableCell st-TableCell-Mail st-TableCell-Content-Mail st-member">
 							<span class="st-member-mail"><a class="st-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2user', nickname, nickname, 'st', 'st'), attr: { title: sh(userMailTitle()) }"></a></span>
 						</div>
 						<div class="st-TableCell st-TableCell-User">
@@ -272,12 +264,12 @@
 			</div>  <!-- div tl-Table ENDE -->
 
 		</div> <!--End div content -->
-		<div id="footer" class="small">
+		<div id="footer" class="minimum-V-big">
 			<div id="version">
 				<a href="html/FAQ.php" target="_blank">FAQ</a>
 				<a href="html/disclaimer.php" target="_blank">Regeln</a>
 				<a href="html/impressum.php" target="_blank">Impressum</a>
-				<span data-bind="text: data.versioninfo" />
+				<span data-bind="text: data.versioninfo" ></span>
 			</div> <!--End div version -->
 		</div> <!--End div footer -->
 	</div> <!--End div total -->

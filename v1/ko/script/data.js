@@ -1,46 +1,15 @@
-﻿	const version = "V10.15";
-	const root = "/alpha";
-
+﻿	const alpha = false;
+	const root = alpha?"/alpha":"/beta";
+	const webmaster = alpha?"GW_ALPHA1":"GW_BETA1";
+	const version = "V11.01" + "-" + root.substring(1);
+	const dumpAJAX = false;
+	
 	'use strict';	// view_use_strict
 
-
-		// 10.15	- Erweiterung
-		//				Profil: Adresse via Map eingeben
-		//
-		// 10.14	- Erweiterung
-		//				Trigger via Email
-		//				Login: keine Daten vom Server holen
-		//
-		// 10.13	- Fehlerbehebung
-		//				Redirekt wenn der Benutzer nicht eingeloggt ist
-		//
-		// 10.12	- Fehlerbehebung
-		//				Logos auf 120% gesetzt
-		//				Tourbeschreibung auf 2000 Zeichen begrenzt
-		//
-		// 10.11	- Fehlerbehebung
-		//				user-save: redirection eingefügt
-		//
-		// 10.10	- erste Testversion
-		//
-		// 10.09	- Data:	Funktion sendMail eingebaut
-		//
-		// 10.08	- Data:	Tour Last Modified Funktion eingebaut
-		//
-		// 10.07	- Data:	Register Funktion eingebaut
-		//
-		// 10.06	- Data:	ResetPassword Funktion eingebaut
-		//
-		// 10.05	- Data:	log für alle REST Funktionen eingebaut
-		//
-		// 10.04	- Data:	Tourfunktion einbauen
-		//					leave, join tour
-		//
-		// 10.02/03	- Data:	Umstellung auf alpha
-		//
-		// 10.01	- Data:	Umstellung auf alpha
-		//
-
+	// 11.01	- Version
+	//				zum veröffentlichen
+	//
+	const durationShowMail = 60;
 
 	////////////////////////////// helper ///////////////////////////
 	Array.prototype.contains = function (obj) {
@@ -52,13 +21,39 @@
 		}
 		return false;
 	}
+	
+	function globalError(msg, url, line, col, error) {
+		// Note that col & error are new to the HTML 5 spec and may not be 
+		// supported in every browser.  It worked for me in Chrome.
+		var extra = !col ? '' : '\ncolumn: ' + col;
+		extra += !error ? '' : '\nerror: ' + error;
 
+		// You can view the information in an alert to see things working like this:
+		go2MailPage("2webmaster", "Error: " + msg + "\nurl: " + url + "\nline: " + line + extra, webmaster, "tl", "tl");
+
+		var suppressErrorAlert = true;
+		// If you return true, then error alerts (like in older versions of 
+		// Internet Explorer) will be suppressed.
+		return suppressErrorAlert;
+	};
+	
+	function isMobile(){
+		var ua = navigator.userAgent;
+		var checker = {
+			iphone: ua.match(/(iPhone|iPod|iPad)/),
+			blackberry: ua.match(/BlackBerry/),
+			android: ua.match(/Android/)
+			};
+			
+		return(checker.iphone||checker.blackberry||checker.android);
+	}
+	
 	// format:
 	//	1: dd.mm.yyyy (default)
 	//	2: d.m.yyyy
 	//	3: yyyy
 	//	4: d.m.yyyy h:MM
-
+	
 	function makeDateString(theDate, what) {
 		if (theDate != null && theDate.getFullYear() > 0) {
 			switch (what) {
@@ -79,7 +74,7 @@
 		}
 		return ("");
 	}
-
+	
 	// format: Meter oder Kilometer mit kurzer oder langer Bezeichnung
 	function makeDistanceString(distance, shortInfo) {
 		if (!isInteger(distance)) {
@@ -99,7 +94,7 @@
 		}
 		return (shortInfo ? "N/A" : "nicht angegeben");
 	}
-
+	
 	// format: Höhe mit kurzer oder langer Bezeichnung
 	function makeAltitudeString(altitude, shortInfo) {
 		if (!isInteger(altitude)) {
@@ -119,7 +114,7 @@
 		}
 		return (shortInfo ? "N/A" : "nicht angegeben");
 	}
-
+	
 	// format: Zeit mit kurzer odr langer Bezeichnung
 	function makeDurationString(duration, shortInfo) {
 		if (isDateObj(duration)) {
@@ -189,7 +184,7 @@
 		}
 		return (dist);
 	}
-
+	
 	function getDistance(lat1, lon1, lat2, lon2){
 		var dist;
 		if(lat1!=0&&lon1!=0&&lat2!=0&&lon2!=0){
@@ -197,11 +192,11 @@
 		}else{
 			dist=0;
 		}
-
+		
 		return( makeDistanceString(dist, true) );
 	}
-
-	function isDate(txtDate) {
+	
+	function isDateString(txtDate) {
 		var currVal = txtDate;
 		if (currVal == '') {
 			return (false);
@@ -230,48 +225,37 @@
 		}
 		return (true);
 	}
-
-	function isDateObj(obj) {
-		/// <summary>
-		/// Determines if the passed object is an instance of Date.
-		/// </summary>
-		/// <param name="obj">The object to test.</param>
-		return Object.prototype.toString.call(obj) === '[object Date]';
+	
+	function isDateObj(date) {
+		return (date instanceof Date && !isNaN(date.valueOf()));
 	}
-	function isValidDate(obj) {
-		/// <summary>
-		/// Determines if the passed object is a Date object, containing an actual date.
-		/// </summary>
-		/// <param name="obj">The object to test.</param>
-		return !isEmpty(obj) && isDateObj(obj) && obj.toString()!='Invalid Date';
-	}
-
+	
 	function isEmpty(obj){
 		return (jQuery.isEmptyObject(obj));
 	}
-
+	
 	function sh(value){
 		return((value!=null&&value.length!=0)?value:".");
 	}
-
+	
 	function pad(n){ return n<10 ? '0'+n : n; };
-
+	
 	function toggle(id){
 		var e = document.getElementById(id);
-
+		
 		if(e !=null ){
 			e.style.display = (e.style.display == "none")?"":"none";
 		}
  	}
-
+	
 	function isInteger(x) {
         return (typeof x === 'number') && (x % 1 === 0);
     }
-
+	
 	function isNumber(x) {
         return (typeof x === 'number');
     }
-
+	
 	function getInteger(value){
 		var val = Number.MAX_SAFE_INTEGER;
 		if(isInteger(value)){
@@ -284,11 +268,11 @@
 		}
 		return(val);
 	}
-
+	
 	function isString(x) {
 		return !isEmpty(x) && x !== undefined && x.constructor === String
 	}
-
+	
 	function round(wert, dez) {
         wert = parseFloat(wert);
         if (!wert) return 0;
@@ -299,8 +283,8 @@
         var umrechnungsfaktor = Math.pow(10,dez);
 
         return ((Math.round(wert * umrechnungsfaktor) / umrechnungsfaktor).toFixed(dez).replace('.', ','));
-	}
-
+	} 
+	
 	function get_url_param( name ){
 		name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 
@@ -313,7 +297,7 @@
 		else
 			return results[1];
 	}
-
+	
 	function date2JSON(d){
 		var	tz = d.getTimezoneOffset(), // mins
 			tzs = (tz>0?"-":"+") + pad(parseInt(Math.abs(tz/60)));
@@ -324,20 +308,20 @@
 		if (tz === 0){ // Zulu time == UTC
 			tzs = 'Z';
 		}
-
+		
 		return (d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + tzs);
 	}
-
+	
 	function dateFromServer(dateJSON){
 		var a = dateJSON.split(/[^0-9]/);
 		return( new Date (a[0], a[1]-1, a[2]|| 1, a[3]|| 0, a[4]|| 0, a[5]|| 0 ));
 	}
-
+	
 	function dateFromLokal(dateJSON){
 		var a = dateJSON.split(/[^0-9]/);
 		return( new Date (Date.UTC(a[0], a[1]-1, a[2]|| 1, a[3]|| 0, a[4]|| 0, a[5]|| 0 )));
 	}
-
+	
 	function testDate(){
 		var date = new Date(2015,6,11,16,00,00);
 		var dateJSON = date2JSON(date);
@@ -345,15 +329,15 @@
 		var serverDate = dateFromServer(serverJSON);
 		var localDateJSON = date2JSON(serverDate);
 		var localDate = dateFromLokal(localDateJSON);
-
+		
 		console.log("Original date      : " + date);
 		console.log("Original date(JSON): " + dateJSON);
 		console.log("Server date (JSON) : " + serverJSON);
 		console.log("Server date        : " + serverDate);
 		console.log("Local date (JSON)  : " + localDateJSON);
 		console.log("Local date         : " + localDate);
-	}
-
+	}			
+	
 	function getDateFromString4Safari(dateString){
 		if(dateString==null) {return(null);}
 		var a = dateString.split(/[^0-9]/);
@@ -371,10 +355,14 @@
 		console.log(text);
 		console.log(str=="undefined"?obj:str);
 	}
+	
+	function dumpInfo(text){
+		console.log(text);
+	}
 	////////////////////////////// end-helper ///////////////////////////
 
 	function checkAutentification( okDestination, cancelDestination )
-	{
+	{  
 		if(WhoAmI()==""){
 			go2LoginPage(okDestination, cancelDestination);
 		}
@@ -384,49 +372,57 @@
 	function go2LoginPage(okDestination, cancelDestination){
 		setTempStorage("login", "okDestination", okDestination);
 		setTempStorage("login", "cancelDestination", cancelDestination);
-		saveData1("lo");
+		saveData1("lo"); 
 		window.location.href='login.html';
 	};
+
 	function go2MailPage(mailtype, tour, user, linkOK, linkCancel){
 		if(mailtype == "2tourall"){
 			setTempStorage("mail", "type", mailtype);			// Mail an Alle
-			setTempStorage("mail", "source", tour);
+			setTempStorage("mail", "source", tour);		 
 			setTempStorage("mail", "subsource", "");
 			setTempStorage("mail", "destination_success", linkOK);
 			setTempStorage("mail", "destination_cancel", linkCancel);
 		}else if(mailtype == "2tourguide"){
 			setTempStorage("mail", "type", mailtype);			// Mail an Tour Guide
-			setTempStorage("mail", "source", tour);
+			setTempStorage("mail", "source", tour);		 
 			setTempStorage("mail", "subsource", "");
 			setTempStorage("mail", "destination_success", linkOK);
 			setTempStorage("mail", "destination_cancel", linkCancel);
 		}else if(mailtype == "2tourmember"){
 			setTempStorage("mail", "type", mailtype);			// Mail an Tour Member
-			setTempStorage("mail", "source", tour);
+			setTempStorage("mail", "source", tour);		 
 			setTempStorage("mail", "subsource", user);
 			setTempStorage("mail", "destination_success", linkOK);
 			setTempStorage("mail", "destination_cancel", linkCancel);
 		}else if(mailtype == "2user"){
 			setTempStorage("mail", "type", mailtype);			// Mail an user
-			setTempStorage("mail", "source", "");
+			setTempStorage("mail", "source", "");		 
+			setTempStorage("mail", "subsource", user);
+			setTempStorage("mail", "destination_success", linkOK);
+			setTempStorage("mail", "destination_cancel", linkCancel);
+		}else if(mailtype == "2webmaster"){
+			setTempStorage("mail", "type", mailtype);			// Mail an webmaster
+			setTempStorage("mail", "source", tour);		 
 			setTempStorage("mail", "subsource", user);
 			setTempStorage("mail", "destination_success", linkOK);
 			setTempStorage("mail", "destination_cancel", linkCancel);
 		}
+
 		saveData1("ma");
 		window.location.href='mail.html';
 	}
 	function go2RegisterPage(){ saveData1("re"); window.location.href='register.html'; };
-	function go2RegisterPage(){ saveData1("rp"); window.location.href='requestpassword.html'; };
+	function go2RequestPasswordPage(){ saveData1("rp"); window.location.href='requestpassword.html'; };
 	function go2ProfilPage(profil_nickname){ if(profil_nickname!=""){setTempStorage("profil", "profil_nickname", profil_nickname);} saveData1("pr"); window.location.href='profil.html'; };
 	function go2StatisticPage(){ saveData1("st"); window.location.href='statistic.html'; };
-	function go2TourPage(tourID, modifiable, okDestination, cancelDestination){
+	function go2TourPage(tourID, modifiable, okDestination, cancelDestination){ 
 		setTempStorage("tour", "tourid", tourID);
 		setTempStorage("tour", "modifiable", modifiable);
 		setTempStorage("tour", "okDestination", okDestination);
 		setTempStorage("tour", "cancelDestination", cancelDestination);
 		saveData1("to");
-		window.location.href='tour.html';
+		window.location.href='tour.html'; 
 	};
 	function go2TourPage1(){ saveData1("to"); window.location.href='tour.html'; };
 	function go2TourlistPage(){ saveData1("tl"); window.location.href='tour-list.html'; };
@@ -447,27 +443,38 @@
 		}else if(destination == "to"){
 			go2TourPage1();
 		}else if(destination == "re"){
+			
 			go2RegisterPage();
 		}
 	}
 	////////////////////////////// END: goto functions ///////////////////////////
+	function callMe(user){
+		window.location = user.getPhoneLink();
+	}
 
-	function showAJAXError(what, xhr, ajaxOptions, thrownError){
-		// call: showAJAXError(this.url, xhr, ajaxOptions, thrownError);
-		console.log("Fehler bei   : " + what);
-		console.log(" xhr         : " + JSON.stringify(xhr));
-		//console.log(" ajaxOptions : " + ajaxOptions);
-		//console.log(" thrownError : " + thrownError);
-
+	function showAJAXError(what, parameter, xhr, ajaxOptions, thrownError){
+		// call: showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError);
+		if(dumpAJAX){
+			console.log("Fehler bei   : " + what);
+			console.log(" parameter   : " + JSON.stringify(parameter));
+			console.log(" xhr         : " + JSON.stringify(xhr));
+			//console.log(" ajaxOptions : " + ajaxOptions);
+			//console.log(" thrownError : " + thrownError);
+		}
 	}
 	function showAJAXSuccess(what, parameter, textstatus, xhr){
+		var checkAJAX = ",tour-save,tour-lastmodified,";
 		// 	call: showAJAXSuccess(this.url, parameter);
-		console.log("OK bei      : " + what + " textstatus : " + textstatus);
-		console.log(" parameter  : " + JSON.stringify(parameter));
-		//console.log(" textstatus : " + JSON.stringify(textstatus));
-		//console.log(" xhr        : " + JSON.stringify(xhr));
+		if(dumpAJAX){
+			//if(checkAJAX.indexOf(","+what+",") != -1 ) {
+				console.log("OK bei      : " + what + " textstatus : " + textstatus);
+				console.log(" parameter  : " + JSON.stringify(parameter));
+				//console.log(" textstatus : " + JSON.stringify(textstatus));
+				//console.log(" xhr        : " + JSON.stringify(xhr));
+			//}
+		}
 	}
-
+	
 	function Login(un, pw, okDestination, errorDestination){
 		if(un!=null&&pw!=null){
 			$.ajax({
@@ -482,7 +489,7 @@
 				error_message: "Fehler " + un + " ist kein gültiger Account",
 				error_destination: errorDestination,
 				error: function( xhr, ajaxOptions, thrownError ) {
-					showAJAXError(this.url, xhr, ajaxOptions, thrownError)
+					showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError)
 					setMe(null);
 					setMessage(this.error_message);
 					go2Destination(this.error_destination);
@@ -495,7 +502,7 @@
 					setMe(this.success_nickname);
 					setMessage(this.success_message);
 					data=null;
-					go2Destination(this.succes_destination);
+					go2Destination(this.succes_destination);	
 				}
 			});
 		}else{
@@ -503,7 +510,7 @@
 			go2Destination(errorDestination);
 		}
 	}
-
+	
 	function WhoAmI(){
 		var nickname = "";
 
@@ -514,7 +521,7 @@
 			error: function( xhr, ajaxOptions, thrownError ) {
 				// TODO: GW->MH: nicht eingeloggt sollte als succes zurückkommen
 				if(thrownError!="Unauthorized"){
-					showAJAXError(this.url, xhr, ajaxOptions, thrownError);
+					showAJAXError(this.url, "keine Parameter", xhr, ajaxOptions, thrownError);
 				}
 			},
 			success: function( parameter, textstatus, xhr ) {
@@ -528,17 +535,17 @@
 				}
 			},
 		});
-		return( nickname );
+		return( nickname );	
 	}
-
+	
 	function getRSSLink(){
 		return("http:////www.sport2gether.de/"+root+"//rss//")
 	}
-
+	
 	function Logout(){
 		var user = self.getMe();
 		var nickname = user.nickname;
-
+		
 		$.ajax({
 			async: false,
 			method: "POST",
@@ -546,7 +553,7 @@
 			dataType: "text",
 			error_message: nickname + ' konnte nicht abgemeldet werden',
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError);
+				showAJAXError(this.url, "keine Parameter", xhr, ajaxOptions, thrownError);
 				setMessage(this.error_message);
 				go2TourlistPage();
 			},
@@ -559,7 +566,7 @@
 			}
 		});
 	}
-
+	
 	function ResetPassword(token, password, okDestination, errorDestination){
 
 		$.ajax({
@@ -573,7 +580,7 @@
 			dataType: "json",
 			error_message: 'Password konnte nicht gesetzt werden',
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError);
+				showAJAXError(this.url, this,data, xhr, ajaxOptions, thrownError);
 				setMessage(this.error_message);
 				go2Destination(errorDestination);
 			},
@@ -586,9 +593,9 @@
 			}
 		});
 	}
-
+	
 	function RequestPassword(username, email, okDestination, errorDestination){
-		if(username!=null){
+		if(username!=null){		
 			$.ajax({
 				async: false,
 				method: "POST",
@@ -600,7 +607,7 @@
 				dataType: "json",
 				error_message: 'Password für ' + username + ' konnte nicht zurückgesetzt werden',
 				error: function( xhr, ajaxOptions, thrownError ) {
-					showAJAXError(this.url, xhr, ajaxOptions, thrownError);
+					showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError);
 					setMessage(this.error_message);
 					go2Destination(errorDestination);
 				},
@@ -617,7 +624,7 @@
 			go2Destination(errorDestination);
 		}
 	}
-
+	
 	function passwordColor( password ){
 		var str = passwordStrength(password);
 		if(str == 0) {return ("black")};
@@ -626,22 +633,22 @@
 		if(str > 25) {return ("#FFC23F")};
 		return ("red");
 	}
-
+	
 	function validPassword( password ){
-		if(password.length<3) { return (false) };
-
+		if(password.length<6) { return (false) };
+		
 		return(true);
 	}
-
+		
 	function validUsername( username ){
 		if(username.length<3) { return (false) };
-
+		
 		return(true);
 	}
-
+		
 	function passwordStrength( password ){
 		if(!validPassword(password)) { return (0) };
-		var len = password.length-3;
+		var len = password.length-5;
 		if(len<5){
 			return( Math.round(100*len/5.0));
 		}
@@ -649,7 +656,7 @@
 	}
 
 	function Register(username, password, email, acceptRules, okDestination, errorDestination){
-
+		
 		$.ajax({
 			async: false,
 			method: "POST",
@@ -660,10 +667,10 @@
 				password: password
 			}),
 			dataType: "json",
-			error_message: 'Neuer Mitfahrer ' + username + ' konnte nicht registriert',
+			error_message: 'Neuer Mitfahrer ' + username + ' konnte nicht registriert werden',
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError);
-				setMessage(this.error_message);
+				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError);
+				setMessage(this.error_message + " ["+ JSON.stringify(xhr) +"]");
 				go2Destination(errorDestination);
 			},
 			success_message: 'Willkommen ' + username + " im Sport2Gether Portal, Registration bitte mit Email fortsetzten",
@@ -675,9 +682,9 @@
 			}
 		});
 	}
-
+	
 	function SendMail2User(recipe, subject,  mailcontent, okDestination, errorDestination){
-
+		
 		$.ajax({
 			async: false,
 			method: "POST",
@@ -691,7 +698,7 @@
 			dataType: "json",
 			error_message: 'Konnte Mail an Mitfahrer ' + recipe + ' nicht verschicken',
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError);
+				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError);
 				setMessage(this.error_message);
 				go2Destination(errorDestination);
 			},
@@ -706,7 +713,7 @@
 	}
 
 	function SendMail2Tour(tourID, subject, mailcontent, okDestination, errorDestination){
-
+		
 		$.ajax({
 			async: false,
 			method: "POST",
@@ -720,7 +727,7 @@
 			dataType: "json",
 			error_message: 'Konnte Mail an Tour ' + tourID + ' nicht verschicken',
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError);
+				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError);
 				setMessage(this.error_message);
 				go2Destination(errorDestination);
 			},
@@ -738,8 +745,8 @@
 	function showMessage(info, document, id, duration){
 		document.getElementById(id).innerHTML = info;
 		setTimeout(function(){ document.getElementById(id).innerHTML = ""; }, duration*1000);
-	}
-
+	}		
+	
 	function toggleActiveTour(tourID){
 		var tour = data.getTour(tourID);
 		if(updateTour(tour, tour.active?"cancel":"activate", null)){
@@ -748,34 +755,34 @@
 		}else{
 			setMessage( "Tour " + tourID + " konnte nicht " + (tour.active?"abgesagt":"reaktiviert") + " werden");
 		}
-		go2TourlistPage();
+		go2TourlistPage();		
 	}
-
+	
 	function add2Tour(tourID, member){
-		var tour = data.getTour(tourID);
-		if(updateTour(tour, "add", member)){
+		var tour = data.getTour(tourID);		
+		if(updateTour(tour, "add", member)){		
 			tour.add2Tour(member);
-			setMessage(member + " wurde erfolgreich an der Tour " + tourID + " angemeldet");
+			setMessage(member + " wurde erfolgreich an der Tour " + tourID + " angemeldet");	
 		}else{
-			setMessage(member + " konnte nicht an die Tour " + tourID + " angemeldet werden");
+			setMessage(member + " konnte nicht an die Tour " + tourID + " angemeldet werden");	
 		}
-		go2TourlistPage();
+		go2TourlistPage();		
 	}
-
+	
 	function removeFromTour(tourID, member){
 		var tour = data.getTour(tourID);
-		if(updateTour(tour, "remove", member)){
+		if(updateTour(tour, "remove", member)){		
 			tour.removeFromTour(member);
-			setMessage(member + " wurde erfolgreich von der Tour " + tourID + " abgemeldet");
+			setMessage(member + " wurde erfolgreich von der Tour " + tourID + " abgemeldet");	
 		}else{
-			setMessage(member + " konnte nicht von der Tour " + tourID + " abgemeldet werden");
+			setMessage(member + " konnte nicht von der Tour " + tourID + " abgemeldet werden");	
 		}
 		go2TourlistPage();
 	}
-
+	
 	function delegateTour(tour, newGuide){
 		var guide = data.getUser(newGuide);
-
+		
 		$.ajax({
 			method: "POST",
 			url: root+"/rest/tour-delegate.php",
@@ -785,19 +792,19 @@
 			}),
 			dataType: "json",
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError)
+				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError)
 			},
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
 			}
 		});
 	}
-
+	
 	function updateUser(username, birthdate, realname, adress, latitude, longitude, mailing, phone, okDestination, errorDestination){
 		var u = {
 					users : [{
 							username:		username,
-							birthdate:		date2JSON(birthdate),
+							birthdate:		null,
 							realname:		realname,
 							address:		adress,
 							address_gps: {
@@ -808,15 +815,35 @@
 							phone:			phone
 						}]
 				};
-
+		
+		if(birthdate==null){
+			delete u.users[0].birthdate;
+		}else{
+			u.users[0].birthdate = date2JSON(birthdate);
+		}
+		if(realname==null){
+			delete u.users[0].realname;
+		}
+		if(adress==null){
+			delete u.users[0].address;
+			delete u.users[0].address_gps;
+		}
+		if(phone==null){
+			delete u.users[0].phone;
+		}
+		if(adress==""||latitude==""||longitude==""){
+			u.users[0].latitude = "49.7248173";
+			u.users[0].longitude = "8.634445";
+		}
+		
 		$.ajax({
 			method: "POST",
 			url: root+"/rest/user-save.php",
 			data: JSON.stringify(u),
 			dataType: "json",
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError);
-				setMessage("Profil konnte nicht geändert werden [" + username + " - " + phone + " - " + birthdate + " - " + adress + " - " + mailing + " ]");
+				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError);
+				setMessage("Profil konnte nicht geändert werden [" + username + " - " + phone + " - " + makeDateString(birthdate,1) + " - " + adress + " - " + mailing + " ]");
 				go2Destination(errorDestination);
 			},
 			success: function( parameter, textstatus, xhr ) {
@@ -826,11 +853,11 @@
 			}
 		});
 	}
-
+	
 	function updateTour(tour, what, nickname){
 		var retValue = false;
 		var dest= "";
-
+	
 		switch(what){
 			case "activate":	dest = "tour-activate.php";
 								break;
@@ -841,10 +868,10 @@
 			case "remove":		dest = "tour-leave.php";
 								break;
 		}
-
+	
 		// set data
 		var parameter =	{ "id": tour.id	};
-
+		
 		if(nickname!=null){
 			parameter["member"] = data.getUser(nickname).id;
 		}
@@ -855,30 +882,26 @@
 			data: JSON.stringify(parameter),
 			dataType: "json",
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError)
+				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError)
 			},
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
-
-				// TODO: GW set date from return values
-				data.lastUpdate = getDate();
-
 				retValue = true;
 			}
 		});
-
+		
 		return( retValue );
 	}
-
+	
 	function saveTourObject(tour){
 		var retValue = false;
 		data.lastUpdate = getDate();
-		var tourtypeid = data.getTourTypebyType(tour.tourtype).tourtypeid;
+		var tourtype = data.getTourTypebyType(tour.tourtype);
 		var guide = data.getUser(tour.guide);
-
+		
 		var t =	{
 					"tours": [{
-								"id":			tour.id,
+								"id":			tour.id,			
 								"desc":			tour.description,
 								"datetime":		date2JSON(tour.datetime),
 								"distance":		tour.distance,
@@ -886,9 +909,10 @@
 								"duration":		tour.duration,
 								"elevation":	tour.up,
 								"skill":		tour.technic,
-								bringlight:		tour.night,
+								bringlight:		tour.night,	
 								"sport": {
-									"id":		tourtypeid
+									"id":		tourtype.tourtypeid,
+									"subname":	tourtype.tourart
 								},
 								"meetingpoint": {
 									"name":		tour.meetingpoint,
@@ -903,12 +927,12 @@
 								"attendees": []
 							}]
 			};
-
+		
 		//
 		if(tour.id<0){
 			delete t.tours[0].id;
 		}
-
+				
 		$.ajax({
 			async: false,
 			method: "POST",
@@ -916,23 +940,22 @@
 			data: JSON.stringify(t),
 			dataType: "json",
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError)
+				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError)
 			},
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
 				// übernehme aus response die neue tour ID
 				if(tour.id<0){
-					tour.id = parameter.id;
+					tour.id = parameter.tours[0].id;
+dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 				}
-				// TODO: GW set date from return values
-				data.lastUpdate = getDate();
 				retValue = true;
 			}
 		});
-
-		return( retValue );
+		
+		return( retValue );		
 	}
-
+	
 	function saveTour(id, guide, members, datetime, duration, distance, up, pace, technic, meetingpoint, adresse, lat, lon, tourtype, description, night, active, destination){
 		var tour = null;
 		if(id <= 0){
@@ -964,10 +987,7 @@
 				if(tour.members.length==members.length && tour.members.every(function(v,i) { return v === members[i]})){
 					var diff_lefttour = $(tour.members).not(members).get();
 					var diff_addtour = $(members).not(tour.members).get();
-
-					console.log("Remove from to " + JSON.stringify(diff_lefttour));
-					console.log("Add to " + JSON.stringify(diff_addtour));
-
+					
 					// TODO: GW set date from return values
 					data.lastUpdate = getDate();
 				}
@@ -975,10 +995,10 @@
 			setMessage((id <= 0?"Neue Tour wurde eingegeben":"Tour wurde geändert"));
 		}else{
 			setMessage("ein Fehler ist beim speichern der Tour aufgetreten");
-		}
+		}		
 		go2Destination(destination);
 	}
-
+	
 	// get last update from the server
 	function getLastUpdate(){
 		var theDate = null;
@@ -988,7 +1008,7 @@
 			error: function( xhr, ajaxOptions, thrownError ) {
 				// TODO: GW->MH: nicht eingeloggt sollte als Datum bei succes zurückkommen
 				if(thrownError !="Bad Request"){
-					showAJAXError(this.url, xhr, ajaxOptions, thrownError);
+					showAJAXError(this.url, "keine Parameter", xhr, ajaxOptions, thrownError);
 				}
 			},
 			success: function( parameter, textstatus, xhr ) {
@@ -997,7 +1017,7 @@
 					theDate = dateFromServer(parameter.tours.lastmodified);
 				}
 			}
-		});
+		});	
 		return( theDate );
 	}
 
@@ -1008,7 +1028,7 @@
 			async: false,
 			url: root+"/rest/servertime.php",
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError)
+				showAJAXError(this.url, "keine Parameter", xhr, ajaxOptions, thrownError)
 			},
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
@@ -1016,10 +1036,10 @@
 					theDate = dateFromServer(parameter.servertime);
 				}
 			}
-		});
+		});	
 		return( theDate );
 	}
-
+	
 	function getUserFromServer( userJson ){
 		var latitude = 0, longitude = 0;
 		if(userJson.address_gps){
@@ -1027,7 +1047,7 @@
 			longitude = userJson.address_gps.long;
 		}
 		return(new User(userJson.username, userJson.id, userJson.realname, userJson.address, latitude, longitude, userJson.birthdate!=null?dateFromServer(userJson.birthdate):null, userJson.phone, true, dateFromServer(userJson.registerdate)));
-
+		
 	}
 
 	function getUsers() {
@@ -1036,7 +1056,7 @@
 			async: false,
 			url: root+"/rest/users.php",
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError)
+				showAJAXError(this.url, "keine Paramter", xhr, ajaxOptions, thrownError)
 			},
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
@@ -1058,7 +1078,7 @@
 			async: false,
 			url: root+"/rest/tours.php",
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, xhr, ajaxOptions, thrownError)
+				showAJAXError(this.url, "keine Parameter", xhr, ajaxOptions, thrownError)
 			},
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
@@ -1073,7 +1093,7 @@
 							if(auth){
 								// handle members
 								t.attendees.forEach( function(a) { members.push(a.name); });
-								tour = new Tour(t.id, t.guide.name, members, dateFromServer(t.datetime), t.duration, t.distance, t.elevation, t.speed, t.skill, t.meetingpoint.desc, t.meetingpoint.name, t.meetingpoint.lat, t.meetingpoint.long, tt, t.desc, night, !t.canceled);
+								tour = new Tour(t.id, t.guide.name, members, dateFromServer(t.datetime), t.duration, t.distance, t.elevation, t.speed, t.skill, t.meetingpoint.name, t.meetingpoint.desc, t.meetingpoint.lat, t.meetingpoint.long, tt, t.desc, night, !t.canceled);
 							}else{
 								tour = new Tour(   0,           "", members, dateFromServer(t.datetime), t.duration, t.distance, t.elevation, t.speed, t.skill,                  "",                  "",                  0,                   0, tt, t.desc, night, true);
 								if("attendees_count" in t){
@@ -1094,8 +1114,9 @@
 
 	// class to represent a user
 	function User(nickname, id, name, adress, latitude, longitude, birthday, phone, tourletter, registration) {
+		const notCalculatet = "nC";
 		var self = this;
-
+		
 		self.nickname = nickname;
 		self.id = id;
 		self.name = name!=null?name:"";
@@ -1104,28 +1125,50 @@
 		self.longitude = longitude;
 		self.distance = function(latitude, longitude) { return (getDistance(latitude, longitude, self.latitude, self.longitude)); };
 		self.birthday = birthday;
-		self.getBirthday = function() { return( makeDateString(self.birthday,3));}
+		self.getBirthday = function() { return( makeDateString(self.birthday,3));};
 		self.phone = phone!=null?phone:"";
+		self.getPhoneLink = function() { var cn = self.getCallablePhonenumber(); return(cn!=""?'tel:'+cn:null); };
+		self.getPhoneLinkInfo = function(){ return( self.getPhoneLink()!=null?"Rufe "+self.nickname+" unter " +self.phone+" an":"tüt tüt"); }
+		self._callablePhonenumber = notCalculatet;
+		self.getCallablePhonenumber = function(){
+							if(self._callablePhonenumber == notCalculatet){
+								// try to calculate
+								if(!self.phone.indexOf("+49")==0){ // IE11
+									// strip non digits
+									var no = self.phone.replace(/\D/g,'');
+									if(no.indexOf("0")==0){ // IE11
+										// replace 0 with "+49"
+										self._callablePhonenumber = no.replace("0", "+49");
+									}else{
+										self._callablePhonenumber = "";
+									}
+								}else{
+									// assume correct number
+									self._callablePhonenumber = self.phone;
+								}			
+							}
+							return(self._callablePhonenumber);
+						};
 		self.tourletter = tourletter;
 		self.registration = registration;
 		self.getRegistration = function() { return( makeDateString(self.registration,1)); }
-
-		self.userPhoneInfo = function() { return ("Für " + self.nickname + (phone?" Telefon: " + phone : " liegen keine Kontaktdaten vor")); };
+		
+		self.userPhoneInfo = function() { return ("Für " + self.nickname + (phone?" Telefon: " + phone : " liegen keine Kontaktdaten vor")); }; 
 		self.userMailTitle = function() { return ("Mail an " + self.nickname); };
 		self.userMail = function(sender){ return ("Mail an " + self.nickname + " von " + sender); };
-
+		
 		self.guidedTours = ko.observableArray([]).extend({ rateLimit: 50 });
 		self.guidedToursNo = ko.pureComputed( function() { return(self.guidedTours().length); } );
 
 		self.toursGuided = ko.observableArray([]).extend({ rateLimit: 50 });
 		self.toursGuidedNo = ko.pureComputed( function() { return(self.toursGuided().length); } );
 	}
-
+	
 	// class to represent a tour
-	//             1    2      3         4        5          6       7     8      9		   10           11        12       13          14         15       16      17
+	//             1    2      3         4        5          6       7     8      9		   10           11        12       13          14         15       16      17 
 	function Tour(id, guide, members, datetime, duration, distance, up, pace, technic, meetingpoint, adresse, latitude, longitude, tourtype, description, night, active) {
 		var self = this;
-
+		
 		self.id = id;
 		self.guide = guide;
 		self.correctable = function(nickname){ return( self.guide==nickname && self.id>0 && self.oldTour() );}; // TODO: GW auf x Stunden der Vergangenheit beschränken
@@ -1135,17 +1178,17 @@
 		self.getDate = function() { return("01.01.2016") };
 		self.getTime = function() { return("10:00") };
 		self.duration = duration;
-		self.durationText = function() { return(makeDurationString( self.duration, true)); };
+		self.durationText = function() { return(makeDurationString( self.duration, true)); };    						
 		self.distance = distance;
-		self.distanceText = function() { return(makeDistanceString( self.distance, true)); };
+		self.distanceText = function() { return(makeDistanceString( self.distance, true)); };  		
 		self.up = up;
-		self.upText = function() { return(makeAltitudeString( self.up, true)); };
+		self.upText = function() { return(makeAltitudeString( self.up, true)); };    			
 
 		self.pace = pace;
 		self.getPaceCSS = function() { return('tl-icon-rate-' + pace); };
 		self.technic = technic;
 		self.getTechnicCSS = function() { return('tl-icon-rate-' + technic); };
-
+	
 		self.meetingpoint = meetingpoint;
 		self.meetingpointInfo = function(latitude, longitude) { var a = self.adresse; var d = getDistance(latitude, longitude, self.latitude, self.longitude); return(a + " [" + d + "]");};
 		self.adresse = adresse;
@@ -1157,33 +1200,33 @@
 		self.getTourtypeCSS = function() { return(data.getTourTypebyType(self.tourtype).icon + (self.night?" tl-nightaction ":"") + (self.active?"":" img-b"));};
 		self.getTourtypeCanceledCSS = function() { return( "tl-icon-sport-canceled img-a");};
 		self.getTourtypeOldCSS = function() { return( "tl-icon-sport-history disable img-c");};
-
+		
 		self.description = description;
 		self.shorttourday = function() { return( self.datetime.getDate()  + "." + (self.datetime.getMonth()+1) + "." + self.datetime.getFullYear() ); };
 		self.tourday = function() {	var days = ['So','Mo','Di','Mi','Do','Fr','Sa']; return( days[self.datetime.getDay()] + ", " + self.shorttourday() ); };
-
-		self.tourtime = function() { return(pad(self.datetime.getHours()) + ":" + pad(datetime.getMinutes())); };
-		self.isEven = function() { return(((self.datetime.getTime()/(1000*60*24)))%2==0); };
-
-		self.tourEditTitle = function() { return ("Die Tour am " + self.tourday() + " um " + self.tourtime() + " bearbeiten"); };
-		self.tourCopyTitle = function() { return ("Die Tour am " + self.tourday() + " um " + self.tourtime() + " kopieren"); };
-		self.tourActivateTitle = function() { return ("Die Tour am " + self.tourday() + " um " + self.tourtime() + " wieder aktivieren"); };
-		self.tourDeactivateTitle = function() { return ("Die Tour am " + self.tourday() + " um " + self.tourtime() + " absagen"); };
-
-		self.tourRegisterTitle = function() { return ("Bei der Tour am " + self.tourday() + " um " + self.tourtime() + " anmelden"); };
-		self.tourUnRegisterTitle = function() { return ("Bei der Tour am " + self.tourday() + " um " + self.tourtime() + " abmelden"); };
+		
+		self.tourtime = function() { return(pad(self.datetime.getHours()) + ":" + pad(datetime.getMinutes())); };    						
+		self.isEven = function() { return(((self.datetime.getTime()/(1000*60*24)))%2==0); }; 
+		
+		self.tourEditTitle = function() { return ("Die Tour vom " + self.tourday() + " um " + self.tourtime() + " bearbeiten"); };
+		self.tourCopyTitle = function() { return ("Die Tour vom " + self.tourday() + " um " + self.tourtime() + " kopieren"); };
+		self.tourActivateTitle = function() { return ("Die Tour vom " + self.tourday() + " um " + self.tourtime() + " wieder aktivieren"); };
+		self.tourDeactivateTitle = function() { return ("Die Tour vom " + self.tourday() + " um " + self.tourtime() + " absagen"); };
+		
+		self.tourRegisterTitle = function() { return ("Bei der Tour vom " + self.tourday() + " um " + self.tourtime() + " anmelden"); };
+		self.tourUnRegisterTitle = function() { return ("Bei der Tour vom " + self.tourday() + " um " + self.tourtime() + " abmelden"); };
 		// info for mail
 		self.tourMail2Guide = function(tourmember) { return ("Mail zur Tour von " + tourmember + " am " + self.tourday() + " um " + self.tourtime()); };
-		self.tourMail2Tour = function(tourmember) { return (self.tourMail2Guide(tourmember+ " an Alle")); };
+		self.tourMail2Tour = function(tourmember) { return (self.tourMail2Guide(self.guide + " von " + tourmember+ " an alle Mitfahrer")); };
 		self.tourMail2User = function() { return (self.tourMail2Guide(self.guide)); };
-
-
-		self.shorttourDescription = function() { return(self.shorttourday() + " mit " + self.guide + " um " + self.tourtime() + " ab Treffpunkt " + self.meetingpoint ); };
+		
+		
+		self.shorttourDescription = function() { return(self.shorttourday() + " mit " + self.guide + " um " + self.tourtime() + " ab Treffpunkt " + self.meetingpoint ); };		
 		//self.tourDescription = function() { return(self.tourday() + " um " + self.tourtime() + " ab Treffpunkt " + self.meetingpoint + (self.guide!=null?" mit " + self.guide:"") ); };
-
+		
 		self.tourMembers = function() { return(self.members.length); };
 		self.oldTour = function(now){ return(now>=self.datetime.getTime()); };
-
+		
 		self.isTourMember = function(member) {return(self.members.contains(member));};
 		self.isPossibleTourMember = function(searchMember){
 			var m = searchMember.toLowerCase();
@@ -1191,7 +1234,7 @@
 				if(self.members[i].toLowerCase().indexOf(m) != -1){
 					return(true);
 				}
-			}
+			}						
 			return(false);
 		};
 		self.getMembersString = function(all){
@@ -1199,7 +1242,7 @@
 			for (var i = 0, len = self.members.length; i < len; i++) {
 				membersstring += self.members[i] + ", ";
 			}
-
+			
 			return(membersstring.substring(0, membersstring.length-2));
 		}
 		self.isPossibleTourGuide = function(searchGuide){ return(self.guide.toLowerCase().indexOf(searchGuide.toLowerCase()) != -1);};
@@ -1214,35 +1257,35 @@
 				if(self.members[i]!=member){
 					m.push(self.members[i]);
 				}
-			}
+			}						
 			self.members=m;
 		}
 	}
-
+	
 	function cloneTour(tour){
 		var m = [];
 		for (var i = 0, len = tour.members.length; i < len; i++) {
 			m.push(tour.members[i]);
-		}
-
+		}						
+		
 		var new_tour = new Tour(tour.id, tour.guide, m, tour.datetime, tour.duration, tour.distance, tour.up, tour.pace, tour.technic, tour.meetingpoint, tour.adresse, tour.latitude, tour.longitude, tour.tourtype, tour.description, tour.night, tour.active);
 
 		return(new_tour);
 	}
-
+	
 	function DataModell() {
 		var self = this;
 
 		self.versioninfo = version;
-
+		
 		self.lastUpdate = null;
-
-		self.users = ko.observableArray().extend({ rateLimit: 50 });
+		
+		self.users = ko.observableArray().extend({ rateLimit: 50 });		
 		self.getUser = function(nickname){ return(ko.utils.arrayFirst(self.users(), function(user) {return (user.nickname == nickname);}));	};
-
+		
 		self.tours = ko.observableArray().extend({ rateLimit: 50 });
 		self.getTour = function(id){ return(ko.utils.arrayFirst(self.tours(), function(tour) {return (tour.id == id);})); };
-
+		
 		var sort_year = 0;
 		self.setStatistics = function(year){
 			if(self.users().length>0){
@@ -1263,26 +1306,25 @@
 								u.toursGuided.push(t.id);
 							});
 						}
-					});
+					});	
 				}
-			}
+			}				
 		}
-
+		
 		self.initFromServer = function(lastUpdate, theUsers, theTours){
 			self.lastUpdate = lastUpdate;
 			self.users(theUsers);
 			self.tours(theTours);
 			self.setStatistics(-1);
 		};
-
+		
 		self.toJSON = function(){
 			return(ko.toJS(self));
 		}
-
+		
 		self.initFromJSON = function (dataJSON){
-			//var json = JSON.parse(dataJSON);
 			var json = dataJSON;
-
+			
 			var theUsers = [];
 			if((typeof(json.users) != undefined)&&(json.users.length>0)){
 				json.users.forEach(function(u) {
@@ -1294,20 +1336,18 @@
 			var theTours = [];
 			if((typeof(json.tours) != undefined)&&(json.tours.length>0)){
 				json.tours.forEach(function(t){
-
+					
 					var m = [];
-					t.members.forEach( function(a) { m.push(a); });
+					t.members.forEach( function(a) { m.push(a); });		
 					var t1 = new Tour(t.id, t.guide, m, dateFromLokal(t.datetime), t.duration, t.distance, t.up, t.pace, t.technic, t.meetingpoint, t.adresse, t.latitude, t.longitude, t.tourtype, t.description, t.night, t.active);
 					theTours.push(t1);
 				});
 			}
-			var lastUpdate = dateFromLokal(json.lastUpdate);
 
-			self.lastUpdate = lastUpdate;
+			self.lastUpdate = dateFromLokal(json.lastUpdate);
 			self.users = ko.observableArray(theUsers);
 			self.tours = ko.observableArray(theTours);
-			self.setStatistics(-1);
-
+			self.setStatistics(-1);	
 		}
 		// default values for
 		// tour-list
@@ -1316,7 +1356,10 @@
 		const tl_showActiveTours = true;
 		const tl_showOldTours = false;
 		const tl_showNightlyTours = true;
-		const tl_showDeactivateTours = false;
+		const tl_showDeactivateTours = false;	
+		const tl_showMailLink = true;
+		const tl_showPhoneLink = true;
+		
 		// tour
 		const to_showMore = false;
 		const to_showMap = false;
@@ -1344,15 +1387,15 @@
 		]
 		self.getTourTypes = function(){
 			var result = [];
-
+			
 			ko.utils.arrayForEach(this.tourtypes, function(tourtype) { result.push( tourtype.tourart );});
 			return(result);
 		}
 		self.getTourTypebyType = function(tourtype){
 			var result = ko.utils.arrayFirst(self.tourtypes, function(item) {return (item.tourtype == tourtype);});
 
-			if(result==null){
-				console.log("Can't find tourtype by "+tourtype);
+			if(result==null){ 
+				console.log("Can't find tourtype by "+tourtype); 
 			}
 			return(result);
 		};
@@ -1364,7 +1407,7 @@
 			{ ratetype: "5", icon: "tl-icon-rate-5", stk_description: "sehr anspruchsvolle Trails",stk_average: "S2", stk_max: "S3", speed: "zügig" },
 			{ ratetype: "6", icon: "tl-icon-rate-6", stk_description: "eher unfahrbar, >S2", stk_average: "S3", stk_max: "S4", speed: "Renntempo"  }
 		];
-
+				
 		self.getSTKDescription = function( rate ){
 			var stk_info = "";
 			if(rate.stk_average!=""){
@@ -1388,86 +1431,81 @@
 		if(!checkBooleanPreference(getPreference("tl_showActiveTours"))) { setPreference("tl_showActiveTours",tl_showActiveTours);}
 		if(!checkBooleanPreference(getPreference("tl_showOldTours"))) { setPreference("tl_showOldTours",tl_showOldTours);}
 		if(!checkBooleanPreference(getPreference("tl_showNightlyTours"))) { setPreference("tl_showNightlyTours",tl_showNightlyTours);}
-		if(!checkBooleanPreference(getPreference("tl_showDeactivateTours"))) { setPreference("tl_showDeactivateTours",tl_showDeactivateTours);}
-		if(getPreference("tl_selectedTourtype")=="") { setPreference("tl_selectedTourtype",ko.toJSON(self.getTourTypes())); }
+		if(!checkBooleanPreference(getPreference("tl_showDeactivateTours"))) { setPreference("tl_showDeactivateTours",tl_showDeactivateTours);}	
+		if(!checkBooleanPreference(getPreference("tl_showPhoneLink"))) { setPreference("tl_showPhoneLink",tl_showPhoneLink);}	
+		if(!checkBooleanPreference(getPreference("tl_showMailLink"))) { setPreference("tl_showMailLink",tl_showMailLink);}	
+		if(getPreference("tl_selectedTourtype")=="") { setPreference("tl_selectedTourtype",ko.toJSON(self.getTourTypes())); }	
 		if(!checkBooleanPreference(getPreference("to_showMore"))) { setPreference("to_showMore",to_showMore);}
-		if(!checkBooleanPreference(getPreference("to_showMap"))) { setPreference("to_showMap",to_showMap);}
-		if(!checkBooleanPreference(getPreference("to_showSlider"))) { setPreference("to_showSlider",to_showSlider);}
+		if(!checkBooleanPreference(getPreference("to_showMap"))) { setPreference("to_showMap",to_showMap);}		
+		if(!checkBooleanPreference(getPreference("to_showSlider"))) { setPreference("to_showSlider",to_showSlider);}		
 		if(!checkBooleanPreference(getPreference("ul_showMore"))) { setPreference("ul_showMore",ul_showMore);}
 		if(!checkBooleanPreference(getPreference("ul_showFilter"))) { setPreference("ul_showFilter",ul_showFilter);}
-	}
-
+	}	
+	
 	var data = null;
-
+	
 	function getData(){
-		var ignore_local = false;
 		// TODO: GW get from server
 		var lastServerUpdate = getLastUpdate();
 		var lastLocalUpdate = getSessionStorage("lastUpdate");
 		// does local data exist?
 		if(lastLocalUpdate == null || lastLocalUpdate == ""){
 			// no, make last update old then server date
-			lastLocalUpdate = new Date (1000*60);
+			lastLocalUpdate = new Date(1000*60);
 		}else{
-			lastLocalUpdate = dateFromLokal(lastLocalUpdate);
+			lastLocalUpdate = dateFromServer(lastLocalUpdate);
 		}
-
-		if(ignore_local || lastServerUpdate > lastLocalUpdate){
-console.log("Load from Server ("+lastServerUpdate+" > "+ lastLocalUpdate);
+		
+		if(lastServerUpdate > lastLocalUpdate){
 			// get data from server
 			var theUsers = getUsers();
 			var theTours = getTours();
-			data = new DataModell();
-
+			data = new DataModell();		
+			
 			data.initFromServer(lastServerUpdate, theUsers, theTours);
 			data.lastUpdate = lastServerUpdate;
 			// and save it
-			if(!ignore_local){
-				setSessionStorage("data", data.toJSON());
-				setSessionStorage("lastUpdate", date2JSON(data.lastUpdate));
-			}
+			saveData();
 		}else{
-console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
-			// local data is up to date
+			// local data is up to date		
 			if(data==null){
 				// get from local storage
 				data = new DataModell();
 				data.initFromJSON(getSessionStorage("data"));
-			}
+			}			
 		}
 		return(data);
 	}
-
+	
 	function clearData(){
 		data = null;
 		removeSessionStorage("data");
 		removeSessionStorage("lastUpdate");
 	}
-
+	
 	function saveData(){
 		// TODO GW: Save data
-		if(data!=null){
+		if(data!=null){				
 			// save it
 			setSessionStorage("data", data.toJSON());
-			setSessionStorage("lastUpdate", date2JSON(data.lastUpdate));
 		}else{
 			removeSessionStorage("data");
 			removeSessionStorage("lastUpdate");
 		}
 	}
-
+	
 	function saveData1(destination){
 		// TODO: GW only if destination changes
 		// get actual location
 		if(getLocation() != destination){
 			saveData();
-
+			
 			// save new location
 			// soll das von der seite gemacht werden?
 			setLocation(destination);
 		}
 	}
-
+	
 	function getMe(){
 		var nickname = WhoAmI();
 
@@ -1476,23 +1514,23 @@ console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
 	function setMe(nickname){
 		setTempStorage("global", "nickname", nickname);
 	}
-
+	
 	function setMessage(message){
-		setTempStorage("global", "message", message);
+		setTempStorage("global", "message", message);	
 	}
 	function getMessage(){
-		var message =  getTempStorage("global", "message");
+		var message =  getTempStorage("global", "message");	
 		setMessage(null);
 		return(message);
 	}
-
+	
 	function setLocation(location){
-		setTempStorage("global", "location", location);
+		setTempStorage("global", "location", location);	
 	}
 	function getLocation(){
-		return(setTempStorage("global", "location"));
+		return(setTempStorage("global", "location"));	
 	}
-
+	
 	// general function for session handling via windows name
 	function setTempStorage( session, name, value ){
 		setStorageWN(session + "_" + name, value)
@@ -1508,7 +1546,7 @@ console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
 		var keys = [];
 		var obj = getAllStorageWN();
 		for(var key in obj){
-			if(key.startsWith(session + "_")){
+			if(key.indexOf(session + "_")==0){
 				keys.push(key);
 			}
 		}
@@ -1517,65 +1555,64 @@ console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
 		}
 	}
 
-
 	// https://wiki.selfhtml.org/wiki/JavaScript/Anwendung_und_Praxis/Wert%C3%BCbergabe_zwischen_verschiedenen_HTML-Dokumenten
 	// handling storage via windows.name
 	var getStorageWN = function (name){
 		var value = storageWN.get(name);
 		return((value!=null&&typeof(value) != undefined)?value:"");
 	}
-
+	
 	var setStorageWN = function (name, value){
 		return(storageWN.set(name, value));
 	}
-
+	
 	var removeStorageWN = function (name){
 		return(storageWN.remove(name));
 	}
-
+	
 	var getAllStorageWN = function(){
 		return(storageWN.getAll());
 	}
-
+	
 	var storageWN = new function () {
 		/* --------- Private Properties --------- */
 		var dataContainer = {};
-		/* --------- Private Methods --------- */
+		/* --------- Private Methods --------- */		
 		function read () {
 			if (window.name == '' || window.name.indexOf(":") == -1) { return; }
-
+				
 			dataContainer = JSON.parse(window.name);
 		}
-		function write () { window.name = ko.toJSON(dataContainer); }
-
+		function write () { window.name = ko.toJSON(dataContainer); } 
+		
 		/* --------- Public Methods --------- */
 		this.set = function (name, value) { dataContainer[name] = value; write(); };
 		this.get = function (name) { var returnValue = dataContainer[name]; return returnValue; };
 		this.getAll = function () { return dataContainer; };
 		this.remove = function (name) { if (typeof(dataContainer[name]) != undefined) { delete dataContainer[name]; } write(); };
-		this.removeAll = function () { dataContainer = {}; write(); };
+		this.removeAll = function () { dataContainer = {}; write(); }; 
 		/* --------- Construction --------- */
 		read();
 	};
-
+	
 	// handling storage via session storage
 	function getSessionStorage(name){
-		var value = sessionstorage.get(name);
+		var value = sessionstorage.get(name); 
 		return((value!=null&&typeof(value) != undefined)?value:"");
 	}
-
+	
 	function setSessionStorage(name, value){
 		return(sessionstorage.set(name, value));
 	}
-
+	
 	function removeSessionStorage(name){
 		return(sessionstorage.remove(name));
 	}
-
+	
 	function removeAllSessionStorage(){
 		return(sessionstorage.removeAll());
 	}
-
+	
 	var sessionstorage = new function () {
 		/* --------- Private Properties --------- */
 		var useSessionStorage = true;
@@ -1604,34 +1641,34 @@ console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
 				}
 			}
 		}
-
-		function write () { if(useSessionStorage){ db.setItem("dataContainer", ko.toJSON(dataContainer));} }
-
+		
+		function write () { if(useSessionStorage){ db.setItem("dataContainer", ko.toJSON(dataContainer));} } 
+		
 		/* --------- Public Methods --------- */
 		this.set = function (name, value) { dataContainer[name] = value; write(); };
 		this.get = function (name) { var returnValue = dataContainer[name]; return returnValue; };
 		this.getAll = function () { return dataContainer; };
 		this.remove = function (name) { if (typeof(dataContainer[name]) != undefined) { delete dataContainer[name]; } write(); };
-		this.removeAll = function () { dataContainer = {}; write(); };
+		this.removeAll = function () { dataContainer = {}; write(); }; 
 		/* --------- Construction --------- */
 		checkStorage();
 		read();
 	};
-
+	
 	// handling storage via local storage
 	function setPreference(name, value){
 		setLocalStorage("Pref" + "_" + name, value)
 	}
-
+	
 	function getPreference(name){
 		return(getLocalStorage("Pref" + "_" + name));
 	}
-
+	
 	function clearPreferences(){
 		var keys = [];
 		var obj = getAllLocalStorage();
 		for(var key in obj){
-			if(key.startsWith("Pref" + "_")){
+			if(key.indexOf("Pref" + "_")==0){ IE11
 				keys.push(key);
 			}
 		}
@@ -1639,24 +1676,24 @@ console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
 			removeLocalStorage(keys[i]);
 		}
 	}
-
+	
 	function getLocalStorage(name){
-		var value = localstorage.get(name);
+		var value = localstorage.get(name); 
 		return((value!=null&&typeof(value) != undefined)?value:"");
 	}
-
+	
 	function setLocalStorage(name, value){
 		return(localstorage.set(name, value));
 	}
-
+	
 	function removeLocalStorage(name){
 		return(localstorage.remove(name));
 	}
-
+	
 	function getAllLocalStorage(){
 		return(localstorage.getAll());
 	}
-
+	
 	var localstorage = new function () {
 		/* --------- Private Properties --------- */
 		var useLocalStorage = true;
@@ -1675,7 +1712,7 @@ console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
 				this.db = new MemoryStorage('GW-localstorage'); // fall back to a memory-based implementation
 			}
 		}
-
+		
 		function read() {
 			if (useLocalStorage) {
 				var ds = this.db.getItem("dataContainer");
@@ -1684,9 +1721,9 @@ console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
 				}
 			}
 		}
-
-		function write () { if(useLocalStorage){ this.db.setItem("dataContainer", ko.toJSON(dataContainer));} }
-
+		
+		function write () { if(useLocalStorage){ this.db.setItem("dataContainer", ko.toJSON(dataContainer));} } 
+		
 		/* --------- Public Variable--------- */
 		this.hasStorage = checkStorage();
 		/* --------- Public Methods --------- */
@@ -1694,7 +1731,7 @@ console.log("Load from local ("+lastServerUpdate+" == "+ lastLocalUpdate);
 		this.get = function (name) { var returnValue = dataContainer[name]; return returnValue; };
 		this.getAll = function () { return dataContainer; };
 		this.remove = function (name) { if (typeof(dataContainer[name]) != undefined) { delete dataContainer[name]; } write(); };
-		this.removeAll = function () { dataContainer = {}; write(); };
+		this.removeAll = function () { dataContainer = {}; write(); }; 
 		/* --------- Construction --------- */
 		checkStorage();
 		read();

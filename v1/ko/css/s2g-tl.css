@@ -149,15 +149,15 @@
 	padding-right: 2px;
 }
 
-.tl-member{
+.tl-member {
 	float: left;
 }
 
-.tl-guide-mail{
+.tl-guide-mail, .tl-guide-phone {
 	width: 25px;
 	display: inline-block;
 }
-.tl-member-mail {
+.tl-member-mail, .tl-icon-member-phone {
 	width: 27px;
 	float: left;
 }
@@ -228,21 +228,23 @@
 
 
 /* icons allgemein */
-.tl-input-icon-edit, .tl-input-icon-plus, .tl-input-icon-minus, .tl-input-icon-copy, .tl-input-icon-activate, .tl-input-icon-deactivate {
+.tl-input-icon-edit, .tl-input-icon-plus, .tl-input-icon-minus, .tl-input-icon-copy, .tl-input-icon-activate, .tl-input-icon-deactivate,
+.tl-icon-guide-phone, .tl-icon-member-phone {
 	display: inline-block;
 	width: 20px;
 	height: 20px;
 	border: none;
 	background-color: transparent;
 }
-.tl-TableCell-Content-Guide .tl-icon-member-mail, tl-guide, .tl-TableCell-Content-Tools .tl-icon-member-mail {
+.tl-TableCell-Content-Guide .tl-icon-guide-mail, .tl-TableCell-Content-Guide .tl-icon-guide-phone, .tl-TableCell-Content-Tools .tl-icon-member-mail, .tl-TableCell-Content-Tools .tl-icon-member-phone {
 	vertical-align: middle;
 	padding-top: 0;
 }
-.tl-icon-member-mail {
+
+.tl-icon-guide-mail, .tl-icon-member-mail {
 	display: inline-block;
 	vertical-align: bottom;
-	width: 32px;
+	width: 32px;	
 	height: 20px;
 	border: none;
 	background-color: transparent;

@@ -72,6 +72,21 @@
 
 /* small-screen */
 @media (min-width: 301px) and (max-width: 900px){
+.st-TableHeading .st-TableCell-User {
+	width: calc(( 100% - ( 3em + 8em + 8em + 17px )));
+}
+.st-TableCell-User {
+	width: calc(( 100% - ( 3em + 8em + 8em )));
+}
+.st-TableCell-Mail {
+	width: 3em;
+}
+.st-TableCell-GuidedTours {
+	width: 8em;
+}
+.st-TableCell-ToursGuide {
+	width: 8em;
+}
 
 }
 

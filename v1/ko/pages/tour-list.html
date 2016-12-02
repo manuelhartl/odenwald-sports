@@ -3,7 +3,7 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<meta name="viewport" content="width=device-width, width=1281">
+	<meta name="viewport" content="width=900">
 	<link rel="stylesheet" href="../script/css/jquery-ui.css">
 	<link rel="stylesheet" href="../script/css/jquery.multiselect.css">
 	<link rel="stylesheet" type="text/css" href="../css/s2g.css" />
@@ -17,54 +17,84 @@
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 
-		'use strict';
+	'use strict';
 
-		ko.bindingHandlers.multiselect = {
-			init: function (element, valueAccessor, allBindingAccessors) {
-				var options = valueAccessor();
+	ko.bindingHandlers.multiselect = {
+		init: function (element, valueAccessor, allBindingAccessors) {
+			var options = valueAccessor();
 
-				ko.bindingHandlers.options.update(
-					element,
-					function() { return options.options; },
-					allBindingAccessors
-				);
+			ko.bindingHandlers.options.update(
+				element,
+				function() { return options.options; },
+				allBindingAccessors
+			);
 
-				ko.bindingHandlers.selectedOptions.init(
-					element,
-					function() { return options.selectedOptions; },
-					allBindingAccessors
-				);
+			ko.bindingHandlers.selectedOptions.init(
+				element,
+				function() { return options.selectedOptions; },
+				allBindingAccessors
+			);
 
-				ko.bindingHandlers.selectedOptions.update(
-					element,
-					function() { return options.selectedOptions; },
-					allBindingAccessors
-				);
+			ko.bindingHandlers.selectedOptions.update(
+				element,
+				function() { return options.selectedOptions; },
+				allBindingAccessors
+			);
 
-				$(element).multiselect(options.config);
+			$(element).multiselect(options.config);
 
-				//make view model know about select/deselect changes
-				$(element).bind("multiselectcheckall", function () { $(element).trigger("change"); });
-				$(element).bind("multiselectuncheckall", function () { $(element).trigger("change"); });
-			},
-			update: function (element, valueAccessor, allBindingAccessors) {
-				var options = valueAccessor();
-				//update html if items set through code
-				ko.bindingHandlers.selectedOptions.update(
-					element,
-					function () { return options.selectedOptions; },
-					allBindingAccessors
-				);
+			//make view model know about select/deselect changes
+			$(element).bind("multiselectcheckall", function () { $(element).trigger("change"); });
+			$(element).bind("multiselectuncheckall", function () { $(element).trigger("change"); });
+		},
+		update: function (element, valueAccessor, allBindingAccessors) {
+			var options = valueAccessor();
+			//update html if items set through code
+			ko.bindingHandlers.selectedOptions.update(
+				element,
+				function () { return options.selectedOptions; },
+				allBindingAccessors
+			);
 
-				$(element).multiselect("refresh");
-			}
-		};
+			$(element).multiselect("refresh");
+		}
+	};
+	
+	function scrollIntoView(eleID) {
+		var e = document.getElementById(eleID);
+		if (!!e && e.scrollIntoView) {
+			e.scrollIntoView();
+		}
+	}
 
 	</script>
 
 	<script type='text/javascript' >
 	
 	// 'use strict';	// view_dont_use_strict
+	
+	function getCookie(cname) {
+		var name = cname + "=";
+		var ca = document.cookie.split(';');
+		for(var i = 0; i < ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return ("");
+	}
+	
+	function getInfoExpireDate(user){
+		if(user!=null){
+			// makeDurationString(now - expiresdate, true)
+			return(getCookie('expires'));
+		}
+		return("");
+	}
 	
 	// class to represent all tours
 	var ToursViewModel = function() {
@@ -75,7 +105,16 @@
 	
 		self.data = getData();
 		self.me = getMe();
+		self.expireDate = getInfoExpireDate(self.me);
+
 		self.now = getDate();
+
+		self.getPhoneLink= function(cn){
+			if(cn!=""){
+				return('tel:'+cn);
+			}
+			return(null);
+		}
 		
 		self.selectedOptions = ko.observableArray(self.data.getTourTypes());
 		var _selectedOptions = ko.observable(JSON.parse(getPreference("tl_selectedTourtype")));
@@ -117,7 +156,7 @@
 					clname += " &#x29D7;"; // Rhombus  &#x29EB; //  Sanduhr &#x29D7; // Karte Karo &#9830; // Pfeile &#8661;
 				}
 			}
-			var doc = document.getElementById(item.id);
+			var doc = document.getElementById(item.id+(self.me!=null?"":"1"));
 			if(doc){
 				doc.innerHTML = clname;
 			}
@@ -240,6 +279,18 @@
 			write: function (value) { _showDeactivateTours(value); setPreference("tl_showDeactivateTours", value)},
 			owner: self
 		});
+		var _showMailLink = ko.observable(getPreference("tl_showMailLink"));
+		self.showMailLink = ko.computed({
+			read: function() { return(_showMailLink());},
+			write: function (value) { _showMailLink(value); setPreference("tl_showMailLink", value)},
+			owner: self
+		});
+		var _showPhoneLink = ko.observable(getPreference("tl_showPhoneLink"));
+		self.showPhoneLink = ko.computed({
+			read: function() { return(_showPhoneLink());},
+			write: function (value) { _showPhoneLink(value); setPreference("tl_showPhoneLink", value)},
+			owner: self
+		});
 
 		self.filters = [
 			{title:'Alle', filter: null},
@@ -334,7 +385,7 @@
 						for (var i = 0, len = filterMembers.length; i < len; i++) {
 							var filterMember = filterMembers[i].toLowerCase().trim();
 							
-							if(filterMember.startsWith("g:")){
+							if(filterMember.indexOf("g:")==0){ // IE11
 								if(tour.isPossibleTourGuide(filterMember.substr(2))){
 									return(true);
 								}
@@ -375,6 +426,7 @@
 		
 		// Page size
 		self.pageSize = ko.observable(100);
+		self.setActualPage = function() { self.lastPage(); };
         self.firstPage = function() { self.pageIndex(0); };
         self.previousPage = function() { self.pageIndex(self.pageIndex() - 1); };
         self.nextPage = function() { self.pageIndex(self.pageIndex() + 1); };
@@ -398,7 +450,6 @@
 		};
 		
 		self.getTours = function(){
-			//clearData();
 			go2TourlistPage();
 		}
 		
@@ -411,7 +462,14 @@
 		}
 		
 		self.toggleActiveTour = function(tourID){
-			toggleActiveTour(tourID);
+			var tour = data.getTour(tourID);
+			var toggle = true;
+			if(tour.active){
+				toggle=confirm("Wollen sie die Tour wirklich absagen?");
+			}
+			if(toggle){
+				toggleActiveTour(tourID);
+			}
 		}
 		
 		self.add2Tour = function(tourID){
@@ -427,10 +485,14 @@
 		}
 
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', 10);
+			showMessage(info, document, 'message', durationShowMail);
 		};
 
 		/* --------- Construction --------- */
+		// keine Sortierung der Teilnehmer, wenn man nicht angemeldet ist
+		if(self.me==null){
+			self.getHeader('Teilnehmer').sortPropertyName=null;
+		}
 		// sort tour list by date time
 		self.sort(self.getHeader('Sport'));
 		
@@ -472,6 +534,10 @@
 	
 	ko.options.deferUpdates = true;
 	
+	window.onerror = function (msg, url, line, col, error) {
+		return(globalError(msg, url, line, col, error));
+	};
+	
 	</script>
 	<title>Sport2Gether (KnockOut)</title>
 </head>
@@ -481,19 +547,17 @@
 	</div>
  	<div class="total" style="display: none" data-bind="visible: true">
 		<div id="navigation">
-			<div id="navigation-top" class="small bigPortrait">
+			<div id="navigation-top" class="minimum-V-big">
 				<div id="message"></div>
 				<div id="logo"></div>
 			</div> <!--End div navigation-top -->
 			<div id="navigation-bottom">
 				<div id="navigation-buttons">
 					<button id="btn-tour-list" data-bind="click: getTours">Touren</button>
-					<span data-bind="if: me!=null" >
-						<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-					</span>
-					<span data-bind="if: me!=null" class="bigPortrait">
-						<button <button data-bind="click: go2StatisticPage">Statistik</button>
-					</span>
+					<span data-bind="if: me!=null" class="minimum-V-medium">
+						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
+					</span >
 				</div> <!--End div navigation-buttons -->
 				<div id="navigation-buttons-logout" data-bind="if: me!=null">
 					<button id="btn-logout" data-bind="click: Logout">Logout</button>
@@ -506,29 +570,32 @@
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
 		<div class="content" id="main">
-			<div id="tourtools" class="small" data-bind="if: me!=null">
+			<div id="tourtools" data-bind="if: me!=null">
 				<div id="tourbutton">
-					<button id="btn-new_tour" class="bigPortrait" data-bind="click: newTour">Neue Tour</button>
+					<button id="btn-new_tour" data-bind="click: newTour">Neue Tour</button>
 				</div>  <!--End div tourbutton -->
 				<div id="checkbox">
 					<div id="topcheckbox">
 						<label for="check1"><input name="cb_activeTours" data-bind="checked: showActiveTours, click: function() {firstPage(); setSessionStorage('global', 'showActiveTours', showActiveTours()); return(true);}" id="check1" type="checkbox">aktive Touren</label>
-						<label for="check2"><input name="cb_oldTours" data-bind="checked: showOldTours, click: function() {firstPage(); setSessionStorage('global', 'showOldTours', showOldTours()); return(true);}" id="check2" type="checkbox">alte Touren</label>
+						<label for="check2"><input name="cb_oldTours" data-bind="checked: showOldTours, click: function() {lastPage(); setSessionStorage('global', 'showOldTours', showOldTours()); return(true);}" id="check2" type="checkbox">alte Touren</label>
 					</div> <!--End div topcheckbox -->
-					<div id="bottomcheckbox" data-bind="if: showMore" class="bigPortrait">
+					<div id="bottomcheckbox" data-bind="if: showMore" class="minimum-V-medium">
 						<label for="check3"><input name="cb_deactiveTours" data-bind="checked: showDeactivateTours, click: function() { setSessionStorage('global', 'showDeactivateTours', showDeactivateTours()); return(true);}" id="check3" type="checkbox">abgesagte Touren</label>
-						<label for="check4"><input name="cb_nightlyTours" data-bind="checked: showNightlyTours, click: function() { setSessionStorage('global', 'showNightlyTours', showNightlyTours()); return(true);}" id="check3" type="checkbox">nächtliche Touren</label>
+						<label for="check4"><input name="cb_nightlyTours" data-bind="checked: showNightlyTours, click: function() { setSessionStorage('global', 'showNightlyTours', showNightlyTours()); return(true);}" id="check4" type="checkbox">nächtliche Touren</label>
+						<label for="check5"><input name="cb_showMailLink" data-bind="checked: showMailLink, click: function() { setSessionStorage('global', 'showMailLink', showMailLink()); return(true);}" id="check5" type="checkbox">Mail Link</label>
+						<label for="check6"><input name="cb_showPhoneLink" data-bind="checked: showPhoneLink, click: function() { setSessionStorage('global', 'showPhoneLink', showPhoneLink()); return(true);}" id="check6" type="checkbox">Telefon Link</label>
 					</div> <!--End div bottomcheckbox -->
 				</div>  <!--End div checkbox -->
-				<div class="bigPortrait">
+				<div class="minimum-V-medium">
 					<a id="rssbutton" data-bind="attr: {href: getRSSLink()}">RSS</a>
 				</div><!--End div rssbutton -->
 				<div id="cb_tools">
-					<div id="cb_tools_top">
-						<label for="check5"><input name="cb_showMore" data-bind="checked: showMore" id="check5" type="checkbox">Mehr..</label>
+					<div id="cb_tools_top" class="minimum-V-medium">
+						<label for="check7"><input name="cb_showMore" data-bind="checked: showMore" id="check7" type="checkbox">Mehr..</label>
+						<span data-bind="text: expireDate" class="expires"></span>
 					</div> <!--End div cb_tools_top -->
-					<div id="cb_tools_bottom" data-bind="if: showMore" class="bigPortrait">
-						<label for="check6"><input name="cb_showFilter" data-bind="checked: showFilter" id="check6" type="checkbox">Filter</label>
+					<div id="cb_tools_bottom" data-bind="if: showMore" class="minimum-V-medium">
+						<label for="check8"><input name="cb_showFilter" data-bind="checked: showFilter" id="check8" type="checkbox">Filter</label>
 						<span data-bind="if: showFilter">
 							<select data-bind="options: filters, optionsText: 'title', optionsValue: 'filter', value: actFilter, optionsCaption: 'Wähle...'"></select>
 							<select multiple="multiple" data-bind="multiselect: { config:  {noneSelectedText:'Wähle Tourart', checkAllText:'Alle Tourarten', uncheckAllText:'keine Tourarten', selectedText: getTourSelection()}, options: options, selectedOptions: selectedOptions }"></select>
@@ -568,7 +635,7 @@
 				<div class="tl-TableRow tl-TableHeading">
 					<div class="tl-TableHead tl-TableCell-Sport"><span id="ID_Sport" class="tl-TableHead-Content-Sport" data-bind="click: sort.bind($data,getHeader('Sport')), attr: {title: getHeader('Sport').sortTitle}"></span></div>
 					<div class="tl-TableHead tl-TableCell-Beschreibung"><span id="ID_Beschreibung" class="tl-TableHead-Content-Beschreibung flex" data-bind="click: sort.bind($data,getHeader('Beschreibung')), attr: {title: getHeader('Beschreibung').sortTitle}"></span></div>
-					<div class="tl-TableHead tl-TableCell-Dauer medium"><span id="ID_Dauer" class="tl-TableHead-Content-Dauer"data-bind="click: sort.bind($data,getHeader('Dauer')), attr: {title: getHeader('Dauer').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Dauer medium"><span id="ID_Dauer" class="tl-TableHead-Content-Dauer" data-bind="click: sort.bind($data,getHeader('Dauer')), attr: {title: getHeader('Dauer').sortTitle}"></span></div>
 					<div class="tl-TableHead tl-TableCell-Distanz medium"><span id="ID_Distanz" class="tl-TableHead-Content-Distanz" data-bind="click: sort.bind($data,getHeader('Distanz')), attr: {title: getHeader('Distanz').sortTitle}"></span></div>
 					<div class="tl-TableHead tl-TableCell-Bergauf medium"><span id="ID_Bergauf" class="tl-TableHead-Content-Bergauf" data-bind="click: sort.bind($data,getHeader('Bergauf')), attr: {title: getHeader('Bergauf').sortTitle}"></span></div>
 					<div class="tl-TableHead tl-TableCell-Pace big"><span id="ID_Pace" class="tl-TableHead-Content-Pace" data-bind="click: sort.bind($data,getHeader('Pace')), attr: {title: getHeader('Pace').sortTitle}"></span></div>
@@ -591,11 +658,14 @@
 					<!-- Tour Title -->
 					<div class="tl-TableRow tl-Tablerow-Title">
 						<div class="tl-TableCell tl-TableCell-Title" data-bind="css: isEven()?'even-title':'odd-title'">
-							<div class="tl-TableCell-Content-Title"><span data-bind="text: tourday()"></span> um 
+							<div class="tl-TableCell-Content-Title"><span data-bind="text: tourday()"> </span> um 
 								<span class="tl-TableCell-Content-Zeit" data-bind="text: tourtime()"></span> mit 
 								<span class="tl-TableCell-Content-Guide tl-guide">
-									<span class="tl-guide-mail"><a class="tl-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2tourguide', id, data.getUser(guide).nickname,'tl', 'tl'), attr: { title: data.getUser(guide).userMailTitle() }"></a></span> <!-- span tl-guide-mail ENDE -->
-									<span class="tl-guide-profil"><a class="tl-a-member-profil" data-bind="click: go2ProfilPage.bind($data, data.getUser(guide).nickname), attr: { title: data.getUser(guide).userPhoneInfo() }, text: data.getUser(guide).nickname">name of the guide</a></span> <!-- span tl-guide-profil ENDE -->
+									<span data-bind="ifnot: $root.me.nickname===data.getUser(guide).nickname">
+										<span class="tl-guide-mail" data-bind="visible: $root.showMailLink()"><a class="tl-icon-guide-mail" data-bind="click: go2MailPage.bind($data, '2tourguide', id, data.getUser(guide).nickname,'tl', 'tl'), attr: { title: data.getUser(guide).userMailTitle() }"></a></span> <!-- span tl-guide-mail ENDE -->
+										<span class="tl-guide-phone" data-bind="visible: ($root.showPhoneLink()&&data.getUser(guide).getPhoneLink()!=null)" ><a class="tl-icon-guide-phone" data-bind="click: callMe.bind($data, data.getUser(guide)), attr: { title: data.getUser(guide).getPhoneLinkInfo() }"></a></span> <!-- span tl-guide-phone ENDE -->
+									</span>
+									<span class="tl-guide-profil"><a class="tl-a-guide-profil" data-bind="click: go2ProfilPage.bind($data, data.getUser(guide).nickname), attr: { title: data.getUser(guide).userPhoneInfo() }, text: data.getUser(guide).nickname">name of the guide</a></span> <!-- span tl-guide-profil ENDE -->
 								</span> <!-- span tl-guide ENDE -->
 							</div> <!-- div tl-TableContent-Title ENDE -->
 							<div class="tl-TableCell-Content-Tools">
@@ -629,8 +699,8 @@
 							</div> <!-- div class=wrapIcon" --> 
 						</div> <!-- div tl-TableCell-Sport --> 
 						<div class="tl-TableCell tl-TableCell-Beschreibung" data-bind="click: $root.showTour.bind($data, id)">
-							<div><span class="tl-TableCell-Content-Treffpunkt" data-bind="text: meetingpoint, attr: {title: meetingpointInfo($root.me.latitude, $root.me.longitude)}" /></div>
-							<div><span class="tl-TableCell-Content-Beschreibung flex" data-bind="text: description" /></div>
+							<div><span class="tl-TableCell-Content-Treffpunkt" data-bind="text: meetingpoint, attr: {title: meetingpointInfo($root.me.latitude, $root.me.longitude)}" ></span></div>
+							<div><span class="tl-TableCell-Content-Beschreibung flex" data-bind="text: description" ></span></div>
 						</div> <!-- div tl-TableCell-Beschreibung -->
 						<div class="tl-TableCell tl-TableCell-Dauer medium"><span class="tl-TableCell-Content-Dauer" data-bind="text: durationText()" ></span></div>
 						<div class="tl-TableCell tl-TableCell-Distanz medium"><span class="tl-TableCell-Content-Distanz" data-bind="text: distanceText()" ></span></div>
@@ -642,16 +712,15 @@
 							<span data-bind="css:getTechnicCSS(), attr: { title: data.getSTKDescription(data.getRateFromRatetype(technic)) }"></span>		
 						</div>
 						<div class="tl-TableCell tl-TableCell-Teilnehmer">
-							<span class="tl-TableCell-Content-Teilnehmer" data-bind="foreach: members">
+							<div class="tl-TableCell-Content-Teilnehmer" data-bind="foreach: members">
 								<div class="tl-member">
-									<span class="tl-member-mail">
-										<a class="tl-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2tourmember', $parent.id, data.getUser($data).nickname, 'tl', 'tl'), attr: { title: data.getUser($data).userMailTitle() }"></a>
+									<span data-bind="ifnot: $root.me.nickname===data.getUser($data).nickname">
+										<span class="tl-member-mail" data-bind="visible: $root.showMailLink()"><a class="tl-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2tourmember', $parent.id, data.getUser($data).nickname, 'tl', 'tl'), attr: { title: data.getUser($data).userMailTitle() }"></a></span>
+										<span class="tl-member-phone" data-bind="visible: ($root.showPhoneLink()&&data.getUser($data).getPhoneLink()!=null)" ><a class="tl-icon-member-phone" data-bind="click: callMe.bind($data, data.getUser($data)), attr: { title: data.getUser($data).getPhoneLinkInfo() }"></a></span>						
 									</span>
-									<span class="tl-member-profil" class="flex">
-										<a class="tl-a-member-profil" data-bind="click: go2ProfilPage.bind($data, data.getUser($data).nickname), attr: { title: data.getUser($data).userPhoneInfo() }, text: data.getUser($data).nickname"></a>
-									</span>
+									<span class="tl-member-profil"><a class="tl-a-member-profil" data-bind="click: go2ProfilPage.bind($data, data.getUser($data).nickname), attr: { title: data.getUser($data).userPhoneInfo() }, text: data.getUser($data).nickname"></a></span>
 								</div>
-							</span> <!-- tl-TableCell-Content-Teilnehmer ENDE -->
+							</div> <!-- tl-TableCell-Content-Teilnehmer ENDE -->
 						</div> <!-- div tl-TableCell-Teilnehmer ENDE -->
 					</div> <!-- div tl-Tablerow ENDE -->
 				</div>  <!-- div tl-Tablebody ENDE -->
@@ -659,12 +728,12 @@
  <!-- ohne authentifizierung -->
 			<div class="tl-Table" data-bind="if: $root.me==null">
 				<div class="tl-TableRow tl-TableHeading">
-					<div class="tl-TableHead tl-TableCell-Sport"><span id="ID_Sport" class="tl-TableHead-Content-Sport" data-bind="click: sort.bind($data,getHeader('Sport')), attr: {title: getHeader('Sport').sortTitle}"></span></div>
-					<div class="tl-TableHead tl-TableCell-Beschreibung-wA"><span id="ID_Beschreibung" class="tl-TableHead-Content-Beschreibung flex" data-bind="click: sort.bind($data,getHeader('Beschreibung')), attr: {title: getHeader('Beschreibung').sortTitle}"></span></div>
-					<div class="tl-TableHead tl-TableCell-Dauer medium"><span id="ID_Dauer" class="tl-TableHead-Content-Dauer"data-bind="click: sort.bind($data,getHeader('Dauer')), attr: {title: getHeader('Dauer').sortTitle}"></span></div>
-					<div class="tl-TableHead tl-TableCell-Distanz medium"><span id="ID_Distanz" class="tl-TableHead-Content-Distanz" data-bind="click: sort.bind($data,getHeader('Distanz')), attr: {title: getHeader('Distanz').sortTitle}"></span></div>
-					<div class="tl-TableHead tl-TableCell-Bergauf medium"><span id="ID_Bergauf" class="tl-TableHead-Content-Bergauf" data-bind="click: sort.bind($data,getHeader('Bergauf')), attr: {title: getHeader('Bergauf').sortTitle}"></span></div>
-					<div class="tl-TableHead tl-TableCell-Teilnehmer-wA big"><span id="ID_Teilnehmer" class="tl-TableHead-Content-Teilnehmer flex" data-bind="click: sort.bind($data,getHeader('Teilnehmer')), attr: {title: getHeader('Teilnehmer').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Sport"><span id="ID_Sport1" class="tl-TableHead-Content-Sport" data-bind="click: sort.bind($data,getHeader('Sport')), attr: {title: getHeader('Sport').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Beschreibung-wA"><span id="ID_Beschreibung1" class="tl-TableHead-Content-Beschreibung flex" data-bind="click: sort.bind($data,getHeader('Beschreibung')), attr: {title: getHeader('Beschreibung').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Dauer medium"><span id="ID_Dauer1" class="tl-TableHead-Content-Dauer" data-bind="click: sort.bind($data,getHeader('Dauer')), attr: {title: getHeader('Dauer').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Distanz medium"><span id="ID_Distanz1" class="tl-TableHead-Content-Distanz" data-bind="click: sort.bind($data,getHeader('Distanz')), attr: {title: getHeader('Distanz').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Bergauf medium"><span id="ID_Bergauf1" class="tl-TableHead-Content-Bergauf" data-bind="click: sort.bind($data,getHeader('Bergauf')), attr: {title: getHeader('Bergauf').sortTitle}"></span></div>
+					<div class="tl-TableHead tl-TableCell-Teilnehmer-wA big"><span id="ID_Teilnehmer1" class="tl-TableHead-Content-Teilnehmer flex" data-bind="attr: {title: getHeader('Teilnehmer').sortTitle}"></span></div>
 					<div class="tl-TableHead tl-TableCell-Scrollbar"><span>&nbsp;</span></div>
 				</div> <!-- div tl-Tablerow ENDE -->
 				<div class="tl-TableBody" data-bind="foreach: filteredTours()">
@@ -681,28 +750,28 @@
 							<div class="wrapIcon">
 								<span data-bind="css:getTourtypeCSS(), attr: { title: data.getTourTypebyType(tourtype).description }"></span>					
 								<span data-bind="visible: !active, css:getTourtypeCanceledCSS()"></span>					
-								<span data-bind="visible: oldTour(self.now), css:getTourtypeOldCSS()"></span>					
+								<span data-bind="visible: oldTour($root.now), css:getTourtypeOldCSS()"></span>					
 							</div> <!-- div class=wrapIcon" --> 
 						</div> <!-- div tl-TableCell-Sport --> 
-						<div class="tl-TableCell tl-TableCell-Beschreibung-wA"><span class="tl-TableCell-Content-Beschreibung flex" data-bind="text: description" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Beschreibung-wA"><span class="tl-TableCell-Content-Beschreibung flex" data-bind="text: sh(description)" ></span></div>
 						<div class="tl-TableCell tl-TableCell-Dauer medium"><span class="tl-TableCell-Content-Dauer" data-bind="text: durationText()" ></span></div>
 						<div class="tl-TableCell tl-TableCell-Distanz medium"><span class="tl-TableCell-Content-Distanz" data-bind="text: distanceText()" ></span></div>
 						<div class="tl-TableCell tl-TableCell-Bergauf medium"><span class="tl-TableCell-Content-Bergauf" data-bind="text: upText()" ></span></div>
-						<div class="tl-TableCell tl-TableCell-Teilnehmer-wA big"><span class="tl-TableCell-Content-Teilnehmer"data-bind="text: tourMembers() + ' Teilnehmer'" ></span></div>
+						<div class="tl-TableCell tl-TableCell-Teilnehmer-wA big"><span class="tl-TableCell-Content-Teilnehmer" data-bind="text: tourMembers() + ' Teilnehmer'" ></span></div>
 					</div> <!-- div tl-Tablerow ENDE -->		 
 				 
 				</div> <!-- div tl-TableBody ENDE -->
 			</div> <!-- div tl-Table ENDE -->
-			
+			<div id="footer" class="minimum-V-big">
+				<div id="version">
+					<a href="html/FAQ.php" target="_blank">FAQ</a>
+					<a href="html/disclaimer.php" target="_blank">Regeln</a>
+					<a href="html/impressum.php" target="_blank">Impressum</a>
+					<span data-bind="text: data.versioninfo"> </span> 
+					[<span data-bind="text: makeDateString(data.lastUpdate,4)"></span>]
+				</div> <!--End div version -->
+			</div> <!--End div footer -->
 		</div> <!--End div content -->
-		<div id="footer" class="small">
-			<div id="version">
-				<a href="html/FAQ.php" target="_blank">FAQ</a>
-				<a href="html/disclaimer.php" target="_blank">Regeln</a>
-				<a href="html/impressum.php" target="_blank">Impressum</a>
-				<span data-bind="text: data.versioninfo" />
-			</div> <!--End div version -->
-		</div> <!--End div footer -->
 	</div> <!--End div total -->
 
 </body>

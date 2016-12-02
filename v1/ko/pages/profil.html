@@ -102,6 +102,10 @@
 	
 	// class to represent a single user	
 	var ProfileViewModel = function() {
+		const meli_latitude = "49.7248173";
+		const meli_longitude = "8.634445";
+
+	
 		var self = this;
 		var s_id = "profil";
 		
@@ -117,8 +121,8 @@
 		
 		self.birthday = ko.observable(self.actUser.birthday);
 		self.adress = ko.observable(self.actUser.adress);
-		self.latitude = ko.observable(self.actUser.latitude.length==0?"49.7557717":self.actUser.latitude);
-		self.longitude = ko.observable(self.actUser.longitude.length==0?"8.635616600000048":self.actUser.longitude);
+		self.latitude = ko.observable(self.actUser.latitude.length==0?meli_latitude:self.actUser.latitude);
+		self.longitude = ko.observable(self.actUser.longitude.length==0?meli_longitude:self.actUser.longitude);
 		self.tourletter = ko.observable(self.actUser.tourletter);
 
 		self.okProfile = function(){
@@ -132,15 +136,21 @@
 			go2TourlistPage();
 		}	
 		self.saveProfile = function(){
-			var latitude = "";
-			var longitude = "";
-
-			updateUser(self.me.nickname, self.birthday(), self.name(), self.adress(), self.latitude(), self.longitude(), self.tourletter(), self.phone(), "tl", "pr" );
-			self.actUser.birthday = self.birthday();
+			var birthday = isDateObj(self.birthday())?self.birthday():null;
+			var latitude = self.latitude();
+			var longitude = self.longitude();
+		
+			if(self.adress()==""){
+				latitude ="";
+				longitude="";
+			}
+		
+			updateUser(self.me.nickname, birthday, self.name(), self.adress(), latitude, longitude, self.tourletter(), self.phone(), "tl", "pr" );
+			self.actUser.birthday = birthday;
 			self.actUser.name = self.name();
 			self.actUser.adress = self.adress();
-			self.actUser.latitude = self.latitude();
-			self.actUser.longitude = self.longitude();
+			self.actUser.latitude = latitude;
+			self.actUser.longitude = longitude;
 			self.actUser.tourletter = self.tourletter();
 			self.actUser.phone = self.phone();
 		}
@@ -151,7 +161,7 @@
 		}
 		
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', 10);
+			showMessage(info, document, 'message', durationShowMail);
 		};
 
 		/* --------- Construction --------- */
@@ -170,16 +180,16 @@
 <body onload="ko.applyBindings(new ProfileViewModel());">
 	<div class="total">
 		<div id="navigation">
-			<div id="navigation-top" class="small bigPortrait">
+			<div id="navigation-top" class="minimum-V-big">
 				<div id="message"></div>
 				<div id="logo"></div>
 			</div> <!--End div navigation-top -->
 			<div id="navigation-bottom">
 				<div id="navigation-buttons">
 					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-					<span data-bind="if: me!=null" class="bigPortrait">
-						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					<span data-bind="if: me!=null" class="minimum-V-medium">
+						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
 					</span >
 				</div> <!--End div navigation-buttons -->
 				<div id="navigation-buttons-logout" data-bind="if: me!=null">
@@ -195,9 +205,9 @@
 		<div class="content" id="main">
 			<div class="pr-Table">
 				<div class="pr-TableBody">
-					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Head medium">&nbsp</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Head minimum-V-big">&nbsp;</div> <!-- div pr-TableRow ENDE -->
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Username">
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-1-noborder">
 							<span class="pr-TableCell-Content-Username-1">Benutzername</span>
 						</div>
@@ -206,90 +216,84 @@
 						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-realname">
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-1">
 							<span class="pr-TableCell-Content-realname-1.1">Klarname</span>
 						</div>
-						<span  data-bind="ifnot: readonly">
+						<div data-bind="ifnot: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2">
 								<span class="pr-TableCell-Content-realname-1.2">
 									<input type="text" id="realname" name="realname" data-bind="textInput: name, attr: { placeholder: name.length==0?'Namen eingeben':name}"/>
 								</span>
 							</div>
-						</span>
-						<span  data-bind="if: readonly">
-							<div class="pr-TableCell pr-TableCell-col-2-noborder">
-								<span class="pr-TableCell-Content-realname-1.2" data-bind="text: name"/>
+						</div>
+						<div data-bind="if: readonly">
+							<div class="pr-TableCell pr-TableCell-col-2-noborder" data-bind="if: readonly">
+								<span class="pr-TableCell-Content-realname-1.2" data-bind="text: name" ></span>
 							</div>
-						</span>
+						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Telefon">
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-1">
 							<span class="pr-TableCell-Content-Telefon-2.1">Telefon</span>
 						</div>
-						<span  data-bind="ifnot: readonly">
+						<div data-bind="ifnot: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2">
 								<span class="pr-TableCell-Content-Telefon-2.2">
-									<input type="text" id="telefon" name="telefon" data-bind="textInput: phone, attr: { placeholder: phone.length==0?'Mobilnummer eingeben':phone}"/>
+									<input type="tel" id="telefon" name="telefon" data-bind="textInput: phone, attr: { placeholder: phone.length==0?'Mobilnummer eingeben':phone}">
 								</span>
 							</div>
-						</span>
-						<span  data-bind="if: readonly">
+						</div>
+						<div data-bind="if: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2-noborder">
-								<span class="pr-TableCell-Content-Telefon-2.2" data-bind="text: phone"/>
+								<span class="pr-TableCell-Content-Telefon-2.2" data-bind="text: phone" ></span>
 							</div>
-						</span>
+						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Birthday">
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-1">
 							<span class="pr-TableCell-Content-Birthday-1">Geburtstag</span>
 						</div>
-						<span  data-bind="ifnot: readonly">
+						<div data-bind="ifnot: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2">
 								<span class="pr-TableCell-Content-Birthday-2">
 									<input data-bind="datepicker: birthday, datepickerOptions: {  dateFormat: 'dd.mm.yy', currentText: 'Heute', closeText: 'Fertig', yearRange: '1900:2015', changeMonth: true, changeYear: true, value: birthday }" />
 								</span> 
 							</div> 
-						</span>
-						<span data-bind="if: readonly">
+						</div>
+						<div data-bind="if: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2-noborder">
-								<span class="pr-TableCell-Content-Birthday-2.2" data-bind="text: makeDateString(birthday(),2)"/>
+								<span class="pr-TableCell-Content-Birthday-2.2" data-bind="text: makeDateString(birthday(),2)" ></span>
 							</div>
-						</span>
+						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Adresse">
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-1">
 							<span class="pr-TableCell-Content-Adresse-1">Adresse</span>
 						</div>
-						<span data-bind="ifnot: readonly">
+						<div data-bind="ifnot: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2">
 								<span class="pr-TableCell-Content-Adresse-2">
-
-
-
 								<input type="text" id="adress" name="adress" data-bind="textInput: adress, attr: { placeholder: adress.length==0?'Adresse eingeben':adress}"/>
 									<input type="hidden" id="lat" class="to-input" name="lat" data-bind="value: latitude"/>
 									<input type="hidden" id="lon" class="to-input" name="lon" data-bind="value: longitude"/>
-
-
-
-
 								</span>
 							</div>
-						</span>
-						<span data-bind="if: readonly">
+						</div>
+						<div data-bind="if: readonly">
 							<div class="pr-TableCell pr-TableCell-col-2-noborder">
-								<span class="pr-TableCell-Content-Adresse-2.2" data-bind="text: adress"/>
+								<span class="pr-TableCell-Content-Adresse-2.2" data-bind="text: adress" ></span>
 							</div>
-						</span>
+						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					
-					<span data-bind="ifnot: readonly">
-						<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Karte small">
-							<div class="pr-TableCell pr-TableCell-col-1"><span class="pr-TableCell-Content-Karte-1">&nbsp</span></div>
+					<div data-bind="ifnot: readonly">
+						<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Karte">
+							<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
+							<div class="pr-TableCell pr-TableCell-col-1"><span class="pr-TableCell-Content-Karte-1">&nbsp;</span></div>
 							<div class="pr-TableCell pr-TableCell-col-2-large">
 								<div class="pr-TableCell-Content-Karte-2" >
 									<div id="map" class="pr-map" data-bind="locationpicker: adress, locationpickerOptions: { radius: 0, location: {latitude: latitude(), longitude:longitude()}, 
@@ -297,83 +301,74 @@
 								</div>
 							</div>
 						</div> <!-- div pr-TableRow ENDE -->
-					</span>
-					
-					
-					
-					<span data-bind="if: actUser.nickname == me.nickname">
+					</div>
+					<div data-bind="if: actUser.nickname == me.nickname">
 						<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Email">
-							<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+							<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 							<div class="pr-TableCell pr-TableCell-col-1">
 								<span class="pr-TableCell-Content-Email-1">E-Mail-Adresse</span>
 							</div>
 							<div class="pr-TableCell pr-TableCell-col-2-noborder">
-								<span class="pr-TableCell-Content-Email-2" data-bind="text: sh(actUser.email)">Strassenschwalbe@fly.com</span>
+								<span class="pr-TableCell-Content-Email-2" data-bind="text: sh(actUser.email)">&nbsp;</span>
 							</div>
 						</div> <!-- div pr-TableRow ENDE -->
-					</span>
+					</div>
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Letter">
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-1-noborder">
 							<span class="pr-TableCell-Content-Letter-1">Tourletter</span>
 						</div>
 						<div class="pr-TableCell pr-TableCell-col-2-noborder">
 							<span class="pr-TableCell-Content-Letter-2">
-								<label for="check1">
-									<span data-bind="ifnot: readonly">
-										<input type="checkbox" id="tourletter" name="tourletter" value="tourletter" data-bind="checked: tourletter"/>
-									</span>
-									<span data-bind="if: readonly">
-										<input type="checkbox" id="tourletter1" name="tourletter1" value="tourletter1" disabled data-bind="checked: tourletter"/>
-									</span>
+								<label for="tourletter">
+									<input type="checkbox" id="tourletter" name="tourletter" data-bind="checked: tourletter, enable : !readonly" />
 								</label>
 							</span>
 						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo">
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-1">
 							<span class="pr-TableCell-Content-Tourinfo-1">
-								<input type="checkbox" id="cb_guidedToursNo" data-bind="click: function() {toggle('guidedToursNo'); return(true);}">geführte Touren</input>
+								<label for="cb_guidedToursNo"><input type="checkbox" id="cb_guidedToursNo" data-bind="click: function() {toggle('guidedToursNo'); return(true);}" />geführte Touren</label>
 							</span>
 						</div>
 						<div class="pr-TableCell pr-TableCell-col-2-noborder">
 							<span class="pr-TableCell-Content-Tourinfo-2" data-bind="text: sh(actUser.guidedToursNo())">123</span>
 						</div>
-						<span id="guidedToursNo" style="display:none" data-bind="foreach: actUser.guidedTours">
+						<div id="guidedToursNo" style="display:none" data-bind="foreach: actUser.guidedTours">
 							<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo">
+								<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
+								<div class="pr-TableCell pr-TableCell-col-1">&nbsp;</div>
 								<div class="pr-TableCell pr-TableCell-col-2-noborder">
-								<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
-								<div class="pr-TableCell pr-TableCell-col-1">&nbsp</div>
 									<span class="pr-TableCell-Content-Tourinfo-2" data-bind="text: data.getTour($data).shorttourDescription()">Beschreibung der geführten Tour</span>
 								</div>
 							</div>
-						</span>
-
+						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo">
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-1">				
 							<span class="pr-TableCell-Content-Tourinfo-1">
-								<input type="checkbox" id="cb_toursGuidedNo" data-bind="click: function() {toggle('toursGuidedNo'); return(true);}">mitgefahrene Touren
+								<label for="cb_toursGuidedNo"><input type="checkbox" id="cb_toursGuidedNo" data-bind="click: function() {toggle('toursGuidedNo'); return(true);}" />mitgefahrene Touren</label>
 							</span>
 						</div>
 						<div class="pr-TableCell pr-TableCell-col-2-noborder">
 							<span class="pr-TableCell-Content-Tourinfo-2" data-bind="text: sh(actUser.toursGuidedNo())">321</span>
 						</div>
-						<span id="toursGuidedNo" style="display:none" data-bind="foreach: actUser.toursGuided">
+						<div id="toursGuidedNo" style="display:none" data-bind="foreach: actUser.toursGuided">
 							<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo">
-								<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
-								<div class="pr-TableCell pr-TableCell-col-1">&nbsp</div>
+								<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
+								<div class="pr-TableCell pr-TableCell-col-1">&nbsp;</div>
 								<div class="pr-TableCell pr-TableCell-col-2-noborder">
 									<span class="pr-TableCell-Content-Tourinfo-2" data-bind="text: data.getTour($data).shorttourDescription()">Beschreibung der mitgefahrenen Tour</span>
 								</div>
 							</div>
-						</span>
+						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Tourinfo" data-bind="if: actUser.nickname == me.nickname" >
-						<div class="pr-TableCell pr-TableCell-col-0 big">&nbsp</div>
-						<div class="pr-TableCell pr-TableCell-col-1">&nbsp</div>
+						<div class="pr-TableCell pr-TableCell-col-0 minimum-H-big">&nbsp;</div>
+						<div class="pr-TableCell pr-TableCell-col-1">&nbsp;</div>
 						<div class="pr-TableCell pr-TableCell-col-2-noborder">
 							<div id="pr-action">
 								<div id="pr-action-buttons">
@@ -390,16 +385,16 @@
 						</div>
 					</div> <!-- div pr-TableRow ENDE -->
 					
-					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Foot medium">&nbsp</div> <!-- div pr-TableRow ENDE -->
+					<div class="pr-TableRow pr-TableRow-Content pr-TableRow-Foot medium">&nbsp;</div> <!-- div pr-TableRow ENDE -->
 				</div> <!-- div pr-TableBody ENDE -->
 			</div> <!-- div pr-Table ENDE -->
-			</div> <!--End div content -->
-		<div id="footer" class="small">
+		</div> <!--End div content -->
+		<div id="footer" class=" minimum-V-big">
 			<div id="version">
-				<a href="html/FAQ.php" target="_blank">FAQ</a>
-				<a href="html/disclaimer.php" target="_blank">Regeln</a>
-				<a href="html/impressum.php" target="_blank">Impressum</a>
-				<span data-bind="text: data.versioninfo" />
+				<a href="html/FAQ.php" target="_blank" >FAQ</a>
+				<a href="html/disclaimer.php" target="_blank" >Regeln</a>
+				<a href="html/impressum.php" target="_blank" >Impressum</a>
+				<span data-bind="text: data.versioninfo" ></span>
 			</div> <!--End div version -->
 		</div> <!--End div footer -->
 	</div> <!--End div total -->

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta name="viewport" content="initial-scale=1.0">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=600">
     <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
     <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
     <link rel="stylesheet" type="text/css" href="../css/s2g-ul.css" />
-    <meta charset="UTF-8">
-	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+ 	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
 	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
 	<script type='text/javascript' src='../script/memorystorage.js'></script>
 	<script type='text/javascript' src='../script/data.js'></script>
@@ -20,7 +20,14 @@
 		
 		self.data = getData();
 		self.me = getMe();
-
+		
+		self.getPhoneLink= function(cn){
+			if(cn!=""){
+				return('tel:'+cn);
+			}
+			return(null);
+		}
+		
 		self.headers = [
 			{id:'ID_Nr', title:'Nr', asc: true, active: false},
 			{id:'ID_User', title:'User', sortPropertyName:'nickname', sortTitle:'Sortierung nach Nickname', asc: false, active: false},
@@ -193,7 +200,7 @@
 		});
 
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', 10);
+			showMessage(info, document, 'message', durationShowMail);
 		};
 
 		/* --------- Construction --------- */
@@ -211,9 +218,6 @@
 		if( message != null && message != ""){
 			self.showMessage(message);
 		}		
-		self.showMessage = function(info){
-			showMessage(info, document, 'message', 10);
-		};
 	}
 	
 	</script>
@@ -222,16 +226,16 @@
 <body onload="ko.applyBindings(new UsersViewModel());">
 	<div class="total">
 		<div id="navigation">
-			<div id="navigation-top" class="small bigPortrait">
+			<div id="navigation-top" class="minimum-V-big">
 				<div id="message"></div>
 				<div id="logo"></div>
 			</div> <!--End div navigation-top -->
 			<div id="navigation-bottom">
 				<div id="navigation-buttons">
 					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<button class="bigPortrait" id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-					<span data-bind="if: me!=null" class="bigPortrait">
-						<button <button data-bind="click: go2StatisticPage">Statistik</button>
+					<span data-bind="if: me!=null"  class="minimum-V-medium">
+						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
 					</span >
 				</div> <!--End div navigation-buttons -->
 				<div id="navigation-buttons-logout" data-bind="if: me!=null">
@@ -245,12 +249,12 @@
 			</div> <!--End div navigation-bottom -->
 		</div> <!--End div navigation -->
 		<div class="content" id="main">
-			<div id="userlisttools" class="small" data-bind="if: me!=null">
+			<div id="userlisttools"data-bind="if: me!=null">
 				<div id="cb_tools">
 					<div id="cb_tools_top">
-						<label for="check5"><input name="cb_showMore" data-bind="checked: showMore" id="check6" type="checkbox">Mehr..</label>
+						<label for="check5"><input name="cb_showMore" data-bind="checked: showMore" id="check5" type="checkbox">Mehr..</label>
 					</div> <!--End div cb_tools_top -->
-					<div id="cb_tools_bottom" data-bind="if: showMore" class="bigPortrait">
+					<div id="cb_tools_bottom" data-bind="if: showMore" class="minimum-V-medium">
 						<label for="check6"><input name="cb_showFilter" data-bind="checked: showFilter" id="check6" type="checkbox">Filter</label>
 						<span data-bind="if: showFilter">
 							<select data-bind="options: filters,
@@ -266,31 +270,25 @@
 
 			<div class="ul-Table">
 				<div class="ul-TableRow ul-TableHeading">
-					<div class="ul-TableHead ul-TableCell-Nummer"><span id="ID_Nr" class class="ul-TableHead-Content-Nummer" data-bind="text: getHeader('Nr').title"></span></div>
-					<div class="ul-TableHead ul-TableCell-User"><span id="ID_User" class class="ul-TableHead-Content-User" data-bind="click: sort.bind($data,getHeader('User')), attr: {title: getHeader('User').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Mail"><span id="ID_Mail" class class="ul-TableHead-Content-Mail" data-bind="attr: {title: getHeader('Mail').title}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Name"><span id="ID_Name" class class="ul-TableHead-Content-Name" data-bind="click: sort.bind($data,getHeader('Namen')), attr: {title: getHeader('Namen').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Telefon"><span id="ID_Telefon" class class="ul-TableHead-Content-Telefon" data-bind="click: sort.bind($data,getHeader('Telefon')), attr: {title: getHeader('Telefon').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Entfernung big"><span id="ID_Entfernung" class class="ul-TableHead-Content-Entfernung" data-bind="text: getHeader('Entfernung zu mir').title"></span></div>
-					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><span id="ID_Jahr" class class="ul-TableHead-Content-Geburtsjahr" data-bind="click: sort.bind($data,getHeader('Jahr')), attr: {title: getHeader('Jahr').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span id="ID_Register" class class="ul-TableHead-Content-Registrierung" data-bind="click: sort.bind($data,getHeader('Register')), attr: {title: getHeader('Register').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Guide medium"><span id="ID_G" class class="ul-TableHead-Content-Guide" data-bind="click: sort.bind($data,getHeader('G')), attr: {title: getHeader('G').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Mitfahrer medium"><span id="ID_M" class class="ul-TableHead-Content-Mitfahrer" data-bind="click: sort.bind($data,getHeader('M')), attr: {title: getHeader('M').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Nummer"><span id="ID_Nr" class="ul-TableHead-Content-Nummer" data-bind="text: getHeader('Nr').title"></span></div>
+					<div class="ul-TableHead ul-TableCell-User"><span id="ID_User" class="ul-TableHead-Content-User" data-bind="click: sort.bind($data,getHeader('User')), attr: {title: getHeader('User').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Mail"><span id="ID_Mail" class="ul-TableHead-Content-Mail" data-bind="attr: {title: getHeader('Mail').title}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Name"><span id="ID_Name" class="ul-TableHead-Content-Name" data-bind="click: sort.bind($data,getHeader('Namen')), attr: {title: getHeader('Namen').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Telefon"><span id="ID_Telefon" class="ul-TableHead-Content-Telefon" data-bind="click: sort.bind($data,getHeader('Telefon')), attr: {title: getHeader('Telefon').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Entfernung big"><span id="ID_Entfernung" class="ul-TableHead-Content-Entfernung" data-bind="text: getHeader('Entfernung zu mir').title"></span></div>
+					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><span id="ID_Jahr" class="ul-TableHead-Content-Geburtsjahr" data-bind="click: sort.bind($data,getHeader('Jahr')), attr: {title: getHeader('Jahr').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span id="ID_Register" class="ul-TableHead-Content-Registrierung" data-bind="click: sort.bind($data,getHeader('Register')), attr: {title: getHeader('Register').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Guide medium"><span id="ID_G" class="ul-TableHead-Content-Guide" data-bind="click: sort.bind($data,getHeader('G')), attr: {title: getHeader('G').sortTitle}"></span></div>
+					<div class="ul-TableHead ul-TableCell-Mitfahrer medium"><span id="ID_M" class="ul-TableHead-Content-Mitfahrer" data-bind="click: sort.bind($data,getHeader('M')), attr: {title: getHeader('M').sortTitle}"></span></div>
 					<div class="ul-TableHead ul-TableCell-Scrollbar"><span>&nbsp;</span></div>
 				</div> <!-- div ul-TableRow ENDE -->
 				<!-- User me -->
 				<div class="ul-TableRow ul-TableHeading even">
 					<div class="ul-TableHead ul-TableCell-Nummer"><span class="ul-TableHead-Content-Nummer">&nbsp;</span></div>
-					<div class="ul-TableHead ul-TableCell-User"><span class="ul-TableHead-Content-User" ><a class="ul-a-member-profil" data-bind="text: sh(me.nickname), click:  go2ProfilPage.bind($data, me.nickname), attr: { title: me.userPhoneInfo()}">User</a></span></div>
-					<div class="ul-TableHead ul-TableCell-Mail">
-						<span class="ul-TableHead-Content-Mail ul-member">
-							<span class="ul-member-mail">
-								<span class="ul-icon-member-mail" ></span>
-							</span>
-						</span>
-					</div>
+					<div class="ul-TableHead ul-TableCell-User"><span class="ul-TableHead-Content-User" ><a class="ul-a-member-profil" data-bind="text: sh(me.nickname), click: go2ProfilPage.bind($data, me.nickname), attr: { title: me.userPhoneInfo()}">User</a></span></div>
+					<div class="ul-TableHead ul-TableCell-Mail"><span class="ul-TableHead-Content-Mail ul-member"><span class="ul-member-mail"><span class="ul-icon-member-mail" ></span></span></span></div>
 					<div class="ul-TableHead ul-TableCell-Name"><span class="ul-TableHead-Content-Name" data-bind="text: sh($root.me.name)">name</span></div>
-					<div class="ul-TableHead ul-TableCell-Telefon"><span class="ul-TableHead-Content-Telefon" data-bind="text: sh($root.me.phone)">phone</span></div>
+					<div class="ul-TableHead ul-TableCell-Telefon"><span class="ul-TableHead-Content-Telefon"><a data-bind="text: sh($root.me.phone), attr: {title: sh($root.me.phone) }">phone</a></span></div>
 					<div class="ul-TableHead ul-TableCell-Entfernung big"><span class="ul-TableHead-Content-Entfernung" data-bind="text: sh($root.me.adress)">adress</span></div>
 					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><span class="ul-TableHead-Content-Geburtsjahr" data-bind="text: sh($root.me.getBirthday())" >0000</span></div>
 					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span class="ul-TableHead-Content-Registrierung" data-bind="text: sh($root.me.getRegistration())">00.00.0000</span></div>
@@ -322,7 +320,7 @@
 							</span>
 						</div>
 						<div class="ul-TableCell ul-TableCell-Name"><span class="ul-TableCell-Content-Name" data-bind="text: sh(name)">name</span></div>
-						<div class="ul-TableCell ul-TableCell-Telefon"><span class="ul-TableCell-Content-Telefon" data-bind="text: sh(phone)">phone</span></div>
+						<div class="ul-TableCell ul-TableCell-Telefon"><span class="ul-TableCell-Content-Telefon"><a data-bind="text: sh(phone), attr: { href: getPhoneLink(), title: sh(phone) }">phone</a></span></div>
 						<div class="ul-TableCell ul-TableCell-Entfernung big"><span class="ul-TableCell-Content-Entfernung" data-bind="text: distance($root.me.latitude, $root.me.longitude)">distance(</span></div>
 						<div class="ul-TableCell ul-TableCell-Geburtsjahr medium"><span class="ul-TableCell-Content-Geburtsjahr" data-bind="text: sh(getBirthday())" >0000</span></div>
 						<div class="ul-TableCell ul-TableCell-Registrierung medium"><span class="ul-TableCell-Content-Registrierung" data-bind="text: sh(getRegistration())">00.00.0000</span></div>
@@ -332,12 +330,12 @@
 				</div> <!-- div ul-TableBody ENDE -->
 			</div>  <!-- div tl-Table ENDE -->
 		</div> <!--End div content -->
-		<div id="footer" class="small">
+		<div id="footer" class="minimum-V-big">
 			<div id="version">
-				<a href="html/FAQ.php" target="_blank">FAQ</a>
-				<a href="html/disclaimer.php" target="_blank">Regeln</a>
-				<a href="html/impressum.php" target="_blank">Impressum</a>
-				<span data-bind="text: data.versioninfo" />
+				<a href="html/FAQ.php" target="_blank" >FAQ</a>
+				<a href="html/disclaimer.php" target="_blank" >Regeln</a>
+				<a href="html/impressum.php" target="_blank" >Impressum</a>
+				<span data-bind="text: data.versioninfo" ></span>
 			</div> <!--End div version -->
 		</div> <!--End div footer -->
 	</div> <!--End div total -->

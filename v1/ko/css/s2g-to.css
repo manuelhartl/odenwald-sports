@@ -1,7 +1,6 @@
 .to-TableBody{
 }
 
-
 /* Size: width */
 .to-TableCell-col-1{
 	width: 10em;
@@ -11,7 +10,7 @@
 	width: 5em;
 }
 .to-TableCell-col-2-small, .to-TableCell-col-3-small, .to-TableCell-col-4-small {
-	width: 10em;
+	width: 15em;
 }
 .to-TableCell-col-2{
 	width: calc(( 40 * ( 100% - ( 8em ))) / 100 );
@@ -59,33 +58,26 @@
 .to-map{
 	width: 100%;
 	min-width: 100px; 
-	height: 400px;
+	height: 300px;
 }
 
 /* size: height */
 .to-TableRow-Sport, .to-TableRow-Treffpunkt-1, .to-TableRow-Treffpunkt-2, .to-TableRow-Adresse, .to-TableRow-Datum, .to-TableRow-Pace, .to-TableRow-Technik, .to-TableRow-Distanz, .to-TableRow-Hoehenmeter, .to-TableRow-Dauer {
 	height: 3em;
 }
-.to-TableRow-Beschreibung{
-	height: 6em;
+.to-TableRow-Beschreibung-2{
+	height: 100%;
 }
 
-#editor{
-	height: calc( ( 50 * ( 100% - ( ( 10 * ( 3em + 0.2em ) ) ) ) ) / 100 );
-}
-img[id='Karte']{
-	height: calc( ( 50 * ( 100% - ( ( 10 * ( 3em + 0.2em ) ) ) ) ) / 100 );
-}
 #meetingpoint, #adress, #date, #time, #distance, #altitude, #duration{
 	height: 1.5em;
 	width: 99%;
 }
 
-
 /* input fields */
-#editor, #meetingpoint, #adress1, #adress2, #distance, #altitude, #duration{
+#editor1, #editor2, #meetingpoint, #adress1, #adress2, #distance, #altitude, #duration{
 	height: 100%;
-	width: 99%;
+	width: 100%;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	box-sizing: border-box;         /* Opera/IE 8+ */
@@ -100,8 +92,16 @@ img[id='Karte']{
    	font-size: inherit;
 }
 
+#editor1, #editor2{
+	height: calc( 200px - 1em);
+}
+
 .xxInput{
 	border-style: ridge;
+}
+.to-Input {
+	height: 25px;
+	width: 99%;
 }
 
 .to-slider-left {
@@ -147,7 +147,7 @@ img[id='Karte']{
 
 
 /* responsive design */
-* big-screen */
+/* big-screen */
 @media (min-width: 1281px){
 }
 
