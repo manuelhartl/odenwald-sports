@@ -42,6 +42,7 @@ if (hasAuth ()) {
 			<input name="action" type="hidden" value="user-list" /> <input name="submit" type="submit" value="Benutzerliste" />
 		</form>
 	</div>
+
 	<div id="navigation-buttons-logout">
 		<form name="logout" action="index.php" method="post">
 			<input name="action" type="hidden" value="logout" /> <input id="submit-logout" name="submit" type="submit"
@@ -70,5 +71,5 @@ if (hasAuth ()) {
 }
 ?>
 
-
+<a href="ko/pages/tour-list.html" id="betalink">BETA-Version</a>
 </div>
