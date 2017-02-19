@@ -84,7 +84,7 @@ function getDBPlace($row) {
 	return $place;
 }
 function insertTour($pdo, DBTour $tour) {
-	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id, skill, speed, distance, elevation, meetingpoint_desc) VALUES(?,?,?,?,?,PointFromText(?),?,?,?,?,?,?)" );
+	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id, skill, speed, distance, elevation, meetingpoint_desc, bringlight) VALUES(?,?,?,?,?,PointFromText(?),?,?,?,?,?,?,?)" );
 	$stmt->bindParam ( 1, $tour->guide->id );
 	$date = toDbmsDate ( $tour->startDateTime );
 	$stmt->bindParam ( 2, $date );
@@ -99,6 +99,7 @@ function insertTour($pdo, DBTour $tour) {
 	$stmt->bindParam ( 10, $tour->distance );
 	$stmt->bindParam ( 11, $tour->elevation );
 	$stmt->bindParam ( 12, $tour->meetingPoint_desc );
+	$stmt->bindParam ( 13, $tour->bringlight );
 	if (! ex2er ( $stmt )) {
 		return false;
 	}

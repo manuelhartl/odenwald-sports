@@ -14,6 +14,14 @@ function htmlHeader($redirect, $to = 'index.php') {
 <body>
 <?php
 }
+function error($str) {
+	header ( 'Content-type: application/json' );
+	$json = array();
+	$json ['text'] = $str;
+	echo json_encode ( $json );
+	http_response_code ( 400 );
+	exit ();	
+}
 function jsonCheckAuth() {
 	if (! hasAuth ()) {
 		$json ['authenticated'] = hasAuth ();
