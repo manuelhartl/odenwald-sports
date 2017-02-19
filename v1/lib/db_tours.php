@@ -106,7 +106,7 @@ function insertTour($pdo, DBTour $tour) {
 	return $pdo->lastInsertId ();
 }
 function updateTour($pdo, DBTour $tour) {
-	$stmt = $pdo->prepare ( "update tour set startdate = ?, duration=?, meetingpoint=?, meetingpoint_desc=? , meetingpoint_coord = PointFromText(?), description=?, skill = ? , speed = ? , distance = ?, elevation = ?, bringlight = ?, modifydate = now() where id=? and status='active'" );
+	$stmt = $pdo->prepare ( "update tour set startdate = ?, duration=?, meetingpoint=?, meetingpoint_desc=? , meetingpoint_coord = PointFromText(?), description=?, fk_sport_subtype_id = ?, skill = ? , speed = ? , distance = ?, elevation = ?, bringlight = ?, modifydate = now() where id=? and status='active'" );
 	$date = toDbmsDate ( $tour->startDateTime );
 	$point = 'POINT(' . $tour->meetingPoint_lat . " " . $tour->meetingPoint_long . ')';
 	if (! ex2er ( $stmt, array (
@@ -116,6 +116,7 @@ function updateTour($pdo, DBTour $tour) {
 			$tour->meetingPoint_desc,
 			$point,
 			$tour->description,
+			$tour->sport->sportsubid,
 			$tour->skill,
 			$tour->speed,
 			$tour->distance,
