@@ -1,30 +1,53 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta name="viewport" content="initial-scale=1.0">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
-    <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
     <link rel="stylesheet" type="text/css" href="../css/s2g-re.css" />
-    <meta charset="UTF-8">
 	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
-	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.1.js'></script>
 	<script type='text/javascript' src='../script/memorystorage.js'></script>
 	<script type='text/javascript' src='../script/data.js'></script>
-	<script type='text/javascript' >
+	<script type='text/javascript'>
+	
+	//'use strict';	// don't_view_use_strict
 
-	// 'use strict';	// view_dont_use_strict
-
-	// class to represent a single user	
-	var PasswordViewModel = function() {
+	function setHeight(){
+		setAvailableHeight('s2g-tablecontent', ['s2g-top','s2g-navigation'], 's2g-footer');
+	}
+	
+	// class to represent a registration	
+	var RegisterViewModel = function() {
+		const s_id = "register";
+		const needs_authentification = false;	
 		var self = this;
 		
 		self.data = getData();
-		self.me = getMe();
-		
-		self.username = ko.observable("");
-		
+		var _me = ko.observable(null);
+		self.me = ko.computed({
+			read: function() { if(needs_authentification){ checkAuthentification(needs_authentification, _me(), 're','tl'); }; return(_me());},
+			write: function (me) { _me(me); },
+			owner: self
+		});		
+
+		self.username = ko.observable("");		
 		self.password = ko.observable("");
 		self.password1 = ko.observable("");
+		self.email = ko.observable("");
+		self.acceptRules = ko.observable(false);
+		
+		self.init = function(){
+			self.me(checkAuthentification( needs_authentification, null, "re","tl" ));
+			self.data.setpreferences(self.me());
+			self.username("");
+			self.password("");
+			self.password1("");
+
+			self.email("");
+			self.acceptRules(false);
+		}
 		
 		self.isConfirmed = ko.computed(function(){
 			if(!validPassword(self.password())) { return (false) };
@@ -45,9 +68,6 @@
 			return (true);
 		});
 		
-		self.email = ko.observable("");
-		self.acceptRules = ko.observable(false);
-
 		self.cancel = function(){
 			// no session info to reset
 			go2TourlistPage();
@@ -71,10 +91,12 @@
 		}
 		
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', durationShowMail);
+			showMessage(info, document, 's2g-message', durationShowMessage);
 		};
 
 		/* --------- Construction --------- */
+		self.init();
+		
 		// show message if available
 		var message = getMessage();
 		if( message != null && message != ""){
@@ -83,144 +105,101 @@
 	}
 
 	window.onerror = function (msg, url, line, col, error) {
-		return(globalError(msg, url, line, col, error));
+		return(globalError("Register", msg, url, line, col, error));
 	};
-	
 	</script>
-	<title>Sport2Gether (KnockOut)</title>
+	
+<title>Sport2gether</title>
 </head>
-<body onload="ko.applyBindings(new PasswordViewModel());">
-	<div class="total">
-		<div id="navigation">
-			<div id="navigation-top" class="minimum-V-big">
-				<div id="message"></div>
-				<div id="logo"></div>
-			</div> <!--End div navigation-top -->
-			<div id="navigation-bottom">
-				<div id="navigation-buttons">
-					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<span data-bind="if: me!=null" class="minimum-V-medium">
-						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
-					</span >
-				</div> <!--End div navigation-buttons -->
-				<div id="navigation-buttons-logout" data-bind="if: me!=null">
-					<button id="btn-logout" data-bind="click: Logout">Logout</button>
-					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
-				</div> <!--End div navigation-buttons-logout (logged in) -->
-				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
-					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
-				</div> <!--End div navigation-buttons-in (logged out) -->
-			</div> <!--End div navigation-bottom -->
-		</div> <!--End div navigation -->
-		<div class="content" id="main">
-		
-			<div class="re-Table">
-				<div class="re-TableBody">
-					<div class="re-TableRow re-TableRow-Content re-TableRow-Head minimum-V-medium">&nbsp;</div> <!-- div re-TableRow ENDE -->
-					<div class="re-TableRow re-TableRow-Content re-TableRow-Username">
-						<div class="re-TableCell re-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-col-1">
-							<span class="re-TableCell-Content-Username-1">Benutzername</span>
-						</div>
-						<div class="re-TableCell re-TableCell-col-2">
-							<span class="re-TableCell-Content-Username-2">
-								<input type="text" id="username" name="username" placeholder="Benutzername" data-bind="textInput: username" />
-							</span>
-						</div>
-						<div class="re-TableCell re-TableCell-col-3">
-							<span style="display:none;color:darkgreen" class="help-inline" data-bind="visible:validUsername(username())">Gültiger Benutzername!</span>
-						</div>
-					</div> <!-- div re-TableRow ENDE -->
-					<div class="re-TableRow re-TableRow-Content re-TableRow-Username">
-						<div class="re-TableCell re-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-col-1">
-							<span class="re-TableCell-Content-Password-1.1" data-bind="style:{color:pwColor()}">Passwort</span>
-						</div>
-						<div class="re-TableCell re-TableCell-col-2">
-							<span class="re-TableCell-Content-Password-1.2">
-								<input type="password" id="password" name="password" placeholder="Passwort" data-bind="textInput: password" />
-							</span>
-						</div>
-						<div class="re-TableCell re-TableCell-col-3">
-							<span style="display:none" class="help-inline" data-bind="visible:passwordStrength(password())">
-								<b data-bind="style:{color:pwColor()}">Stärke:</b> <span data-bind="text:passwordStrength(password())">0</span>%
-							</span>
-						</div>
-					</div> <!-- div re-TableRow ENDE -->
-					<div class="re-TableRow re-TableRow-Content re-TableRow-Repeat-Password">
-						<div class="re-TableCell re-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-col-1">
-							<span class="re-TableCell-Content-Password-2.1">Passwort wiederholen</span>
-						</div>
-						<div class="re-TableCell re-TableCell-col-2">
-							<span class="re-TableCell-Content-Password-2.2">
-								<input type="password" id="passwordrepeat" name="passwordrepeat" placeholder="Passwort wiederholen" data-bind="value: password1, valueUpdate: 'afterkeydown'" />
-							</span>
-						</div>
-						<div class="re-TableCell re-TableCell-col-3">
-							<span style="display:none;color:darkgreen" class="help-inline" data-bind="visible:isConfirmed()">Passwords Match!</span>
-						</div>
-					</div> <!-- div re-TableRow ENDE -->
-					<div class="re-TableRow re-TableRow-Content re-TableRow-Email">
-						<div class="re-TableCell re-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-col-1">
-							<span class="re-TableCell-Content-Email-1">E-Mail-Adresse</span>
-						</div>
-						<div class="re-TableCell re-TableCell-col-2">
-							<span class="re-TableCell-Content-Email-2">
-								<input type="text" id="email" name="email" placeholder="Email eingeben" data-bind="textInput: email" />
-							</span>
-						</div>
-					</div> <!-- div re-TableRow ENDE -->
-					<div class="re-TableRow re-TableRow-Content re-TableRow-Rules">
-						<div class="re-TableCell re-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-col-1">
-							<span class="re-TableCell-Content-Rules-1">Ich habe die Regeln</span>
-						</div>
-						<div class="re-TableCell re-TableCell-col-2-tini">
-							<span class="re-TableCell-Content-Rules-2">
-								<input type="checkbox" id="rules" name="rules" data-bind="checked: acceptRules" />
-							</span>
-						</div> 
-						<div class="re-TableCell re-TableCell-col-3">
-							<span class="re-TableCell-Content-Rules-3"> gelesen und akzeptiere sie</span>
-						</div> 
-					</div> <!-- div re-TableRow ENDE -->
-					<div class="re-TableRow re-TableRow-Content re-TableRow-Register">
-						<div class="re-TableCell re-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-col-1">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-Content-Register-1">
-							<span class="re-TableCell-Content-Register-2">
-								<button id="btnLogin" data-bind="click: cancel">Abbrechen</button>
-							</span>
-							<span class="re-TableCell-Content-Register-3">
-								<button id="btnRegister" data-bind="click: register">Registrieren</button>
-							</span>
-						</div>
-					</div> <!-- div to-TableRow ENDE -->
-					<div class="re-TableRow re-TableRow-Content re-TableRow-RegisterInfo">
-						<div class="re-TableCell re-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-col-1">&nbsp;</div>
-						<div class="re-TableCell re-TableCell-Content-RegisterInfo">
-							<span style="display:none;color:darkgreen" class="help-inline" data-bind="visible:isValidForm()">Alle Daten können jetzt mit Registrieren an das Portal übermittelt werden, du erhälst anschließend ein Email und mit dem darin enthaltenen Link kannst du die Registrierung abschliessen</span>
-						</div>
-					</div> <!-- div to-TableRow ENDE -->
-					<div class="re-TableRow re-TableRow-Content re-TableRow-Foot minimum-V-medium">&nbsp;</div> <!-- div re-TableRow ENDE -->
-				</div> <!-- div re-TableBody ENDE -->
-			</div> <!-- div re-Table ENDE -->
+<body onload="ko.applyBindings(new RegisterViewModel());" onresize="setHeight();" >
+<!-- ko template: {afterRender: setHeight } -->
+	<div id="s2g-top">
+		<div id="navigation-top" class="minimum-V-big">
+			<div id="s2g-message"></div>
+			<div id="s2g-logo"></div>
+		</div> <!-- End div navigation-top -->
+	</div> <!--End div s2g-top -->
+	<div id="s2g-navigation">
+		<div id="s2g-left-navigation-buttons">
+			<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+			<span data-bind="if: me()!=null" class="minimum-V-medium">
+				<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+				<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
+			</span >
+		</div> <!--End div navigation-buttons -->
+		<div id="s2g-right-navigation-buttons-logout" data-bind="if: me()!=null">
+			<button id="btn-logout" data-bind="click: Logout">Logout</button>
+			<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me().nickname), text: 'Profil '+ me().nickname">Profil</button>
+		</div> <!-- End div navigation-buttons-logout -->
+		<div id="s2g-right-navigation-buttons-login" data-bind="ifnot: me()!=null">
+			<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+			<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
+		</div> <!-- End div navigation-buttons-login -->
+	</div> <!--End div s2g-navigation -->
+	
+	<div id="s2g-table">
+		<div id="s2g-tablecontent">
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">&nbsp;</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">				<div class="s2g-tablecell">Benutzername</div>	</div>
+				<div class="s2g-table-col-3">				<div class="s2g-tablecell s2g-input-cell">	<input class="s2g-input-field" type="text" id="username" name="username" placeholder="Benutzername" data-bind="textInput: username" />	</div>	</div>					
+				<div class="s2g-table-col-4">				<div class="s2g-tablecell">	<span style="display:none;color:darkgreen" class="help-inline" data-bind="visible:validUsername(username())">Gültiger Benutzername!</span>	</div>	</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">				<div class="s2g-tablecell"><span data-bind="style:{color:pwColor()}">Passwort</span></div>	</div>
+				<div class="s2g-table-col-3">				<div class="s2g-tablecell s2g-input-cell">	<input class="s2g-input-field" type="password" id="password" name="password" placeholder="Passwort" data-bind="textInput: password" />	</div>	</div>					
+				<div class="s2g-table-col-4">				<div class="s2g-tablecell">	<span style="display:none" class="help-inline" data-bind="visible:passwordStrength(password())"><b data-bind="style:{color:pwColor()}">Stärke:</b> <span data-bind="text:passwordStrength(password())">0</span>%</span>	</div>	</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">				<div class="s2g-tablecell">Passwort wiederholen</div>	</div>
+				<div class="s2g-table-col-3">				<div class="s2g-tablecell s2g-input-cell">	<input class="s2g-input-field" type="password" id="passwordrepeat" name="passwordrepeat" placeholder="Passwort wiederholen" data-bind="value: password1, valueUpdate: 'afterkeydown'" />	</div>	</div>					
+				<div class="s2g-table-col-4">				<div class="s2g-tablecell">	<span style="display:none;color:darkgreen" class="help-inline" data-bind="visible:isConfirmed()">Passwords Match!</span>	</div>	</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">				<div class="s2g-tablecell">E-Mail-Adresse</div>	</div>
+				<div class="s2g-table-col-3">				<div class="s2g-tablecell s2g-input-cell">	<input class="s2g-input-field" type="text" id="email" name="email" placeholder="Email eingeben" data-bind="textInput: email" />	</div>	</div>
+				<div class="s2g-table-col-4">&nbsp;</div>				
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">				<div class="s2g-tablecell">Ich habe die Regeln <input type="checkbox" id="rules" name="rules" data-bind="checked: acceptRules" /> gelesen und akzeptiere sie</div>	</div>
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">
+					<div class="s2g-tablecell">
+						<span>
+							<button id="btnLogin" data-bind="click: cancel">Abbrechen</button>
+						</span>
+						<span>
+							<button id="btnRegister" data-bind="click: register">Registrieren</button>
+						</span>
+					</div>
+				</div>
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+		</div> <!--End div s2g-tablecontent -->
+	</div> <!--End div s2g-table -->
 
-		</div> <!--End div content -->
-		<div id="footer" class="minimum-V-big">
-			<div id="version">
-				<a href="html/FAQ.php" target="_blank" >FAQ</a>
-				<a href="html/disclaimer.php" target="_blank" >Regeln</a>
-				<a href="html/impressum.php" target="_blank" >Impressum</a>
-				<span data-bind="text: data.versioninfo" ></span>
-			</div> <!--End div version -->
-		</div> <!--End div footer -->
-	</div> <!--End div total -->
-
+	<div id="s2g-footer">
+		<div id="s2g-version">
+			<a href="info_faq.html" target="_blank">FAQ</a>
+			<a href="info_disclaimer.html" target="_blank">Regeln</a>
+			<a href="info_impressum.html" target="_blank">Impressum</a>
+			[<a href="info_version.html" data-bind="text: data.versioninfo" target="_blank"></a>] <span data-bind="text: makeDateString(data.lastUpdate,4)"> </span>
+		</div> <!--End div version -->
+	</div> <!--End div s2g-footer -->
+<!-- /ko -->
 </body>
-</html>

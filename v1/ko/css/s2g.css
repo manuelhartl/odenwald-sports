@@ -1,166 +1,278 @@
 html {
+}
+
+
+body {
 	background: url('../img/background.png') no-repeat center center fixed;
-	background-size: 100% 100%;
+	background-size: contain;
+	background-position: bottom;
 	background-color: #ffffff;
 	font-weight: 400;
 	color: #000000;
-	margin-bottom: 0px;
-	margin-top: 15px;
-	margin-left: 20px;
-	margin-right: 20px;
-	margin-bottom: 1em;
+	margin-top:		20px;
+	margin-left:	20px;
+	margin-right:	20px;
+	margin-bottom:	20px;
+	font-family: Verdana, "Courier New", Courier, Georgia, Times, "Times New Roman", serif;
+
 }
+.night {
+	background: url('../img/background.gif') no-repeat center center fixed;	
+	background-size: contain;
+	background-position: bottom;
+	background-color: #ffffff;
+}
+
 html, body {
 	overflow:hidden;
 }
 
-body, input, textarea {
-	font-family: Verdana, "Courier New", Courier, Georgia, Times, "Times New Roman", serif;
+#s2g-top {
+	height: 50px;
+	width: 100%;
+	min-width: 100%;
+	border-bottom: solid 2px #37607c;
+}
+#s2g-message {
+	float: left;
+}
+#s2g-logo {
+	background: transparent url('../img/s2g.sprite.I.png') calc( -13 * 25px ) calc( -5 * 25px );
+	height: 48px;
+	width: 250px;
+	float: right;
 }
 
-#total {
-	height: 100%;
+#s2g-navigation {
+	height: 40px;
+	width: 100%;
+	padding-top: 5px;
 }
 
-#main {
-    height: 100%;
-    width: 100%;
+#s2g-left-navigation-buttons {
+	float: left;
 }
 
-#footer {
-	position:absolute;
-	bottom:0;
+#s2g-right-navigation-buttons-logout, #s2g-right-navigation-buttons-login {
+	float: right;
+}
+
+#s2g-pagetools {
+	width: 100%;
+}	
+
+#s2g-pagetools-extended {
 	width:100%;
-	height:	2em;
 }
-
-.flex {
-	display: inline-block;
-	/* white-space: nowrap;*/
+#s2g-tableheader {
+	width:100%;
+}
+#s2g-tablecontent {
+	height: 100%;
+	width: 100%;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+.s2g-tablerow {
 	overflow: hidden;
-	text-overflow: ellipsis;	/** IE6+, Firefox 7+, Opera 11+, Chrome, Safari **/
-	-o-text-overflow: ellipsis;	/** Opera 9 & 10 **/
+	clear: both;			/* neue Zeile */
+}
+.s2g-tablecell {
 	width: 100%;
-	max-height: 100px;
 }
 
-/* date(time)picker */
-.ui-widget {
-	font-size: 1em;
+.s2g-table-col-1, .s2g-table-col-2, .s2g-table-col-3, .s2g-table-col-4, .s2g-table-col-5 {
+	float: left;
 }
-.ui-widget-header {
+
+.s2g-table-col-1 {
+	width:	5em;
+}
+.s2g-table-col-2 {
+	width:	calc( 20 * ( 100% - ( 5em + 5em  )) / 100 );
+}
+#s2g-tableheader .s2g-table-col-2 {
+	width:	calc( 20 * ( 100% - ( 5em + 5em + 17px )) / 100 );
+}
+.s2g-table-col-3 {
+	width:	calc( 80 * ( 100% - ( 5em + 5em  )) / 100 );
+}
+#s2g-tableheader .s2g-table-col-3 {
+	width:	calc( 80 * ( 100% - ( 5em + 5em + 17px )) / 100 );
+}
+.s2g-table-col-4 {
+	width:	5em;
+}
+.s2g-table-col-5 {
+	width: 17px;
+}
+
+#s2g-footer {
+	position:absolute;
+	bottom: 5px;
+	height:	1em;
+	width:100%;
+}
+
+#s2g-version {
+	margin-right: 40px;
+	float: right;
+	color: #555555;
+}
+
+#s2g-version a {
+	background-color: inherit;
+	color: #555555;
+	padding: 3px 7px;
+	border-width: 0;
+}
+
+#s2g-version a:hover {
+	background-color: #BDC3BA;
+	text-decoration: none;
+}
+	
+/*-----------Definition for Buttons--------------*/
+button, a[id=firstbutton], a[id=nextbutton], a[id=prevbutton], a[id=lastbutton] {
 	background: #669999;
-}
-/* move datetimepicker into front */
-.ui-datepicker {
-	z-index: 99 !important;
-}
-
-
-/* https://gist.github.com/jensgro/4557625 */
-.clearfix:before, .clearfix:after {
-	content: " ";
-	display: table;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	color: #ffffff;
+	font-weight: 500;
+	font-size: 14px;
+	padding: 2px 5px 2px 5px;
+	text-decoration: none;
+	margin-right: 5px;
 }
 
-.clearfix:after {
-	clear: both;
+button[id=btn-logout] {
+	background: #c63635;
 }
 
-.clearfix {
-	zoom: 1;
+button:hover, a[id=firstbutton]:hover, a[id=prevbutton]:hover, a[id=nextbutton]:hover, a[id=lastbutton]:hover {
+	background: #78c2c1;
+	text-decoration: none;
 }
 
-.searchfield {
-	width: 98%;
+button[id=btn-logout]:hover {
+	background: #ed2833;
 }
 
-.hasDatepicker{
-	width: 100%;
+/*-----------Definition for Checkboxes--------------*/
+.s2g-checkbox {
+	font-size: 80%;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+/*------------- Icons ----------------------------*/
+.s2g-icon-sport-mtb						{ background: url('../img/s2g.sprite.I.png') calc( -0 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-rennrad					{ background: url('../img/s2g.sprite.I.png') calc( -3 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-run						{ background: url('../img/s2g.sprite.I.png') calc( -6 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-schwimmen 				{ background: url('../img/s2g.sprite.I.png') calc( -9 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-ski 					{ background: url('../img/s2g.sprite.I.png') calc( -12 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-crosser 				{ background: url('../img/s2g.sprite.I.png') calc( -15 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-trailrun 				{ background: url('../img/s2g.sprite.I.png') calc( -18 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-duathlon 				{ background: url('../img/s2g.sprite.I.png') calc( -21 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-triathlon 				{ background: url('../img/s2g.sprite.I.png') calc( -24 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-swim-bike 				{ background: url('../img/s2g.sprite.I.png') calc( -27 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-downhill-bike 			{ background: url('../img/s2g.sprite.I.png') calc( -30 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-e-bike 					{ background: url('../img/s2g.sprite.I.png') calc( -33 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-feier 					{ background: url('../img/s2g.sprite.I.png') calc( -36 * 25px ) calc( -2 * 25px ); }
+
+.s2g-icon-sport-canceled 				{ background: url('../img/s2g.sprite.I.png') calc( -42 * 25px ) calc( -2 * 25px ); z-index:	2; }
+.s2g-icon-sport-canceled-nightaction	{ background: url('../img/s2g.sprite.I.png') calc( -39 * 25px ) calc( -2 * 25px ); }
+.s2g-icon-sport-history 				{ background: url('../img/s2g.sprite.I.png') calc( -45 * 25px ) calc( -2 * 25px ); z-index:	1; }
+.s2g-icon-sport-canceled-small 			{ background: url('../img/s2g.sprite.I.png') calc( -2 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-sport-history-small 			{ background: url('../img/s2g.sprite.I.png') calc( -8 * 25px ) calc( -5 * 25px ); }
+
+.s2g-wrap-icon, .s2g-icon-sport-mtb, .s2g-icon-sport-rennrad, .s2g-icon-sport-run, .s2g-icon-sport-schwimmen, .s2g-icon-sport-ski, .s2g-icon-sport-crosser, .s2g-icon-sport-trailrun, .s2g-icon-sport-duathlon, .s2g-icon-sport-triathlon, .s2g-icon-sport-feier, .s2g-icon-sport-swim-bike, .s2g-icon-sport-downhill-bike, .s2g-icon-sport-e-bike, .s2g-icon-sport-canceled, .s2g-icon-sport-canceled-nightaction, .s2g-icon-sport-history {
+	width: 50px;
+	height: 50px;
+	background-color: transparent;
+	border-radius: 10px;
+	box-sizing: border-box;
+}
+
+.s2g-wrap-icon{
+	position: relative;
 	border: none;
 }
-
-
-/* slider Positionierung */
-.oben, .unten { display: flex; }
-.links { float: left; }
-.rechts { float: right; }
-.links, .rechts { width: 30px; }
-.mitte {  width: 100%; margin: 0 10px; }
-
-.unten {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.s2g-wrap-icon span{
+	position: absolute;
 }
 
 
-/* even, odd changes */
-.even-title, .even, .odd-title, .odd {
+.s2g-icon-sport-nightaction				{ background-color: black; }
+.s2g-icon-sport-event-nightaction 		{ color: white; }
+
+.s2g-icon-sport-event {
+	bottom:		-2px;
+	right:		4px;
+	font-size:	10px;
+	z-index:	3;
+}
+
+/* rate icons */
+.s2g-icon-rate-1 			{ background: url('../img/s2g.sprite.I.png') calc( -24 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-rate-1:hover		{ background: url('../img/s2g.sprite.I.png') calc( -24 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-rate-2 			{ background: url('../img/s2g.sprite.I.png') calc( -26 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-rate-2:hover		{ background: url('../img/s2g.sprite.I.png') calc( -26 * 25px ) calc( -6 * 25px ); }
+.s2g-icon-rate-3 			{ background: url('../img/s2g.sprite.I.png') calc( -28 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-rate-3:hover		{ background: url('../img/s2g.sprite.I.png') calc( -28 * 25px ) calc( -6 * 25px ); }
+.s2g-icon-rate-4 			{ background: url('../img/s2g.sprite.I.png') calc( -30 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-rate-4:hover		{ background: url('../img/s2g.sprite.I.png') calc( -30 * 25px ) calc( -6 * 25px ); }
+.s2g-icon-rate-5 			{ background: url('../img/s2g.sprite.I.png') calc( -32 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-rate-5:hover		{ background: url('../img/s2g.sprite.I.png') calc( -32 * 25px ) calc( -6 * 25px ); }
+.s2g-icon-rate-6 			{ background: url('../img/s2g.sprite.I.png') calc( -34 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-rate-6:hover		{ background: url('../img/s2g.sprite.I.png') calc( -34 * 25px ) calc( -6 * 25px ); }
+
+.s2g-icon-rate-1, .s2g-icon-rate-2, .s2g-icon-rate-3, .s2g-icon-rate-4, .s2g-icon-rate-5, .s2g-icon-rate-6 {
+	display: inline-block;
+	width: 35px;
+	height: 24px;
+	background-color: transparent;
+}
+
+.s2g-icon-more				{ background: url('../img/s2g.sprite.I.png') calc( -45 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-more:hover		{ background: url('../img/s2g.sprite.I.png') calc( -45 * 25px ) calc( -6 * 25px ); }
+.s2g-icon-s-f				{ background: url('../img/s2g.sprite.I.png') calc( -51 * 25px ) calc( -5 * 25px ); }
+.s2g-icon-s-f:hover			{ background: url('../img/s2g.sprite.I.png') calc( -51 * 25px ) calc( -6 * 25px ); }
+
+.s2g-icon-more, .s2g-icon-s-f, .s2g-icon-more:hover, .s2g-icon-s-f:hover {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+	vertical-align:	text-bottom;
+    border: none;
+}
+
+.s2g-icon-guide-mail,		.s2g-icon-member-mail				{ background: url('../img/s2g.sprite.I.png') calc( -8 * 25px ) calc( -9 * 25px ); }
+.s2g-icon-guide-mail:hover,	.s2g-icon-member-mail:hover			{ background: url('../img/s2g.sprite.I.png') calc( -8 * 25px ) calc( -8 * 25px ); }
+
+.s2g-icon-guide-phone,		.s2g-icon-member-phone				{ background: url('../img/s2g.sprite.I.png') calc( -12 * 25px ) calc( -9 * 25px ); }
+.s2g-icon-guide-phone:hover,	.s2g-icon-member-phone:hover	{ background: url('../img/s2g.sprite.I.png') calc( -12 * 25px ) calc( -8 * 25px ); }
+
+.s2g-icon-guide-mail,		.s2g-icon-member-mail,			.s2g-icon-guide-phone,			.s2g-icon-member-phone,
+.s2g-icon-guide-mail:hover,	.s2g-icon-member-mail:hover,	.s2g-icon-guide-phone:hover,	.s2g-icon-member-phone:hover {
+    display: inline-block;
+    width: 35px;
+    height: 20px;
+	vertical-align:	text-bottom;
+}
+
+.s2g-icon-guide-phone, .s2g-icon-member-phone, .s2g-icon-guide-phone:hover, .s2g-icon-member-phone:hover {
+    width: 25px;
+}
+
+/*-----------------even--odd------------------------*/
+.s2g-even-title, .s2g-even, .s2g-odd-title, .s2g-odd {
 	padding-top: 3px;
 	padding-bottom: 3px;
 	opacity: 0.8;
-	/* Header Even: Font */
-	/* color: dimgrey; */
-}
-.even-title, even {
-}
-.even {
-	/* Content Even */
-	background-color: white;
-}
-.even-title {
-	/* Header Even */
-	background-color: #d9d9d9;
 }
 
-.even a, .even-title a {
-}
-
-.even .tl-guide, .even .tl-member, .even .ul-member, .even-title .tl-guide, .even-title .tl-member, .even-title .ul-member, .even-title .st-member {
-	/* Member: Fill */
-	background-color: transparent;
-}
-
-.even .tl-guide-mail:hover,         .even .tl-member-mail:hover,         .even .ul-member-mail:hover,         .even .st-member-mail:hover,
-.even .tl-guide-profil:hover,       .even .tl-member-profil:hover,       .even .ul-member-profil:hover,       .even .st-member-profil:hover,
-.even .tl-guide-phone:hover,		.even .tl-member-phone:hover,
-.even-title .tl-guide-mail:hover,   .even-title .tl-member-mail:hover,   .even-title .ul-member-mail:hover,   .even-title .st-member-mail:hover,
-.even-title .tl-guide-profil:hover, .even-title .tl-member-profil:hover, .even-title .ul-member-profil:hover, .even-title .st-member-profil:hover {
-	/* H-E(T) 3 */
-	background-color: darkgray;
-}
-
-.odd-title, odd {
-}
-.odd {
-	/* Content Odd */
-	background-color: white;
-}
-.odd-title{
-	/* Header Odd */
-	background-color: #cccccc;
-}
-
-.odd a, .odd-title a {
-}
-
-
-.odd .tl-guide, .odd .tl-member, .odd .ul-member, .odd-title .tl-guide, .odd-title .tl-member, .odd-title .ul-member, .odd-title .st-member {
-	/* Member: Fill */
-	background-color: transparent;
-}
-
-.odd .tl-guide-mail:hover,         .odd .tl-member-mail:hover,         .odd .ul-member-mail:hover,         .odd .st-member-mail:hover,
-.odd .tl-guide-profil:hover,       .odd .tl-member-profil:hover,       .odd .ul-member-profil:hover,       .odd .st-member-profil:hover,
-.odd .tl-guide-phone:hover,		   .odd .tl-member-phone:hover,
-.odd-title .tl-guide-mail:hover,   .odd-title .tl-member-mail:hover,   .odd-title .ul-member-mail:hover,   .odd-title .st-member-mail:hover,
-.odd-title .tl-guide-profil:hover, .odd-title .tl-member-profil:hover, .odd-title .ul-member-profil:hover, .odd-title .st-member-profil:hover {
-	/* H-O(T) 3 */
-	background-color: silver;
-}
-
-.odd-title, .even-title{
+.s2g-odd-title, .s2g-even-title{
 	-webkit-border-top-left-radius: 10px;
 	-webkit-border-top-right-radius: 10px;
 	-moz-border-radius-topleft: 10px;
@@ -168,315 +280,100 @@ body, input, textarea {
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 }
-.odd, .even{
-	-webkit-border-bottom-right-radius: 10px;
-	-webkit-border-bottom-left-radius: 10px;
-	-moz-border-radius-bottomright: 10px;
-	-moz-border-radius-bottomleft: 10px;
-	border-bottom-right-radius: 10px;
-	border-bottom-left-radius: 10px;
+
+.s2g-even-title {
+	/* Header Even */
+	background-color: #d9d9d9;
+}
+.s2g-even {
+	/* Content Even */
+	background-color: white;
 }
 
-
-/* Table */
-.tl-Table, .ul-Table, .to-Table, .lo-Table, .re-Table, .pr-Table, .st-Table, .ma-Table {
+.s2g-odd-title{
+	/* Header Odd */
+	background-color: #cccccc;
+}
+.s2g-odd {
+	/* Content Odd */
+	background-color: white;
 }
 
-.tl-TableHeading, .tl-TableBody, .tl-TableFoot, .tl-TableRow,
-.ul-TableHeading, .ul-TableBody, .ul-TableFoot, .ul-TableRow,
-.to-TableHeading, .to-TableBody, .to-TableFoot, .to-TableRow,
-.lo-TableHeading, .lo-TableBody, .lo-TableFoot, .lo-TableRow,
-.re-TableHeading, .re-TableBody, .re-TableFoot, .re-TableRow,
-.pr-TableHeading, .pr-TableBody, .pr-TableFoot, .pr-TableRow,
-.st-TableHeading, .st-TableBody, .st-TableFoot, .st-TableRow,
-.ma-TableHeading, .ma-TableBody, .ma-TableFoot, .ma-TableRow {
-	clear: both;
-}
-
-.tl-TableBody, .ul-TableBody, .to-TableBody, .lo-TableBody, .re-TableBody, .pr-TableBody, .st-TableBody, .ma-TableBody {
-	height: 100%
-	overflow-y: scroll;
-	overflow-x: hidden;
-}
-
-.tl-TableBody {
-	height: calc( 100vh - 50px - 40px - 20px - 16px - 60px ); /* - Navigation Top - Navigation Bottom - Titelzeile - Filter */	
-}
-
-.to-TableBody {
-	height: calc( 100vh - 50px - 40px - 20px - 16px - 60px ); /* - Navigation Top - Navigation Bottom - cb-tools */	
-}
-.st-TableBody, .ul-TableBody {
-	height: calc( 100vh - 50px - 40px - 48px - 26px - 45px ); /* - Navigation Top - Navigation Bottom - st-tools */	
-}
-
-
-.lo-TableBody, .re-TableBody, .pr-TableBody, .ma-TableBody {
-	height: calc( 100vh - 50px - 40px - 80px ); /* - Navigation Top - Navigation Bottom  */	
-}
-
-.tl-TableCell, .tl-TableHead, .ul-TableCell, .ul-TableHead, .to-TableCell, .to-TableHead,
-.lo-TableCell, .lo-TableHead, .re-TableCell, .re-TableHead, .pr-TableCell, .pr-TableHead,
-.st-TableCell, .st-TableHead, .ma-TableCell, .ma-TableHead {
-   	float: left;
-}
-.tl-Table:after, .ul-Table:after, .to-Table:after, .lo-Table:after, .re-Table:after, .pr-Table:after, .st-Table:after, .ma-Table:after {
-  	 visibility: hidden;
-  	 display: block;
-  	 font-size: 0;
-  	 content: " ";
-  	 clear: both;
-  	 height: 0;
-}
-.tl-TableRow, .ul-TableRow, .to-TableRow, .lo-TableRow, .re-TableRow, .pr-TableRow, .st-TableRow, .ma-TableRow {
-	width: 100%;
-}
-/* remove underline from Link */
-.tl-a-member-profil, .ul-a-member-profil, .st-a-member-profil{
-	text-decoration:none;
-	vertical-align: bottom;
-}
-.tl-guide, .tl-member, .ul-member, .st-member {
-	border-radius: 6px;
-}
-
-/* TODO: GW Namen noch  neutralisieren */
-.tl-guide-mail, .tl-member-mail, .ul-member-mail, .st-member-mail, .tl-member-phone {
-	padding-left: 5px;
-}
-.tl-guide-profil, .tl-member-profil, .ul-member-profil, .st-member-profil {
-	vertical-align: top;
-	padding-right: 5px;
-	padding-left: 2px;
-}
-
-.tl-icon-member-phone, .tl-icon-guide-phone{
- 	background: #ccc url('../img/s2g.sprite.png') calc( -0 * 25px ) calc( -21 * 25px ) no-repeat;
-}
-
-.tl-icon-member-phone:hover, .tl-icon-guide-phone:hover{
- 	background: #ccc url('../img/s2g.sprite.png') calc( -1 * 25px ) calc( -21 * 25px ) no-repeat;
-}
-
-.tl-icon-guide-mail, .tl-icon-member-mail, .ul-icon-member-mail, .st-icon-member-mail {
- 	background: transparent url('../img/s2g.sprite.png') calc( -8 * 25px ) 0px no-repeat;
-}
-.tl-icon-guide-mail:hover, .tl-icon-member-mail:hover, .ul-icon-member-mail:hover, .st-icon-member-mail:hover {
- 	background: transparent url('../img/s2g.sprite.png') calc( 0 * 25px ) calc( -1 * 25px ) no-repeat;
-}
-
-/* sport icons */
-.tl-icon-sport-mtb {
- 	background: url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -1 * 25px );
-}
-
-.tl-icon-sport-rennrad {
- 	background: url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -1 * 25px );
-}
-
-.tl-icon-sport-run {
- 	background: url('../img/s2g.sprite.png') calc( -0 * 25px ) calc( -3 * 25px );
-}
-
-.tl-icon-sport-schwimmen {
- 	background: url('../img/s2g.sprite.png') calc( -2 * 25px ) calc( -3 * 25px );
-}
-
-.tl-icon-sport-ski {
- 	background: url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -3 * 25px );
-}
-
-.tl-icon-sport-crosser {
- 	background: url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -3 * 25px );
-}
-
-.tl-icon-sport-trailrun {
- 	background: url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -3 * 25px );
-}
-
-.tl-icon-sport-duathlon {
- 	background: url('../img/s2g.sprite.png') calc( -0 * 25px ) calc( -5 * 25px );
-}
-
-.tl-icon-sport-triathlon {
- 	background: url('../img/s2g.sprite.png') calc( -2 * 25px ) calc( -5 * 25px );
-}
-
-.tl-icon-sport-feier {
- 	background: url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -5 * 25px );
-}
-
-.tl-icon-sport-swim-bike {
- 	background: url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -5 * 25px );
-}
-
-.tl-icon-sport-downhill-bike {
- 	background: url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -17 * 25px );
-}
-
-.tl-icon-sport-e-bike {
- 	background: url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -17 * 25px );
-}
-
-.tl-icon-sport-canceled {
- 	background: url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -1 * 25px );
-}
-
-.tl-icon-sport-history {
- 	background: url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -17 * 25px );
-}
-
-.disable{
-    opacity:0.5;
-}
-
-.tl-icon-sport-mtb, .tl-icon-sport-rennrad, .tl-icon-sport-run, .tl-icon-sport-schwimmen, .tl-icon-sport-ski, .tl-icon-sport-crosser, .tl-icon-sport-trailrun, .tl-icon-sport-duathlon, .tl-icon-sport-triathlon, .tl-icon-sport-feier, .tl-icon-sport-swim-bike, .tl-icon-sport-downhill-bike, .tl-icon-sport-e-bike, .tl-icon-sport-canceled, .tl-icon-sport-history {
-	width: 50px;
-	height: 50px;
-	background-color: transparent;
-	zoom: 1.2;
-    		-moz-transform:scale(1.2);
-    		-moz-transform-origin: 0 0;
+/*------------------inputfields----------------------*/
+.s2g-input-cell {
+	width: calc( 100% - 20px );
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
 	border-radius: 10px;
+	border-style: solid;
+	border-width:thin medium;
+	padding: 0.2em;
 }
 
+.s2g-input-field {
+	width: 100%;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+	border: none;
 
-/* rate icons */
-.tl-icon-rate-1 {
-	background: transparent url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -5 * 25px ) no-repeat;
+ 	/* resize baseline */
+    vertical-align: text-top;
+    margin-top: -1px; 				/* - (border-top-width + padding-top) */
 }
-.tl-icon-rate-2 {
-	background: transparent url('../img/s2g.sprite.png') calc( -0 * 25px ) calc( -9 * 25px ) no-repeat;
-}
-.tl-icon-rate-3 {
-	background: transparent url('../img/s2g.sprite.png') calc( -2 * 25px ) calc( -9 * 25px ) no-repeat;
-}
-.tl-icon-rate-4 {
-	background: transparent url('../img/s2g.sprite.png') calc( -4 * 25px ) calc( -9 * 25px ) no-repeat;
-}
-.tl-icon-rate-5 {
-	background: transparent url('../img/s2g.sprite.png') calc( -6 * 25px ) calc( -9 * 25px ) no-repeat;
-}
-.tl-icon-rate-6 {
-	background: transparent url('../img/s2g.sprite.png') calc( -8 * 25px ) calc( -9 * 25px ) no-repeat;
+.s2g-searchfield{
+	width:	98%;
 }
 
-.tl-icon-rate-1, .tl-icon-rate-2, .tl-icon-rate-3, .tl-icon-rate-4, .tl-icon-rate-5, .tl-icon-rate-6 {
-	display: inline-block;
-	width: 32px;
-	height: 25px;
-	background-color: transparent;
-	background-repeat: no-repeat;
+/* width: no wide-screen */
+@media only screen and (max-width: 801px){
+	body {		margin-left:	5px;	margin-right:	5px;	}
+	.s2g-table-col-1 { display: none; }
+	.s2g-table-col-4 { display: none; }
+	.s2g-table-col-2 {	width:	calc( 20 * ( 100% - ( 0px  )) / 100 );	}
+	#s2g-tableheader .s2g-table-col-2 {	width:	calc( 20 * ( 100% - ( 17px )) / 100 );	}
+	.s2g-table-col-3 {	width:	calc( 80 * ( 100% - ( 0px  )) / 100 );	}
+	#s2g-tableheader .s2g-table-col-3 {	width:	calc( 80 * ( 100% - ( 17px )) / 100 );	}
+}
+@media only screen and (max-width: 601px){
 }
 
+@media only screen and (max-width: 401px){
+	html{	font-size: small;	}
+	
+	#s2g-tableheader .s2g-table-col-2 {	width:	calc( 20 * ( 100% - ( 0px )) / 100 );	}
+	#s2g-tableheader .s2g-table-col-3 {	width:	calc( 80 * ( 100% - ( 0px )) / 100 );	}
 
-/* icon overlay (size analog icon-sport.. */
-.wrapIcon {
-	width: 50px;
-	height: 50px;
-	position: relative;
-	transform: scale(1.2);
-		-moz-transform: scale(1.2);
-		-ms-transform: scale(1.2);
-		-webkit-transform: scale(1.2);
-		-o-transform: scale(1.2);
-	transform-origin: left top;
-		-moz-transform-origin: left top;
-		-ms-transform-origin: left top;
-		-webkit-transform-origin: left top;
 }
 
-.wrapIcon span{
-	position: absolute;
+/* height: no high-screen */
+@media only screen and (max-height: 701px){
+	body {		margin-left:	5px;	margin-right:	5px;	}
+	#s2g-top, #s2g-footer { display: none; }
 }
 
-
-.img-a {
-	top: 0;
-	left: 0;
-	z-index: 2;
+/* height: no medium-high-screen */
+@media only screen and (max-height: 401px){
+	html{	font-size: small;	}
+	#s2g-pagetools { display: none; }
+	
 }
 
-.img-b {
-	top: 0;
-	left: 0;
-	z-index: 1;
+/* height: no small-high-screen */
+@media only screen and (max-height: 251px){
+	#s2g-pagetools-extended { display: none; }
 }
-
-.img-c {
-	top: 0;
-	left: 0;
-}
-
-select, option {
- font: inherit;
-}
-
-
-form {
-	display: inline-block;
-	vertical-align: top;
-}
-.expires{
-	float:right;
-}
-
-
-/*--------------------------------------*/
-/* responsive design */
-/* width: big-screen */
-@media only screen and (min-width: 1281px){
-.minimum-H-big, .minimum-H-medium, .minimum-H-small {}
-}
-
-/* width: medium-screen */
-@media only screen and (min-width: 901px) and (max-width: 1280px){
-.minimum-H-big {	display: none;	}
-.minimum-H-medium, .minimum-H-small {}
-}
-
-/* width: small-screen */
-@media only screen and (min-width: 301px) and (max-width: 900px){
-.minimum-H-big, .minimum-H-medium {	display: none;	}
-.minimum-H-small {}
-}
-
-/* width: mobil-screen */
-@media only screen and (max-width: 300px){
-.minimum-H-big, .minimum-H-medium, .minimum-H-small {	display: none;	}
-}
-
-
-/* height: big-screen */
-@media only screen and (min-height: 801px){
-.minimum-V-big, .minimum-V-medium, .minimum-V-small {}
-}
-
-/* width: medium-screen */
-@media only screen and (min-height: 401px) and (max-height: 800px){
-.minimum-V-big {	display: none;	}
-.minimum-V-medium, .minimum-V-small {}
-}
-
-/* width: small-screen */
-@media only screen and (min-height: 251px) and (max-height: 400px){
-.minimum-V-big, .minimum-V-medium {	display: none;	}
-.minimum-V-small {}
-}
-
-/* height: mobil-screen */
-@media only screen and (max-height: 250px){
-.minimum-V-big, .minimum-V-medium, .minimum-V-small {	display: none;	}
-}
-
-
 
 .isIPhonePortrait{}
 
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) and (orientation : portrait),	/* iPhone 2G-4S in portrait */
 	only screen and (min-device-width : 320px) and (max-device-width : 568px) and (orientation : portrait),		/* iPhone 5 & 5S in portrait */
 	only screen and (min-device-width : 375px) and (max-device-width : 667px) and (orientation : portrait){		/* iPhone 6 in portrait */
-.isIPhonePortrait{	display: none; }
+	.isIPhonePortrait{	display: none; }
+	 @viewport {
+		width: device-width;
+		initial-scale: 1;
+	}	
 }
 
 .isIPhoneLandscape{}
@@ -484,70 +381,13 @@ form {
 @media only screen and (min-device-width : 320px) and (max-device-width : 480px) and (orientation : landscape),	/* iPhone 2G-4S in landscape */
 	only screen and (min-device-width : 320px) and (max-device-width : 568px) and (orientation : landscape),	/* iPhone 5 & 5S in landscape */
 	only screen and (min-device-width : 375px) and (max-device-width : 667px) and (orientation : landscape){	/* iPhone 6 in landscape */
-.isIPhoneLandscape{	display: none; }
-}/*--------------------------------------*/
+	.isIPhoneLandscape{	display: none; }
 
-
-.notBig {
-	display: none;
-}
-
-/* responsive design */
-/* big-screen */
-@media (min-width: 900px){
-
-.big, .medium {
-}
-
-}
-.notbig {
-	display: none;
-}
-
-/* medium--screen */
-@media (min-width: 901px) and (max-width: 1280px){
-
-.big {
-	display: none;
-}
-
-.notbig, .medium, .mini {
-}
-
-}
-
-/* small-screen */
-@media (min-width: 301px) and (max-width: 900px){
-
-.big, .medium {
-	display: none;
-}
-
-.notbig, .mini {
-}
-}
-
-
-/* mobil-screen */
-@media (max-width: 300px){
-
-.big, .medium, .mini {
-	display: none;
-}
-.notBig {
-}
-}
-
-
-/* mobil-screen */
-/* width-screen */
-@media (min-height: 481px){
-
-.small {
-}
-
-}
-
-@media (max-height: 480px){
-
+	html{	font-size: small;	}
+	#s2g-top, #s2g-footer { display: none; }
+	#s2g-pagetools { display: none; }
+	#s2g-pagetools-extended { display: none; }
+	@viewport {
+		width: 500;
+	}	
 }

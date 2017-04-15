@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-in.css" />
+	<meta charset="UTF-8"> 
+	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.1.js'></script>
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+		
+	<script type='text/javascript' >
+
+	//'use strict';	// don't_view_use_strict
+	
+	function setHeight(){
+		setAvailableHeight('s2g-tablecontent', ['s2g-top', 's2g-pagetools'], 's2g-footer');
+	}
+	
+	var RetrospectViewModel = function() {
+		const s_id = "retrospect";
+		const needs_authentification = false;	
+		var self = this;
+		
+		self.data = getData();
+
+		var _showEvents = ko.observable(false);
+		self.showEvents = ko.computed({
+			read: function() { return(_showEvents());},
+			write: function (value) { _showEvents(value); self.getRetrospective(value, _showFutureTours()); fireResizeEvent(); },
+			owner: self
+		});
+
+		var _showFutureTours = ko.observable(false);
+		self.showFutureTours = ko.computed({
+			read: function() { return(_showFutureTours());},
+			write: function (value) { _showFutureTours(value); self.getRetrospective(_showEvents(), value); fireResizeEvent(); },
+			owner: self
+		});
+
+		var _showMore = ko.observable(false);
+		self.showMore = ko.computed({
+			read: function() { return(_showMore());},
+			write: function (value) { _showMore(value);  },
+			owner: self
+		});
+		self.toggleShowMore = function(){ self.showMore(!self.showMore());}
+		
+		self.information = new ko.observableArray();
+		
+		self.getRetrospective = function(withEvents, withFutureTours){
+			var info = {
+				'all': {
+						'year': 'all',
+						'numberOfTours':	0,
+						'numberOfMembers':	0,
+						'guides':	new Array(),
+						'members':	new Array(),
+						'activeMembers':	new Array()
+				}
+			}
+			var now = getDate();
+			self.data.tours().forEach(function(t,i,ts){
+				var year = t.datetime.getFullYear();
+				var addOnlyOnce = function(map, entry){
+					if(map.indexOf(entry)==-1){
+						map.push(entry);
+					}
+				}
+				if( t.isCountableTour(year, now, withEvents, withFutureTours) ){
+					if(info[year]===undefined){
+						info[year] = {
+							'year': year,
+							'numberOfTours':	0,
+							'numberOfMembers':	0,
+							'guides':	new Array(),
+							'members':	new Array(),
+							'activeMembers':	new Array()
+						}
+					}
+					info['all']['numberOfTours'] += 1;
+					info[year]['numberOfTours'] += 1;
+					info['all']['numberOfMembers'] += t.tourMembers();
+					info[year]['numberOfMembers'] += t.tourMembers();
+					addOnlyOnce(info['all']['guides'],t.guide);
+					addOnlyOnce(info['all']['activeMembers'],t.guide);
+					addOnlyOnce(info[year]['guides'],t.guide);
+					addOnlyOnce(info[year]['activeMembers'],t.guide);
+
+					t.members.forEach(function(m,i,ts){
+						addOnlyOnce(info['all']['members'], m);
+						addOnlyOnce(info['all']['activeMembers'], m);
+						addOnlyOnce(info[year]['members'], m);
+						addOnlyOnce(info[year]['activeMembers'], m);
+					});
+				}
+			});
+			
+			self.information([]);
+			var yi1 = info['all'];
+			var in1 = {
+				's0': "Gesamte Touren",
+				's1': "insgesamt wurden " + yi1['numberOfTours'] + " Touren angeboten",
+				's2': "an denen " +  yi1['numberOfMembers'] + " Mitfahrer teilnahmen (Ø " + (yi1['numberOfMembers']/yi1['numberOfTours']).toFixed(2) + " Mitfahrer pro Tour)",
+				's3': "insgesamt waren " +  yi1['activeMembers'].length + " Leute aktiv unterwegs gewesen",
+				's4': yi1['guides'].length + " haben Touren angeboten und " + yi1['members'].length + " sind mitgefahren"
+			}
+			self.information.push(in1);
+
+			for(var i=2030; i>2014;i--){
+				var yi2 = info[i];
+				if( yi2 != undefined ){
+					var in2 = {
+						's0': i,
+						's1': "insgesamt wurden " + yi2['numberOfTours'] + " Touren angeboten",
+						's2': "an denen " +  yi2['numberOfMembers'] + " Mitfahrer teilnahmen (Ø " + (yi2['numberOfMembers']/yi2['numberOfTours']).toFixed(2) + " Mitfahrer pro Tour)",
+						's3': "insgesamt waren " +  yi2['activeMembers'].length + " Leute aktiv unterwegs gewesen",
+						's4': yi2['guides'].length + " haben Touren angeboten und " + yi2['members'].length + " sind mitgefahren"
+					}
+					self.information.push(in2);							
+				}
+			};
+		}
+
+		/* --------- Construction --------- */
+		self.getRetrospective(self.showEvents(), self.showFutureTours());
+		
+	}
+	</script>
+
+
+	<title>Sport2gether Versionsinfo</title>
+</head>
+<body onload="ko.applyBindings(new RetrospectViewModel());" onresize="setHeight();" >
+<!-- ko template: {afterRender: setHeight} -->
+	<div id="s2g-top">
+		<div id="navigation-top" class="minimum-V-big">
+			<div id="s2g-message"></div>
+			<div id="s2g-logo"></div>
+		</div> <!-- End div navigation-top -->
+	</div> <!--End div s2g-top -->
+	<div id="s2g-pagetools">
+		<div class="s2g-tablerow">
+			<div id="st-cb-tools-add">
+				<div id="st-tools-add-more" class="minimum-V-medium">
+					<input type="button" title="weitere Optionen" class="s2g-icon-more" data-bind="click: toggleShowMore" />
+				</div> <!--End div tl-tools-add-more -->
+				<span data-bind="if: showMore">
+					<label for="check1"><input type="checkbox" data-bind="checked: showEvents" id="check1">inklusive Events</label>
+					<label for="check2"><input type="checkbox" data-bind="checked: showFutureTours" id="check2">inklusive zukünftige Touren</label>
+				</span>
+			</div>
+		</div>
+	</div> <!--End div s2g-pagetools -->
+	
+	<div id="s2g-table">
+		<div id="s2g-tablecontent">
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">
+					<div class="s2g-tablecell">
+						<h1>Jahresrückblick</h1>
+						Sport2gether gibt es nun schon seit 2015, deshalb kann man ja mal etwas zurückschauen und die gemeinsamen Aktivitäten auflisten			
+							<!-- ko foreach: information -->
+							<ul style="list-style-position: inside;">
+								<b data-bind="text: s0"></b>
+								<li data-bind="text: s1"></li>
+								<li data-bind="text: s2"></li>
+								<li data-bind="text: s3"></li>
+								<li data-bind="text: s4"></li>
+							</ul>
+							<!-- /ko -->
+							Weiter so...   ...Ride on
+					</div>					
+				</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div>
+		</div> <!--End div s2g-tablecontent -->
+	</div> <!--End div s2g-table -->
+	<div id="s2g-footer">
+		<div id="s2g-version">
+			<a href="info_faq.html" target="_blank">FAQ</a>
+			<a href="info_disclaimer.html" target="_blank">Regeln</a>
+			<a href="info_impressum.html" target="_blank">Impressum</a>
+		</div> <!--End div version -->
+	</div> <!--End div s2g-footer -->
+<!-- /ko -->
+</body>
+

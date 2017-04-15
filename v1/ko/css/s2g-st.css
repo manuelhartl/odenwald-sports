@@ -1,98 +1,33 @@
-.st-Table{
-}
+/* Seitenspezifisch */
+.s2g-icon-more { float: right };
 
-.st-TableHeading {
-/* analog .even */
-	padding-top: 5px;
-}
-
-.st-Tablerow-Content {
-	margin-top: 10px;
-}
-
-.st-TableRow {
-	padding-left: 10px;
-	overflow-y: hidden;
+.s2g-odd {
+	/* Content Odd */
+	background-color: #ccc;
 }
 
 /* Size */
-.st-TableHeading .st-TableCell-User {
-	width: calc(( 100% - ( 3em + 16em + 16em + 17px )));
-}
-.st-TableCell-User {
-	width: calc(( 100% - ( 3em + 16em + 16em )));
-}
-.st-TableCell-Mail {
-	width: 3em;
-}
-.st-TableCell-GuidedTours {
-	width: 16em;
-}
-.st-TableCell-ToursGuide {
-	width: 16em;
-}
-.st-TableCell-Scrollbar {
-	width: 17px;
-}
+.st-table-col-number	{ width: 3em; }
 
-.st-TableHead-Content-ToursGuide, .st-TableHead-Content-GuidedTours {
-	float:right;
-	padding-right: 50px;
-}
+.st-table-col-user		{ width: calc( (( 100 * ( 100% - ( 3em + 3em + 5em + 5em ))) / 100 ) - 5px ); }
 
-.odd-title, .even-title, .odd, .even {
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-}
+.st-table-col-mail		{ width: 3em; }
 
-.st-Table .odd {
-	background-color: lightgrey;
-}
+.st-table-col-guide, .st-table-col-member {	width: 5em; }
+
+.st-table-col-number, .st-table-col-user, .st-table-col-mail, .st-table-col-guide, .st-table-col-member { float: left; }
+
+/* Ausrichtung */
+.st-table-col-number { text-align:	center; }
+
+.st-table-col-guide, .st-table-col-member {	text-align:	right; }
 
 
-/* icons allgemein */
-.st-icon-member-mail {
-	display: inline-block;
-	width: 35px;
-	height: 25px;
-	border: none;
-	background-color: transparent;
+@media only screen and (max-width : 400px) {
+	html { font-size: small; }
 }
 
-/* responsive design */
-/* big-screen */
-@media (min-width: 1281px){
+@media only screen and (max-height : 400px) {
+	html { font-size: small; }
 }
 
-/* medium-screen */
-@media (min-width: 901px) and (max-width: 1280px){
-
-}
-
-/* small-screen */
-@media (min-width: 301px) and (max-width: 900px){
-.st-TableHeading .st-TableCell-User {
-	width: calc(( 100% - ( 3em + 8em + 8em + 17px )));
-}
-.st-TableCell-User {
-	width: calc(( 100% - ( 3em + 8em + 8em )));
-}
-.st-TableCell-Mail {
-	width: 3em;
-}
-.st-TableCell-GuidedTours {
-	width: 8em;
-}
-.st-TableCell-ToursGuide {
-	width: 8em;
-}
-
-}
-
-@media (max-height: 300px){
-
-.tl-TableBody {
-	height: 100%;
-}
-}

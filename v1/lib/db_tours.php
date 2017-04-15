@@ -84,7 +84,7 @@ function getDBPlace($row) {
 	return $place;
 }
 function insertTour($pdo, DBTour $tour) {
-	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id, skill, speed, distance, elevation, meetingpoint_desc, bringlight) VALUES(?,?,?,?,?,PointFromText(?),?,?,?,?,?,?,?)" );
+	$stmt = $pdo->prepare ( "insert into tour (fk_guide_id,startdate,duration,meetingpoint,description, meetingpoint_coord,fk_sport_subtype_id, skill, speed, distance, elevation, meetingpoint_desc) VALUES(?,?,?,?,?,PointFromText(?),?,?,?,?,?,?)" );
 	$stmt->bindParam ( 1, $tour->guide->id );
 	$date = toDbmsDate ( $tour->startDateTime );
 	$stmt->bindParam ( 2, $date );
@@ -99,14 +99,13 @@ function insertTour($pdo, DBTour $tour) {
 	$stmt->bindParam ( 10, $tour->distance );
 	$stmt->bindParam ( 11, $tour->elevation );
 	$stmt->bindParam ( 12, $tour->meetingPoint_desc );
-	$stmt->bindParam ( 13, $tour->bringlight );
 	if (! ex2er ( $stmt )) {
 		return false;
 	}
 	return $pdo->lastInsertId ();
 }
 function updateTour($pdo, DBTour $tour) {
-	$stmt = $pdo->prepare ( "update tour set startdate = ?, duration=?, meetingpoint=?, meetingpoint_desc=? , meetingpoint_coord = PointFromText(?), description=?, fk_sport_subtype_id = ?, skill = ? , speed = ? , distance = ?, elevation = ?, bringlight = ?, modifydate = now() where id=? and status='active'" );
+	$stmt = $pdo->prepare ( "update tour set startdate = ?, duration=?, meetingpoint=?, meetingpoint_desc=? , meetingpoint_coord = PointFromText(?), description=?, skill = ? , speed = ? , distance = ?, elevation = ?, bringlight = ?, modifydate = now() where id=? and status='active'" );
 	$date = toDbmsDate ( $tour->startDateTime );
 	$point = 'POINT(' . $tour->meetingPoint_lat . " " . $tour->meetingPoint_long . ')';
 	if (! ex2er ( $stmt, array (
@@ -116,7 +115,6 @@ function updateTour($pdo, DBTour $tour) {
 			$tour->meetingPoint_desc,
 			$point,
 			$tour->description,
-			$tour->sport->sportsubid,
 			$tour->skill,
 			$tour->speed,
 			$tour->distance,
@@ -192,7 +190,7 @@ function getSports($pdo) {
 	return $stmt->fetchAll ( PDO::FETCH_OBJ );
 }
 function getSport($pdo, $id) {
-	$stmt = $pdo->prepare ( "select sportname,sport_subtype.sportsubname as sportsubname, sport_subtype.id as sportsubid from sport_subtype left join sport ON (fk_sport_id=sport.id) WHERE (sport_subtype.id = ?)" );
+	$stmt = $pdo->prepare ( "select sportname,sport_subtype.sportsubname as sportsubname, sport_subtype.id as sportsubid from sport_subtype left join sport ON (fk_sport_id=sport.id) and (sport_subtype.id = ?)" );
 	if (! ex2er ( $stmt, array (
 			$id 
 	) )) {

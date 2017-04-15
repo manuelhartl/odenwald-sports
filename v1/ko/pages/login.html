@@ -1,27 +1,42 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta name="viewport" content="initial-scale=1.0">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
-    <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
     <link rel="stylesheet" type="text/css" href="../css/s2g-lo.css" />
-    <meta charset="UTF-8">
 	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
-	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.1.js'></script>
 	<script type='text/javascript' src='../script/memorystorage.js'></script>
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 
-	// 'use strict';	// view_dont_use_strict
-
+	//'use strict';	// don't_view_use_strict
+	
+	function setHeight(){
+		setAvailableHeight('s2g-tablecontent', ['s2g-top','s2g-navigation'], 's2g-footer');
+	}
+	
 	// class to represent a login	
 	var LoginViewModel = function() {
+		const needs_authentification = false;
+		const s_id = "login";
 		var self = this;
-		var s_id = "login";
 
-		self.me = null;
+		var _me = ko.observable(null);
+		self.me = ko.computed({
+			read: function() { if(needs_authentification){ checkAuthentification(needs_authentification, _me(), 'tl','tl'); }; return(_me());},
+			write: function (me) { _me(me); },
+			owner: self
+		});		
 		
-		self.isRequestPW = ko.observable(false);
+		self.isRequestPW = ko.observable();
+		
+		self.init = function(){
+			self.isRequestPW(false);
+			removeAllSessionStorage();
+		}
 
 		self.loginPassword = function(){
 			var okDestination = getTempStorage(s_id, "okDestination");
@@ -29,7 +44,12 @@
 			if(okDestination==null||okDestination.length==0){ okDestination = 'tl'; }
 			if(cancelDestination==null||cancelDestination.length==0){ cancelDestination = 'tl'; }
 
-			Login($('#username').val(),  $('#password').val(), okDestination, cancelDestination);
+			Login($('#username').val(),  $('#password').val(), document.getElementById('lo_form'), okDestination, cancelDestination);
+		}
+		
+		self.loginPasswordCR = function (data, event) {
+			if (event.keyCode == 13) { self.loginPassword(); }
+			return true;
 		}
 		
 		self.cancelPW = function(){
@@ -54,118 +74,114 @@
 			self.isRequestPW(true);
 		}
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', durationShowMail);
+			showMessage(info, document, 's2g-message', durationShowMessage);
 		};
 
 		/* --------- Construction --------- */
-		removeAllSessionStorage();
+		self.init();
 		
+		setHeight();
 		// show message if available
 		var message = getMessage();
 		if( message != null && message != ""){
 			self.showMessage(message);
-		}		
+		}
+
+		//--------------------
 	}
 
 	window.onerror = function (msg, url, line, col, error) {
-		return(globalError(msg, url, line, col, error));
+		return(globalError("Login", msg, url, line, col, error));
 	};
-	
 	</script>
-	<title>Sport2Gether (KnockOut)</title>
+<title>Sport2gether</title>
 </head>
-<body onload="ko.applyBindings(new LoginViewModel());">
-	<div class="total">
-		<div id="navigation">
-			<div id="navigation-top" class="minimum-V-big">
-				<div id="message"></div>
-				<div id="logo"></div>
-			</div> <!--End div navigation-top -->
-			<div id="navigation-bottom">
-				<div id="navigation-buttons">
-					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<span data-bind="if: me!=null" class="minimum-V-medium">
-						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
-					</span >
-				</div> <!--End div navigation-buttons -->
-				<div id="navigation-buttons-logout" data-bind="if: me!=null">
-					<button id="btn-logout" data-bind="click: Logout">Logout</button>
-					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
-				</div> <!--End div navigation-buttons-logout (logged in) -->
-				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
-					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
-				</div> <!--End div navigation-buttons-in (logged out) -->
-			</div> <!--End div navigation-bottom -->
-		</div> <!--End div navigation -->
-		<div class="content" id="main">
-			<div class="lo-Table">
-				<div class="lo-TableBody">
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Head minimum-V-medium">&nbsp;</div> <!-- div lo-TableRow ENDE -->
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Username">
-						<div class="lo-TableCell lo-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="lo-TableCell lo-TableCell-col-1">
-							<span class="lo-TableCell-Content-Username-1">Benutzername</span>
-						</div>
-						<div class="lo-TableCell lo-TableCell-col-2">
-							<span class="lo-TableCell-Content-Username-2">
-								<input type="text" id="username" name="username" placeholder="Benutzername" />
-							</span>
-						</div>
-					</div> <!-- div to-TableRow ENDE -->
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Username" data-bind="ifnot: isRequestPW">
-						<div class="lo-TableCell lo-TableCell-col-0 minimum-H-big ">&nbsp;</div>
-						<div class="lo-TableCell lo-TableCell-col-1">
-							<span class="lo-TableCell-Content-Password-1">Passwort</span>
-						</div>
-						<div class="lo-TableCell lo-TableCell-col-2">
-							<span class="lo-TableCell-Content-Password-2">
-								<input type="password" id="password" name="password" placeholder="Passwort" />
-							</span>
-						</div>
-					</div> <!-- div to-TableRow ENDE -->
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Email" data-bind="if: isRequestPW">
-						<div class="lo-TableCell lo-TableCell-col-0 minimum-H-big ">&nbsp;</div>
-						<div class="lo-TableCell lo-TableCell-col-1">
-							<span class="lo-TableCell-Content-Email-1">Email</span>
-						</div>
-						<div class="lo-TableCell lo-TableCell-col-2">
-							<span class="lo-TableCell-Content-Email-2">
-								<input type="email" id="email" name="email" placeholder="Deine Email der Registrierung" />
-							</span>
-						</div>
-					</div> <!-- div to-TableRow ENDE -->
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Login">
-						<div class="lo-TableCell lo-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="lo-TableCell lo-TableCell-col-1">&nbsp;</div>
-						<div class="lo-TableCell lo-TableCell-Content-Login-1">							
-							<span class="lo-TableCell-Content-Login-2" data-bind="ifnot: isRequestPW">
-								<button id="btn-resetpassword" data-bind="click: requestPWInput">Passwort vergessen</button>
-							</span>							
-							<span class="lo-TableCell-Content-Login-2" data-bind="if: isRequestPW">
-								<button id="btn-requestpassword" data-bind="click: requestPW">Passwort anfordern</button>
-							</span>							
-							<span class="lo-TableCell-Content-Login-3">
-								<button id="btncancel" data-bind="click: cancelPW">Abbrechen</button>
-							</span>
-							<span class="lo-TableCell-Content-Login-4" data-bind="ifnot: isRequestPW">
-								<button id="btnlogin" data-bind="click: loginPassword">Anmelden</button>
-							</span>
-						</div>
-					</div> <!-- div to-TableRow ENDE -->
-					<div class="lo-TableRow lo-TableRow-Content lo-TableRow-Foot minimum-V-medium">&nbsp;</div> <!-- div lo-TableRow ENDE -->
-				</div> <!-- div lo-TableBody ENDE -->
-			</div> <!-- div lo-Table ENDE -->
+<body onload="ko.applyBindings(new LoginViewModel());" onresize="setHeight();">
+<!-- ko template: {afterRender: setHeight } -->
+	<div id="s2g-top">
+		<div id="navigation-top" class="minimum-V-big">
+			<div id="s2g-message"></div>
+			<div id="s2g-logo"></div>
+		</div> <!-- End div navigation-top -->
+	</div> <!--End div s2g-top -->
+	<div id="s2g-navigation">
+		<div id="s2g-left-navigation-buttons">
+			<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+			<span data-bind="if: me()!=null" class="minimum-V-medium">
+				<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+				<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
+			</span >
+		</div> <!--End div navigation-buttons -->
+		<div id="s2g-right-navigation-buttons-logout" data-bind="if: me()!=null">
+			<button id="btn-logout" data-bind="click: Logout">Logout</button>
+			<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ me.nickname">Profil</button>
+		</div> <!-- End div navigation-buttons-logout -->
+		<div id="s2g-right-navigation-buttons-login" data-bind="ifnot: me()!=null">
+			<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+			<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
+		</div> <!-- End div navigation-buttons-login -->
+	</div> <!--End div s2g-navigation -->
+	
+	<div id="s2g-table">
+		<div id="s2g-tablecontent">
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">&nbsp;</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div>
+			<form id="lo_form">
+				<div class="s2g-tablerow">
+					<div class="s2g-table-col-1">&nbsp;</div>
+					<div class="s2g-table-col-2">					<div class="s2g-tablecell">Benutzername</div></div>
+					<div class="s2g-table-col-3">					<div class="s2g-tablecell s2g-input-cell">	<input class="s2g-input-field" type="text" id="username" name="username" placeholder="Benutzername" data-bind="event: { keypress: loginPasswordCR}" />	</div>	</div>
+					<div class="s2g-table-col-4">&nbsp;</div>
+				</div> <!-- s2g-tablerow ENDE -->
+				<div class="s2g-tablerow" data-bind="ifnot: isRequestPW">
+					<div class="s2g-table-col-1">&nbsp;</div>
+					<div class="s2g-table-col-2">					<div class="s2g-tablecell">Passwort</div></div>
+					<div class="s2g-table-col-3">					<div class="s2g-tablecell s2g-input-cell">	<input class="s2g-input-field" type="password" id="password" name="password" placeholder="Passwort" data-bind="event: { keypress: loginPasswordCR}" />	</div>	
+																	<span class="lo-TableCell-Content-Login-4" data-bind="ifnot: isRequestPW">
+																		<div id="lo-login" class="lo-login" data-bind="click: loginPassword">	</div>
+																	</span>			
+					</div>
+					<div class="s2g-table-col-4">&nbsp;</div>
+				</div> <!-- s2g-tablerow ENDE -->
+			</form>
+			<div class="s2g-tablerow" data-bind="if: isRequestPW">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">				<div class="s2g-tablecell">Email</div></div>
+				<div class="s2g-table-col-3">				<div class="s2g-tablecell s2g-input-cell">	<input class="s2g-input-field" type="email" id="email" name="email" placeholder="Deine Email der Registrierung" />	</div>	</div>
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">
+					<div class="s2g-tablecell">
+						<span class="lo-TableCell-Content-Login-2" data-bind="ifnot: isRequestPW">
+							<button id="btn-resetpassword" data-bind="click: requestPWInput">Passwort vergessen</button>
+						</span>							
+						<span class="lo-TableCell-Content-Login-2" data-bind="if: isRequestPW">
+							<button id="btn-requestpassword" data-bind="click: requestPW">Passwort anfordern</button>
+						</span>							
+						<span class="lo-TableCell-Content-Login-3">
+							<button id="btncancel" data-bind="click: cancelPW">Abbrechen</button>
+						</span>
+					</div>
+				</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->	
+		</div> <!--End div s2g-tablecontent -->
+	</div> <!--End div s2g-table -->
 
-		</div> <!--End div content -->
-		<div id="footer" class="minimum-V-big">
-			<div id="version">
-				<a href="html/FAQ.php" target="_blank">FAQ</a>
-				<a href="html/disclaimer.php" target="_blank">Regeln</a>
-				<a href="html/impressum.php" target="_blank">Impressum</a>
-			</div> <!--End div version -->
-		</div> <!--End div footer -->
-	</div> <!--End div total -->
+	<div id="s2g-footer">
+		<div id="s2g-version">
+			<a href="info_faq.html" target="_blank">FAQ</a>
+			<a href="info_disclaimer.html" target="_blank">Regeln</a>
+			<a href="info_impressum.html" target="_blank">Impressum</a>
+			<a href="http://www.sporttogether.de/v1/index.php" target="_blank">zu den Anfängen</a>
+		</div> <!--End div version -->
+	</div> <!--End div s2g-footer -->
+<!-- /ko -->
 </body>
-</html>

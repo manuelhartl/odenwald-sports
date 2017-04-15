@@ -1,45 +1,25 @@
-.ma-TableBody{
+/* Seitenspezifisch */
+.s2g-tablerow{
+	min-height: 5em;
 }
 
-
-/* Size: width */
-.ma-TableCell-col-0{
-	width: 0em;
+/* width: no high-screen */
+@media only screen and (max-height: 701px){
+	.s2g-tablerow{ min-height: 4em;	}
 }
 
-.ma-TableCell-col-1{
-	width: 8em;
+/* width: no medium-high-screen */
+@media only screen and (max-height: 401px){
+	.s2g-tablerow{ min-height: 3em;	}
 }
 
-.ma-TableCell-col-2-tini{
-	width: 5em;
+/* width: no small-high-screen */
+@media only screen and (max-height: 251px){
+	.s2g-tablerow{ min-height: 2em;	}
 }
-.ma-TableCell-col-2-small{
-	width: 10em;
-}
-.ma-TableCell-col-2{
-	width: calc(( 40 * ( 100% - ( 8em ))) / 100 );
-	min-width: 5em;
-}
-.ma-TableCell-col-2-large{
-	width: calc(( 80 * ( 100% - ( 8em ))) / 100 );
-	min-width: 5em;
-}
-
-.ma-TableCell-col-3-small{
-	width: 15em;
-}
-
-/* size: height */
-.ma-TableRow-Absender, .ma-TableRow-Empfaenger, .ma-TableRow-Betreff, .ma-TableRow-Send {
-	height: 3em;
-}
-.ma-TableRow-Editor{
-}
-
-
+	
 /* input fields */
-#Editor, #Betreff{
+#ma-Editor, #ma-Betreff {
 	height: 100%;
 	width: 100%;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
@@ -48,85 +28,16 @@
 	border: none;
 
  	/* resize baseline */
-    	vertical-align: text-top;
-    	margin-top: -1px; /* - (border-top-width + padding-top) */
+    vertical-align: text-top;
+    margin-top: -1px; 				/* - (border-top-width + padding-top) */
 
   	font-family: inherit;
    	font-size: inherit;
+	
 }
 
-#Editor{
+#ma-Editor{
 	height: 10em;
+	resize: vertical;
 }
-
-#Absender, #Empfaenger, #Betreff, #Send{
-	height: 1.5em;
-}
-
-
-.ma-TableRow-Content {
-	padding: 0.2em;
-}
-
-
-/* Abstand Button zu Eingabefelder */
-.ma-TableCell-Content-Send-1{
-	margin-top: 2em;
-}
-.ma-TableCell-col-1{
-    padding-top: 3px; /* - margin-top of textarea */
-
-}
-
-.ma-TableCell-col-2,  .ma-TableCell-col-2-large {
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	border-style: solid;
-	border-width:thin medium;
-	padding: 0.2em;
-}
-
-
-/* responsive design */
-* big-screen */
-@media (min-width: 1281px){
-}
-
-/* medium--screen */
-@media (min-width: 901px) and (max-width: 1280px){
-}
-
-/* small-screen */
-@media (min-width: 301px) and (max-width: 900px){
-}
-
-
-/* mobil-screen */
-@media (max-width: 300px){
-
-html{
-	font-size: small;
-}
-
-}
-
-@media (max-height: 400px){
-
-.small {
-	display: none;
-}
-
-.ma-TableRow-Absender, .ma-TableRow-Empfaenger, .ma-TableRow-Betreff, .ma-TableRow-Inhalt, .ma-TableRow-Send {
-    height: 2em;
-}
-
-.ma-TableBody {
-	height: 100%;
-	overflow-y: scroll;
-}
-
-}
-
-
 

@@ -1,0 +1,19 @@
+/* Seitenspezifisch */
+.s2g-icon-more { float: right };
+
+ol.s2g-in-level-1 {
+	counter-reset: listenpunkt_ebene1;
+	list-style-type: none;
+}
+ol.s2g-in-level-1 li::before {
+	content: counter(listenpunkt_ebene1) ". ";
+	counter-increment: listenpunkt_ebene1;
+}
+ol.s2g-in-level-2 {
+	counter-reset:listenpunkt_ebene2;
+	list-style-type:none;
+}
+ol.s2g-in-level-2 li::before {
+	content: counter(listenpunkt_ebene1) counter(listenpunkt_ebene2,lower-alpha) ". ";
+	counter-increment:listenpunkt_ebene2;
+}

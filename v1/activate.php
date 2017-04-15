@@ -1,11 +1,10 @@
 <?php
-function htmlHeader($redirect, $to = 'index.php') {
+function htmlHeader($redirect) {
 	?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="refresh"
-	content="<?php echo $redirect.'; url='.$to ?>">
+<meta http-equiv="refresh" content="<?php echo $redirect; ?>; url=index.php">
 <title>Touren</title>
 </head>
 <body>
@@ -25,9 +24,8 @@ if (array_key_exists ( 'token', $_GET )) {
 		$redirectInSeconds = 180;
 		echo 'Aktivierung fehlgeschlagen - Bitte Administrator an wenden (webmaster)';
 	}
-	$to = 'ko/pages';
-	htmlHeader ( $redirectInSeconds, $to );
-	echo '- Du wirst in ' . $redirectInSeconds . ' Sekunden an die Anmeldung umgelenkt (oder direkt zu: <a href="' . $to . '">Login</a>)';
+	htmlHeader ( $redirectInSeconds );
+	echo '- Du wirst in ' . $redirectInSeconds . ' Sekunden an die Anmeldung umgelenkt (oder direkt zu: <a href="index.php">Login</a>)';
 }
 ?>
 </body>

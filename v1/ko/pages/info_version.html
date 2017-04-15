@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta name="viewport" content="initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
+    <link rel="stylesheet" type="text/css" href="../css/s2g-in.css" />
+	<meta charset="UTF-8"> 
+	<script type='text/javascript' src='../script/memorystorage.js'></script>
+	<script type='text/javascript' src='../script/data.js'></script>
+	
+	<script type='text/javascript' >
+
+	//'use strict';	// don't_view_use_strict
+	
+	function setHeight(){
+		setAvailableHeight('s2g-tablecontent', ['s2g-top'], 's2g-footer');
+	}
+	</script>
+
+
+	<title>Sport2gether Versionsinfo</title>
+</head>
+<body onload="setHeight();" onresize="setHeight();" >
+	<div id="s2g-top">
+		<div id="navigation-top" class="minimum-V-big">
+			<div id="s2g-message"></div>
+			<div id="s2g-logo"></div>
+		</div> <!-- End div navigation-top -->
+	</div> <!--End div s2g-top -->
+	
+	<div id="s2g-table">
+		<div id="s2g-tablecontent">
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">
+					<div class="s2g-tablecell">
+						<h1>Versionsinformationen</h1>
+						<ol class="s2g-in-level-1">
+							<li>Version V13
+								<ol class="s2g-in-level-1">
+									<li>Touren anzeigen: alte oder neue Touren, alternativ alles anzeigen</li>
+									<li>Touren anzeigen: Hintergrund mit Lichtern nachts</li>
+									<li>Touren anzeigen: Jahresrückblick</li>
+								</ol>
+							</li>
+							<li>Version V12
+								<ol class="s2g-in-level-1">
+									<li>Versionsinfo eingebaut</li>
+									<li>Tour eingeben: Adressvorschläge</li>
+									<li>Tour anzeigen: Button Routenplaner</li>
+								</ol>
+							</li>
+						</ol>			
+					</div>					
+				</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div>
+		</div> <!--End div s2g-tablecontent -->
+	</div> <!--End div s2g-table -->
+	<div id="s2g-footer">
+	</div> <!--End div s2g-footer -->
+</body>
+

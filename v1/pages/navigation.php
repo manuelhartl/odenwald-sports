@@ -71,5 +71,5 @@ if (hasAuth ()) {
 }
 ?>
 
-<a href="ko/pages/tour-list.html" id="betalink">BETA-Version</a>
+<a href="ko/pages/tour-list.html" id="betalink">Alternative Version</a>
 </div>

@@ -1,48 +1,8 @@
-/* Size: width */
-.pr-TableCell-col-0{
-	width: 10em;
+/* Seitenspezifisch */
+.s2g-tablerow{
+	min-height: 2em;
 }
 
-.pr-TableCell-col-1, .pr-TableCell-col-1-noborder{
- 	width: 12em;
-}
-
-.pr-TableCell-col-2{
-	width: calc(( 80 * ( 100% - ( 10em + 12em ))) / 100 );
-	min-width: 12em;
-}
-.pr-TableCell-col-2-large{
-	width: calc(( 90 * ( 100% - ( 10em + 12em ))) / 100 );
-	min-width: 12em;
-}
-
-
-/* size: height */
-#telefon, #birthday, #adress, #realname{
-	height: 1.5em;
-}
-
-.pr-TableRow-Head, .pr-TableRow-Foot{
-	height: 100px;;
-}
-
-
-/* input fields */
-#telefon, #birthday, #adress, #realname{
-	width:  98%;
-	resize: none;
-	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-	box-sizing: border-box;         /* Opera/IE 8+ */
-	border: none;
-
-	/* resize baseline */
-    	vertical-align: text-top;
-    	margin-top: -1px; /* - (border-top-width + padding-top) */
-
-  	font-family: inherit;
-   	font-size: inherit;
-}
 
 .pr-map{
 	width: 100%;
@@ -50,7 +10,7 @@
 	height: 400px;
 }
 
-#pr-action-buttons {
+#pr-action-buttons, #pr_tools {
 	float: right;
 }
 
@@ -59,52 +19,15 @@
 	padding: 0.2em;
 }
 
-.pr-TableCell-col-2, .pr-TableCell-col-2-noborder{
-	padding: 5px;
+/* width: no high-screen */
+@media only screen and (max-height: 701px){
+	.s2g-tablerow{ min-height: 1.5em;	}
 }
 
-.pr-TableCell-col-1{
-	padding-top: 3px; /* - margin-top of textarea */
+/* width: no medium-high-screen */
+@media only screen and (max-height: 401px){
 }
 
-.pr-TableCell-col-2{
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	border-style: solid;
-	border-width:thin medium;
-}
-
-#adress{
-	width: 99%;
-}
-
-.pr-TableCell-Content-Tourinfo-2{
-	font-size: small;
-}
-.pr-TableRow-Tourinfo{
-	overflow: hidden;
-}
-
-/* responsive design */
-/* big-screen */
-@media (min-width: 1281px){
-}
-
-/* medium--screen */
-@media (min-width: 901px) and (max-width: 1280px){
-}
-
-/* small-screen */
-@media (min-width: 301px) and (max-width: 900px){
-}
-
-
-/* mobil-screen */
-@media (max-width: 300px){
-
-html{
-	font-size: small;
-}
-
+/* width: no small-high-screen */
+@media only screen and (max-height: 251px){
 }

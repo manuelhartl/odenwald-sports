@@ -1,127 +1,73 @@
-.ul-Table{
+/* Seitenspezifisch */
+/*----s2g-pagetools----*/
+#ul-cb_tools-add, #ul-tools-add-more {
+	float: right;
 }
 
-.ul-TableHeading {
-/* analog .even */
-	padding-top: 5px;
-}
-
-.ul-Tablerow-Content {
-	margin-top: 10px;
-}
-
-.ul-TableRow {
+#s2g-tableheader .s2g-tablerow, #s2g-tablecontent .s2g-tablerow {
 	padding-left: 10px;
-	overflow-y: hidden;
+}
+
+.s2g-odd {
+	/* Content Odd */
+	background-color: #ccc;
 }
 
 /* Size */
-.ul-TableCell-Nummer {
+.ul-table-col-number {
 	width: 3em;
 }
-.ul-TableHeading .ul-TableCell-User {
-	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em + 17px ))) / 100 );
+.ul-table-col-user {
+	width: calc(( 40 * ( 100% - (3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em + 5em))) / 100 );
 }
-.ul-TableCell-User {
-	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em ))) / 100 );
-}
-.ul-TableCell-Mail {
+.ul-table-col-mail {
 	width: 3em;
 }
-.ul-TableHeading .ul-TableCell-Name {
-	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em + 17px ))) / 100 );
+.ul-table-col-name {
+	width: calc(( 60 * ( 100% - (3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em ))) / 100 );
 }
-.ul-TableCell-Name {
-	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 15em + 4em + 7em + 3em + 3em ))) / 100 );
-}
-.ul-TableCell-Telefon {
+.ul-table-col-phone {
 	width: 10em;
 }
-.ul-TableCell-Entfernung {
+.ul-table-col-distance {
 	width: 15em;
 }
-
-.ul-TableCell-Geburtsjahr {
+.ul-table-col-age {
 	width: 4em;
 }
-
-.ul-TableCell-Registrierung {
+.ul-table-col-register {
 	width: 7em;
 }
-
-.ul-TableCell-Mitfahrer, .ul-TableCell-Guide {
+.ul-table-col-guide, .ul-table-col-member {
 	width: 3em;
 }
-.ul-TableHead-Content-Mitfahrer, .ul-TableHead-Content-Guide, .ul-TableCell-Content-Mitfahrer, .ul-TableCell-Content-Guide  {
-	float:right;
-	padding-right: 15px;
+
+.ul-table-col-number, .ul-table-col-user, .ul-table-col-mail, .ul-table-col-name, .ul-table-col-phone, .ul-table-col-distance, .ul-table-col-age, .ul-table-col-register, .ul-table-col-guide, .ul-table-col-member {
+	float: left;
 }
 
-.ul-TableCell-Scrollbar {
-	width: 17px;
+/* Ausrichtung */
+.ul-table-col-number {
+	text-align:	center;
 }
 
-.odd-title, .even-title, .odd, .even {
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
+.ul-table-col-age, .ul-table-col-register, .ul-table-col-guide, .ul-table-col-member {
+	text-align:	right;
 }
 
-.ul-Table .odd {
-	background-color: lightgrey;
+/* width: no wide-screen */
+@media only screen and (max-width: 1201px){
+	.ul-table-col-distance {	display: none;	}
+	.ul-table-col-user {	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em ))) / 100 );	}
+	.ul-table-col-name {	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em ))) / 100 );	}
 }
 
-
-/* icons allgemein */
-.ul-icon-member-mail {
-	display: inline-block;
-	width: 35px;
-	height: 25px;
-	border: none;
-	background-color: transparent;
+@media only screen and (max-width: 801px){
+	.ul-table-col-age, .ul-table-col-register, .ul-table-col-guide, .ul-table-col-member {	display: none;	}
+	.ul-table-col-user {	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em ))) / 100 );	}
+	.ul-table-col-name {	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em ))) / 100 );	}
 }
 
-/* responsive design */
-/* big-screen */
-@media (min-width: 1281px){
+@media only screen and (max-width: 401px){
 }
 
-/* medium--screen */
-@media (min-width: 901px) and (max-width: 1280px){
-.ul-TableHeading .ul-TableCell-User {
-	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em + 17px ))) / 100 );
-}
-.ul-TableCell-User {
-	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em ))) / 100 );
-}
-
-.ul-TableHeading .ul-TableCell-Name {
-	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em + 17px ))) / 100 );
-}
-.ul-TableCell-Name {
-	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 4em + 7em + 3em + 3em ))) / 100 );
-}
-}
-
-/* small-screen */
-@media (min-width: 301px) and (max-width: 900px){
-.ul-TableHeading .ul-TableCell-User {
-	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em + 17px ))) / 100 );
-}
-.ul-TableCell-User {
-	width: calc(( 40 * ( 100% - ( 3em  + 3em + 10em ))) / 100 );
-}
-.ul-TableHeading .ul-TableCell-Name {
-	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em + 17px ))) / 100 );
-}
-.ul-TableCell-Name {
-	width: calc(( 60 * ( 100% - ( 3em  + 3em + 10em ))) / 100 );
-}
-}
-
-@media (max-height: 300px){
-
-.tl-TableBody {
-	height: 100%;
-}
-}

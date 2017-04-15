@@ -1,37 +1,50 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta name="viewport" content="initial-scale=1.0">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" type="text/css" href="../css/s2g.css" />
-	<link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
-	<link rel="stylesheet" type="text/css" href="../css/s2g-ma.css" />
-	<meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../css/s2g-ma.css" />
 	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
-	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.1.js'></script>
 	<script type='text/javascript' src='../script/memorystorage.js'></script>
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
 
-	// 'use strict';	// view_dont_use_strict
+	//'use strict';	// don't_view_use_strict
+
+	function setHeight(){
+		setAvailableHeight('s2g-tablecontent', ['s2g-top','s2g-navigation'], 's2g-footer');
+	}
 	
 	// class to represent a mail
 	var MailViewModel = function() {
+		const s_id = "mail";
+		const needs_authentification = true;
 		var self = this;
-		var s_id = "mail";
 
-		self.data = getData();
-		self.me = getMe();
+		self.data = getData();	
+		var _me = ko.observable(null);
+		self.me = ko.computed({
+			read: function() { if(needs_authentification){ checkAuthentification(needs_authentification, _me(), 'ma','tl'); }; return(_me());},
+			write: function (me) { _me(me); },
+			owner: self
+		});		
 		
-		self.sender = ko.observable(self.me.nickname);		
-		self.recipe = ko.observable("Empf\u00e4ngerliste");
-		self.subject = ko.observable("Mail an alle");
-		self.mailcontent = ko.observable("");
-		
-		self.tourID = ko.observable(0);
+		self.sender = ko.observable();		
+		self.recipe = ko.observable();
+		self.subject = ko.observable();
+		self.mailcontent = ko.observable();
+		self.tourID = ko.observable();
 		
 		self.init = function(){
-			// if logged out, login and stay, otherwise goto tour list
-			checkAutentification('ma','tl');
+			self.me(checkAuthentification( needs_authentification, null, "ma","tl" ));
+			self.data.setpreferences(self.me());
+			self.sender(self.me().nickname);
+			self.recipe("Empf\u00e4ngerliste");
+			self.subject("Mail an alle");
+			self.mailcontent("");
 		
 			var type = getTempStorage(s_id, "type");
 			var source = getTempStorage(s_id, "source");
@@ -41,28 +54,28 @@
 			if(type == "2tourmember"){
 				var tour = self.data.getTour(source);
 				self.recipe(subsource);
-				self.subject(tour.tourMail2User());				
+				self.subject(tour.tourMail2User(self.me().nickname));				
 			}else if(type == "2tourguide"){
 				var tour = self.data.getTour(source);
 				self.recipe(tour.guide);
-				self.subject(tour.tourMail2Guide(self.me.nickname));				
+				self.subject(tour.tourMail2Guide(self.me().nickname));				
 			}else if(type == "2tourall"){
 				var tour = self.data.getTour(source);
 				var recipes;
-				if(self.me.nickname == tour.guide){
+				if(self.me().nickname == tour.guide){
 					recipes = tour.getMembersString();
 				}else{
-					recipes = tour.getMembersString().replace(self.me.nickname, tour.guide);
+					recipes = tour.getMembersString().replace(self.me().nickname, tour.guide);
 				}
 				self.recipe(recipes);
-				self.subject(tour.tourMail2Tour(self.me.nickname));				
+				self.subject(tour.tourMail2Tour(self.me().nickname));				
 			}else if(type == "2user"){
 				var user = self.data.getUser(subsource);
 				self.recipe(subsource);
-				self.subject(user.userMail(self.me.nickname));				
+				self.subject(user.userMail(self.me().nickname));				
 			}else if(type == "2webmaster"){
 				self.recipe(subsource);
-				self.subject("Fehlermeldung von "+ self.me.nickname);				
+				self.subject("Fehlermeldung von "+ self.me().nickname);				
 				self.mailcontent(source);				
 			}
 		}
@@ -103,7 +116,7 @@
 		}
 		
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', durationShowMail);
+			showMessage(info, document, 's2g-message', durationShowMessage);
 		};
 
 		/* --------- Construction --------- */
@@ -115,99 +128,97 @@
 			self.showMessage(message);
 		}
 	};
-	
+
+	window.onerror = function (msg, url, line, col, error) {
+		return(globalError("Login", msg, url, line, col, error));
+	};
 	</script>
-	<title>Sport2Gether (KnockOut)</title>
+<title>Sport2gether</title>
 </head>
-<body onload="ko.applyBindings(new MailViewModel());">
-	<div class="total">
-		<div id="navigation">
-			<div id="navigation-top" class="minimum-V-big">
-				<div id="message"></div>
-				<div id="logo"></div>
-			</div> <!--End div navigation-top -->
-			<div id="navigation-bottom">
-				<div id="navigation-buttons">
-					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<span data-bind="if: me!=null" class="minimum-V-medium">
-						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
-					</span >
-				</div> <!--End div navigation-buttons -->
-				<div id="navigation-buttons-logout" data-bind="if: me!=null">
-					<button id="btn-logout" data-bind="click: Logout">Logout</button>
-					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
-				</div> <!--End div navigation-buttons-logout (logged in) -->
-				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
-					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
-				</div> <!--End div navigation-buttons-in (logged out) -->
-			</div> <!--End div navigation-bottom -->
-		</div> <!--End div navigation -->
-		<div class="content" id="main">
-			<div class="ma-Table">
-				<div class="ma-TableBody">
-					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Absender">
-						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Absender-2-1">Von</span></div>
-						<div class="ma-TableCell ma-TableCell-col-2-large">
-							<span class="ma-TableCell-Content-Absender-2-2">
-								<span id="Absender" data-bind="text: sender"></span>
-							</span>
-						</div>
-					</div> <!-- div ma-TableRow ENDE -->
-					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Empfaenger">
-						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Empfaenger-1">An</span></div>
-						<div class="ma-TableCell ma-TableCell-col-2-large">
-							<span class="ma-TableCell-Content-Empfaenger-2">
-								<span id="Empfaenger" data-bind="text: recipe"></span>
-							</span>
-						</div>
-					</div> <!-- div ma-TableRow ENDE -->
-					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Betreff">
-						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Betreff-1">Betreff</span></div>
-						<div class="ma-TableCell ma-TableCell-col-2-large">
-							<span class="ma-TableCell-Content-Betreff-2">
-								<input type="text" id="Betreff" data-bind="textInput: subject" />
-							</span>
-						</div>
-					</div> <!-- div ma-TableRow ENDE -->
-					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Editor">
-						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="ma-TableCell ma-TableCell-col-1"><span class="ma-TableCell-Content-Editor-1">Inhalt</span></div>
-						<div class="ma-TableCell ma-TableCell-col-2-large">
-							<span class="ma-TableCell-Content-Editor-2">
-								<textarea id="Editor" name="editor" placeholder="Bitte Mailtext eingeben" data-bind="textInput: mailcontent"></textarea>
-							</span>
-						</div>
-					</div> <!-- div ma-TableRow ENDE -->
-					<div class="ma-TableRow ma-TableRow-Content ma-TableRow-Send">
-						<div class="ma-TableCell ma-TableCell-col-0 minimum-H-big">&nbsp;</div>
-						<div class="ma-TableCell ma-TableCell-col-1">&nbsp;</div>
-						<div class="ma-TableCell ma-TableCell-Content-Send-1">
-							<span class="ma-TableCell-Content-Send-2">
-								<button id="btncancel" data-bind="click: cancel">Abbrechen</button>
-							</span>
-							<span class="ma-TableCell-Content-Send-3">
-								<button id="btnlogin" data-bind="click: send">Senden</button>
-							</span>
-						</div>
-					</div> <!-- div ma-TableRow ENDE -->
-				</div> <!-- div ma-TableBody ENDE -->
-			</div>  <!-- div ma-Table ENDE -->
+<body onload="ko.applyBindings(new MailViewModel());" onresize="setHeight();" >
+<!-- ko template: {afterRender: setHeight } -->
+	<div id="s2g-top">
+		<div id="navigation-top" class="minimum-V-big">
+			<div id="s2g-message"></div>
+			<div id="s2g-logo"></div>
+		</div> <!-- End div navigation-top -->
+	</div> <!--End div s2g-top -->
+	<div id="s2g-navigation">
+		<div id="s2g-left-navigation-buttons">
+			<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+			<span data-bind="if: me()!=null" class="minimum-V-medium">
+				<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+				<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
+			</span >
+		</div> <!--End div navigation-buttons -->
+		<div id="s2g-right-navigation-buttons-logout" data-bind="if: me()!=null">
+			<button id="btn-logout" data-bind="click: Logout">Logout</button>
+			<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me().nickname), text: 'Profil '+ me().nickname">Profil</button>
+		</div> <!-- End div navigation-buttons-logout -->
+		<div id="s2g-right-navigation-buttons-login" data-bind="ifnot: me()!=null">
+			<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+			<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
+		</div> <!-- End div navigation-buttons-login -->
+	</div> <!--End div s2g-navigation -->
+	
+	<div id="s2g-table">
+		<div id="s2g-tablecontent">
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">&nbsp;</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">					<div class="s2g-tablecell">Von</div>	</div>
+				<div class="s2g-table-col-3">					<div class="s2g-tablecell">	<span id="Absender" data-bind="text: sender"></span>	</div>	</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">					<div class="s2g-tablecell">An</div>	</div>
+				<div class="s2g-table-col-3">					<div class="s2g-tablecell">	<span id="Empfaenger" data-bind="text: recipe"></span>	</div>	</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">					<div class="s2g-tablecell">Betreff</div>	</div>
+				<div class="s2g-table-col-3">					<div class="s2g-tablecell s2g-input-cell">	<input type="text" id="ma-Betreff" class="s2g-input-field" data-bind="textInput: subject" />	</div>	</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">					<div class="s2g-tablecell">Inhalt</div>	</div>
+				<div class="s2g-table-col-3">					<div class="s2g-tablecell s2g-input-cell">	<textarea id="ma-Editor" class="s2g-input-field" placeholder="Bitte Mailtext eingeben" data-bind="textInput: mailcontent"></textarea>	</div>	</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+			
+			<div class="s2g-tablerow">
+				<div class="s2g-table-col-1">&nbsp;</div>
+				<div class="s2g-table-col-2">&nbsp;</div>
+				<div class="s2g-table-col-3">
+					<div class="s2g-tablecell">
+						<span class="ma-TableCell-Content-Send-2">
+							<button id="btncancel" data-bind="click: cancel">Abbrechen</button>
+						</span>
+						<span class="ma-TableCell-Content-Send-3">
+							<button id="btnlogin" data-bind="click: send">Senden</button>
+						</span>
+					</div>
+				</div>					
+				<div class="s2g-table-col-4">&nbsp;</div>
+			</div> <!-- s2g-tablerow ENDE -->
+		</div> <!--End div s2g-tablecontent -->
+	</div> <!--End div s2g-table -->
 
-		</div> <!--End div content -->
-		<div id="footer" class="minimum-V-big">
-			<div id="version">
-				<a href="html/FAQ.php" target="_blank">FAQ</a>
-				<a href="html/disclaimer.php" target="_blank">Regeln</a>
-				<a href="html/impressum.php" target="_blank">Impressum</a>
-				<span data-bind="text: data.versioninfo" ></span>
-			</div> <!--End div version -->
-		</div> <!--End div footer -->
-	</div> <!--End div total -->
-
+	<div id="s2g-footer">
+		<div id="s2g-version">
+			<a href="info_faq.html" target="_blank">FAQ</a>
+			<a href="info_disclaimer.html" target="_blank">Regeln</a>
+			<a href="info_impressum.html" target="_blank">Impressum</a>
+			[<a href="info_version.html" data-bind="text: data.versioninfo" target="_blank"></a>] <span data-bind="text: makeDateString(data.lastUpdate,4)"> </span>
+		</div> <!--End div version -->
+	</div> <!--End div s2g-footer -->
+<!-- /ko -->
 </body>
-</html>

@@ -101,10 +101,6 @@ foreach ( $tours as $tour ) {
 	$dbtour->distance = $tour ['distance'];
 	$dbtour->elevation = $tour ['elevation'];
 	$dbtour->bringlight = $tour ['bringlight'] == 'true';
-	// validate
-	if (strlen($dbtour->description)>2000) {
-		error("description is longer than 2000 characters");
-	}
 	
 	if ($isNew) {
 		if ($dbtour->id = insertTour ( $pdo, $dbtour )) {

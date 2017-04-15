@@ -1,0 +1,42 @@
+/* Seitenspezifisch */
+.s2g-tablerow{
+	min-height: 3em;
+}
+
+.s2g-table-col-2 {
+	width:	calc( 20 * ( 100% - ( 5em + 15em  )) / 100 );
+}
+#s2g-tableheader .s2g-table-col-2 {
+	width:	calc( 20 * ( 100% - ( 5em + 15em + 17px )) / 100 );
+}
+.s2g-table-col-3 {
+	width:	calc( 70 * ( 100% - ( 5em + 15em  )) / 100 );
+}
+#s2g-tableheader .s2g-table-col-3 {
+	width:	calc( 70 * ( 100% - ( 5em + 15em + 17px )) / 100 );
+}
+.s2g-table-col-4 {
+	width:	15em;
+	padding-left: 5px;
+}
+
+/* width: no high-screen */
+@media only screen and (max-height: 701px){
+	.s2g-tablerow{ min-height: 2em;	}
+}
+
+/* width: no medium-high-screen */
+@media only screen and (max-height: 401px){
+}
+
+/* width: no small-high-screen */
+@media only screen and (max-height: 251px){
+}
+
+@media only screen and (max-width: 801px){
+	body {	margin: 0px;	}
+	.s2g-table-col-1 { display: none; }
+	.s2g-table-col-4 { display: none; }
+	.s2g-table-col-2 {	width:	calc( 20 * ( 100% - ( 0px  )) / 100 );	}
+	.s2g-table-col-3 {	width:	calc( 70 * ( 100% - ( 0px  )) / 100 );	}
+}

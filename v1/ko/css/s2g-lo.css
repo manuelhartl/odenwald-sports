@@ -1,102 +1,39 @@
-.lo-TableBody{
+/* Seitenspezifisch */
+.s2g-tablerow{
+	height: 5em;
 }
 
-/* Size: width */
-.lo-TableCell-col-0{
-	width: 100px;
+.s2g-input-cell{
+	float: left;
+	width: calc( 100% - 50px );
 }
 
-.lo-TableCell-col-1{
-    	padding-top: 3px; /* - margin-top of textarea */
-	width: 8em;
+.lo-login{
+	display: inline-block;
+	background: url('../img/s2g.sprite.I.png') calc( -53 * 25px ) calc( -5 * 25px );
+	background-color: transparent;
+	width: 25px;
+	height: 25px;
 }
 
-.lo-TableCell-col-2{
-	width: calc(( 80 * ( 100% - ( 10em ))) / 100 );
-	max-width: 50em;
-	min-width: 10em;
+.lo-login:hover{	background: url('../img/s2g.sprite.I.png') calc( -53 * 25px ) calc( -7 * 25px );	}
+
+#lo-login{
+	margin-left: 5px;
 }
 
-/* Abstand Button zu Eingabefelder */
-.lo-TableCell-Content-Login-1{
-	margin-top: 2em;
+/* width: no high-screen */
+@media only screen and (max-height: 701px){
+	.s2g-tablerow{ height: 4em;	}
 }
 
-/* size: height */
-#username, #password, #email{
-	height: 1.5em;
+/* width: no medium-high-screen */
+@media only screen and (max-height: 401px){
+	.s2g-tablerow{ height: 3em;	}
 }
 
-.lo-TableRow-Head, .lo-TableRow-Foot{
-	height: 75px;
+/* width: no small-high-screen */
+@media only screen and (max-height: 251px){
+	.s2g-tablerow{ height: 2em;	}
 }
 
-
-/* input fields */
-#username, #password, #email{
-	width:  100%;
-	resize: none;
-	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-	box-sizing: border-box;         /* Opera/IE 8+ */
-	border: none;
-
-	/* resize baseline */
-    	vertical-align: text-top;
-    	margin-top: -1px; /* - (border-top-width + padding-top) */
-
-  	font-family: inherit;
-   	font-size: inherit;
-}
-
-
-.lo-TableRow-Content{
-	padding: 0.2em;
-}
-
-
-.lo-TableCell-col-2{
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	border-style: solid;
-	border-width:thin medium;
-	padding: 5px;
-}
-
-
-/* responsive design */
-/* big-screen */
-@media (min-width: 1281px){
-}
-
-/* medium--screen */
-@media (min-width: 901px) and (max-width: 1280px){
-}
-
-/* small-screen */
-@media (min-width: 301px) and (max-width: 900px){
-}
-
-
-/* mobil-screen */
-@media (max-width: 300px){
-
-html{
-	font-size: small;
-}
-
-}
-
-@media (max-height: 400px){
-
-.small {
-	display: none;
-}
-
-.lo-TableBody {
-	height: 100%;
-	overflow-y: scroll;
-}
-
-}

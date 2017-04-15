@@ -1,17 +1,110 @@
-﻿	const alpha = false;
-	const root = alpha?"/alpha":"/beta";
-	const webmaster = alpha?"GW_ALPHA1":"GW_BETA1";
-	const version = "V11.01" + "-" + root.substring(1);
-	const dumpAJAX = false;
+﻿	//'use strict';	// view_use_strict
 	
-	'use strict';	// view_use_strict
-
-	// 11.01	- Version
-	//				zum veröffentlichen
+	// diese beiden Konstanten müssen angepasst werden
+	const stage = "v1"; // v1, alpha, beta
+	const vers = "14.03";
+	const dumpAJAX = false;
+	const useLocalStorage = true;
+	
+	function root(){
+		return( "/" + stage );
+	}
+	
+	function version(){
+		return( "V"+ vers + "-" + stage );
+	}
+	
+	function setTitle(){
+		var title;
+		switch(stage){
+			case "alpha":	title = "s2g (" + version() + ")";
+							break;
+			case "beta":	title = "s2g (" + version() + ")";
+							break;
+			case "v1":		title = "Sport2gether";
+							break;
+		}
+		document.title = title;
+	}
+	
+	function webmaster(){
+		var adressat;
+		switch(stage){
+			case "alpha":	adressat = "GW_ALPHA1";
+							break;
+			case "beta":	adressat = "GW_BETA1";
+							break;
+			case "v1":		adressat = "GW";
+							break;
+		}
+		return(adressat)
+	}	
+	
+	// 14.02	- Version
+	//				Umstellung sprite
 	//
-	const durationShowMail = 60;
+	// 14.01	- Version
+	//				login:	trigger storage of password & username in browser
+	//				data:	set tourtype correctly
+	//
+	const durationShowMessage = 60;
 
+	function globalError(page, msg, url, line, col, error) {
+		// Note that col & error are new to the HTML 5 spec and may not be supported in every browser.  It worked for me in Chrome.
+		var extra = !col ? '' : '\ncolumn: ' + col;
+		extra += !error ? '' : '\nerror: ' + error;
+		var info = 'Bitte kurz beschreiben was passiert ist\n\n\n\n';
+		
+		if(WhoAmI()!=""){
+			go2MailPage("2webmaster", "Page: " + page + "\n" + info + "\nError: " + msg + "\nurl: " + url + "\nline: " + line + extra, webmaster(), "tl", "tl");	
+		}else{
+			alert(msg + " - " + error);
+			go2LoginPage("tl","tl");
+		}
+
+
+		var suppressErrorAlert = true;
+		// If you return true, then error alerts (like in older versions of Internet Explorer) will be suppressed.
+		return suppressErrorAlert;
+	};
+	
 	////////////////////////////// helper ///////////////////////////
+	function fireResizeEvent(){
+		var event = document.createEvent('UIEvents');
+		event.initUIEvent('resize', true, false, window, 0);
+	
+		setTimeout(function() { window.dispatchEvent(event); }, 500);
+	}
+	
+	function setAvailableHeight(theID, ids, footer){
+		var availableHeight = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight;
+		
+		for (var i = 0; i < ids.length; i++) {
+			var element = document.getElementById(ids[i]);
+			if(element){
+				availableHeight -= element.offsetHeight;
+			}
+		}
+		
+		// check footer and margins around body
+		var foot = document.getElementById(footer);			
+		var body = document.body;
+		if(body){
+			var style = body.currentStyle || window.getComputedStyle(body);
+			var marginTop = style.marginTop.replace(/\D/g,'');
+			var marginBottom = style.marginBottom.replace(/\D/g,'');
+			
+			availableHeight -= (parseInt(marginTop) + Math.max(foot.offsetHeight, parseInt(marginBottom)));
+		}else{
+			availableHeight -= foot.offsetHeight;
+		}
+		// set element theID
+		var element = document.getElementById(theID);
+		if(element){
+			element.style.height = availableHeight+"px";
+		}
+	}
+
 	Array.prototype.contains = function (obj) {
 		var i = this.length;
 		while (i--) {
@@ -22,20 +115,10 @@
 		return false;
 	}
 	
-	function globalError(msg, url, line, col, error) {
-		// Note that col & error are new to the HTML 5 spec and may not be 
-		// supported in every browser.  It worked for me in Chrome.
-		var extra = !col ? '' : '\ncolumn: ' + col;
-		extra += !error ? '' : '\nerror: ' + error;
-
-		// You can view the information in an alert to see things working like this:
-		go2MailPage("2webmaster", "Error: " + msg + "\nurl: " + url + "\nline: " + line + extra, webmaster, "tl", "tl");
-
-		var suppressErrorAlert = true;
-		// If you return true, then error alerts (like in older versions of 
-		// Internet Explorer) will be suppressed.
-		return suppressErrorAlert;
-	};
+	function isNight(){
+		var h = new Date().getHours();
+		return(h>=18 || h<=6);
+	}
 	
 	function isMobile(){
 		var ua = navigator.userAgent;
@@ -57,19 +140,25 @@
 	function makeDateString(theDate, what) {
 		if (theDate != null && theDate.getFullYear() > 0) {
 			switch (what) {
-			case 2:
-				return (theDate.getDate() + "." + (theDate.getMonth() + 1) + "." + theDate.getFullYear());
-				break;
-			case 3:
-				return (theDate.getFullYear());
-				break;
-			case 4:
-				return (theDate.getDate() + "." + (theDate.getMonth() + 1) + "." + theDate.getFullYear() + " " + theDate.getHours() + ":" + pad(theDate.getMinutes()));
-				break;
-			case 1:
-			default:
-				return (pad(theDate.getDate()) + "." + pad(theDate.getMonth() + 1) + "." + theDate.getFullYear());
-				break;
+				case 6:
+					return (theDate.getFullYear() + "-" + pad(theDate.getMonth() + 1) + "-" + pad(theDate.getDate())+"T"+pad(theDate.getHours())+":"+pad(theDate.getMinutes())+":"+pad(theDate.getSeconds()));
+					break;
+				case 5:
+					return (theDate.getFullYear() + "-" + pad(theDate.getMonth() + 1) + "-" + pad(theDate.getDate()));
+					break;
+				case 2:
+					return (theDate.getDate() + "." + (theDate.getMonth() + 1) + "." + theDate.getFullYear());
+					break;
+				case 3:
+					return (theDate.getFullYear());
+					break;
+				case 4:
+					return (theDate.getDate() + "." + (theDate.getMonth() + 1) + "." + theDate.getFullYear() + " " + theDate.getHours() + ":" + pad(theDate.getMinutes()));
+					break;
+				case 1:
+				default:
+					return (pad(theDate.getDate()) + "." + pad(theDate.getMonth() + 1) + "." + theDate.getFullYear());
+					break;
 			}
 		}
 		return ("");
@@ -273,6 +362,13 @@
 		return !isEmpty(x) && x !== undefined && x.constructor === String
 	}
 	
+	function startWith(str, suffix) {
+		return ( str.indexOf(suffix) === 0 );
+	}
+	function endsWith(str, suffix) {
+		return ( str.indexOf(suffix, str.length - suffix.length) !== -1 );
+	}
+	
 	function round(wert, dez) {
         wert = parseFloat(wert);
         if (!wert) return 0;
@@ -323,7 +419,7 @@
 	}
 	
 	function testDate(){
-		var date = new Date(2015,6,11,16,00,00);
+		var date = new Date(2015,6,11,16,0,0);
 		var dateJSON = date2JSON(date);
 		var serverJSON = "2015-07-11T16:00:00+0200";
 		var serverDate = dateFromServer(serverJSON);
@@ -361,13 +457,6 @@
 	}
 	////////////////////////////// end-helper ///////////////////////////
 
-	function checkAutentification( okDestination, cancelDestination )
-	{  
-		if(WhoAmI()==""){
-			go2LoginPage(okDestination, cancelDestination);
-		}
-		return(true);
-	}
 	// relocation service : goto functions
 	function go2LoginPage(okDestination, cancelDestination){
 		setTempStorage("login", "okDestination", okDestination);
@@ -442,8 +531,7 @@
 			go2RequestPasswordPage();
 		}else if(destination == "to"){
 			go2TourPage1();
-		}else if(destination == "re"){
-			
+		}else if(destination == "re"){	
 			go2RegisterPage();
 		}
 	}
@@ -475,17 +563,18 @@
 		}
 	}
 	
-	function Login(un, pw, okDestination, errorDestination){
+	function Login(un, pw, loginform, okDestination, errorDestination){
 		if(un!=null&&pw!=null){
 			$.ajax({
 				async: false,
 				method: "POST",
-				url: root+"/rest/auth.php",
+				url: root()+"/rest/auth.php",
 				data: {
 					username: un,
 					password: pw
 				},
 				dataType: "text",
+				login_form: loginform,
 				error_message: "Fehler " + un + " ist kein gültiger Account",
 				error_destination: errorDestination,
 				error: function( xhr, ajaxOptions, thrownError ) {
@@ -498,6 +587,9 @@
 				success_message: un + " eingeloggt",
 				succes_destination: okDestination,
 				success: function( parameter, textstatus, xhr ) {
+					// trigger storing pw & username in browser
+					this.login_form.submit(function(event){event.preventDefault(); return(true); });
+					//this.login_form.submit();
 					showAJAXSuccess(this.url, parameter, textstatus, xhr);
 					setMe(this.success_nickname);
 					setMessage(this.success_message);
@@ -511,12 +603,13 @@
 		}
 	}
 	
+	
 	function WhoAmI(){
 		var nickname = "";
 
 		$.ajax({
 			async: false,
-			url: root+"/rest/whoami.php",
+			url: root()+"/rest/whoami.php",
 			dataType : "json",
 			error: function( xhr, ajaxOptions, thrownError ) {
 				// TODO: GW->MH: nicht eingeloggt sollte als succes zurückkommen
@@ -539,17 +632,17 @@
 	}
 	
 	function getRSSLink(){
-		return("http:////www.sport2gether.de/"+root+"//rss//")
+		return("http:////www.sport2gether.de/"+root()+"//rss//")
 	}
 	
 	function Logout(){
-		var user = self.getMe();
+		var user = self.getMe(false);
 		var nickname = user.nickname;
 		
 		$.ajax({
 			async: false,
 			method: "POST",
-			url: root+"/rest/logout.php",
+			url: root()+"/rest/logout.php",
 			dataType: "text",
 			error_message: nickname + ' konnte nicht abgemeldet werden',
 			error: function( xhr, ajaxOptions, thrownError ) {
@@ -572,7 +665,7 @@
 		$.ajax({
 			async: false,
 			method: "POST",
-			url: root+"/rest/user-password-reset.php",
+			url: root()+"/rest/user-password-reset.php",
 			data: JSON.stringify({
 				token: token,
 				newpassword: password
@@ -580,7 +673,7 @@
 			dataType: "json",
 			error_message: 'Password konnte nicht gesetzt werden',
 			error: function( xhr, ajaxOptions, thrownError ) {
-				showAJAXError(this.url, this,data, xhr, ajaxOptions, thrownError);
+				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError);
 				setMessage(this.error_message);
 				go2Destination(errorDestination);
 			},
@@ -599,7 +692,7 @@
 			$.ajax({
 				async: false,
 				method: "POST",
-				url: root+"/rest/user-password-reset-request.php",
+				url: root()+"/rest/user-password-reset-request.php",
 				data: JSON.stringify({
 					username: username,
 					email: email
@@ -660,7 +753,7 @@
 		$.ajax({
 			async: false,
 			method: "POST",
-			url: root+"/rest/user-register.php",
+			url: root()+"/rest/user-register.php",
 			data: JSON.stringify({
 				username: username,
 				email: email,
@@ -688,7 +781,7 @@
 		$.ajax({
 			async: false,
 			method: "POST",
-			url: root+"/rest/mail.php",
+			url: root()+"/rest/mail.php",
 			data: JSON.stringify({
 				destination:	"user",
 				userid:			recipe,
@@ -702,7 +795,7 @@
 				setMessage(this.error_message);
 				go2Destination(errorDestination);
 			},
-			success_message: 'Mail ' + recipe + " erfolgreich versandt",
+			success_message: 'Mail an ' + recipe + " erfolgreich verschickt",
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
 				setMe(null);
@@ -717,7 +810,7 @@
 		$.ajax({
 			async: false,
 			method: "POST",
-			url: root+"/rest/mail.php",
+			url: root()+"/rest/mail.php",
 			data: JSON.stringify({
 				destination:	"tour",
 				tourid:			tourID,
@@ -725,13 +818,13 @@
 				body:			mailcontent
 			}),
 			dataType: "json",
-			error_message: 'Konnte Mail an Tour ' + tourID + ' nicht verschicken',
+			error_message: 'Konnte Mail an Biker der Tour mit der Nummer ' + tourID + ' nicht verschicken',
 			error: function( xhr, ajaxOptions, thrownError ) {
 				showAJAXError(this.url, this.data, xhr, ajaxOptions, thrownError);
 				setMessage(this.error_message);
 				go2Destination(errorDestination);
 			},
-			success_message: 'Mail an Tour ' + tourID + " erfolgreich versandt",
+			success_message: 'Mail an die Biker der Tour mit der Nummer ' + tourID + " erfolgreich verschickt",
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
 				setMe(null);
@@ -750,10 +843,10 @@
 	function toggleActiveTour(tourID){
 		var tour = data.getTour(tourID);
 		if(updateTour(tour, tour.active?"cancel":"activate", null)){
-			setMessage( "Tour " + tourID + " wurde " + (tour.active?"abgesagt":"reaktiviert"));
+			setMessage( "Tour mit der Nummer " + tourID + " wurde " + (tour.active?"abgesagt":"reaktiviert"));
 			tour.active = !tour.active;
 		}else{
-			setMessage( "Tour " + tourID + " konnte nicht " + (tour.active?"abgesagt":"reaktiviert") + " werden");
+			setMessage( "Tour mit der Nummer " + tourID + " konnte nicht " + (tour.active?"abgesagt":"reaktiviert") + " werden");
 		}
 		go2TourlistPage();		
 	}
@@ -762,9 +855,9 @@
 		var tour = data.getTour(tourID);		
 		if(updateTour(tour, "add", member)){		
 			tour.add2Tour(member);
-			setMessage(member + " wurde erfolgreich an der Tour " + tourID + " angemeldet");	
+			setMessage(member + " wurde erfolgreich an der Tour mit der Nummer " + tourID + " angemeldet");	
 		}else{
-			setMessage(member + " konnte nicht an die Tour " + tourID + " angemeldet werden");	
+			setMessage(member + " konnte nicht an die Tour mit der Nummer " + tourID + " angemeldet werden");	
 		}
 		go2TourlistPage();		
 	}
@@ -773,9 +866,9 @@
 		var tour = data.getTour(tourID);
 		if(updateTour(tour, "remove", member)){		
 			tour.removeFromTour(member);
-			setMessage(member + " wurde erfolgreich von der Tour " + tourID + " abgemeldet");	
+			setMessage(member + " wurde erfolgreich von der Tour mit der Nummer " + tourID + " abgemeldet");	
 		}else{
-			setMessage(member + " konnte nicht von der Tour " + tourID + " abgemeldet werden");	
+			setMessage(member + " konnte nicht von der Tour mit der Nummer " + tourID + " abgemeldet werden");	
 		}
 		go2TourlistPage();
 	}
@@ -785,7 +878,7 @@
 		
 		$.ajax({
 			method: "POST",
-			url: root+"/rest/tour-delegate.php",
+			url: root()+"/rest/tour-delegate.php",
 			data: JSON.stringify({
 				id: tour.id,
 				guideid: guide.id
@@ -838,7 +931,7 @@
 		
 		$.ajax({
 			method: "POST",
-			url: root+"/rest/user-save.php",
+			url: root()+"/rest/user-save.php",
 			data: JSON.stringify(u),
 			dataType: "json",
 			error: function( xhr, ajaxOptions, thrownError ) {
@@ -878,7 +971,7 @@
 		$.ajax({
 			async: false,
 			method: "POST",
-			url: root+"/rest/"+dest,
+			url: root()+"/rest/"+dest,
 			data: JSON.stringify(parameter),
 			dataType: "json",
 			error: function( xhr, ajaxOptions, thrownError ) {
@@ -909,9 +1002,9 @@
 								"duration":		tour.duration,
 								"elevation":	tour.up,
 								"skill":		tour.technic,
-								bringlight:		tour.night,	
+								"bringlight":	tour.night,	
 								"sport": {
-									"id":		tourtype.tourtypeid,
+									"id":		tourtype.tourtype,
 									"subname":	tourtype.tourart
 								},
 								"meetingpoint": {
@@ -936,7 +1029,7 @@
 		$.ajax({
 			async: false,
 			method: "POST",
-			url: root+"/rest/tour-save.php",
+			url: root()+"/rest/tour-save.php",
 			data: JSON.stringify(t),
 			dataType: "json",
 			error: function( xhr, ajaxOptions, thrownError ) {
@@ -947,7 +1040,6 @@
 				// übernehme aus response die neue tour ID
 				if(tour.id<0){
 					tour.id = parameter.tours[0].id;
-dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 				}
 				retValue = true;
 			}
@@ -1001,10 +1093,10 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 	
 	// get last update from the server
 	function getLastUpdate(){
-		var theDate = null;
+		var theDate = new Date();
 		$.ajax({
 			async: false,
-			url: root+"/rest/tour-lastmodified.php",
+			url: root()+"/rest/tour-lastmodified.php",
 			error: function( xhr, ajaxOptions, thrownError ) {
 				// TODO: GW->MH: nicht eingeloggt sollte als Datum bei succes zurückkommen
 				if(thrownError !="Bad Request"){
@@ -1023,10 +1115,10 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 
 	// get date from the server
 	function getDate(){
-		var theDate = null;
+		var theDate = new Date();
 		$.ajax({
 			async: false,
-			url: root+"/rest/servertime.php",
+			url: root()+"/rest/servertime.php",
 			error: function( xhr, ajaxOptions, thrownError ) {
 				showAJAXError(this.url, "keine Parameter", xhr, ajaxOptions, thrownError)
 			},
@@ -1054,7 +1146,7 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		var theUsers = [];
 		$.ajax({
 			async: false,
-			url: root+"/rest/users.php",
+			url: root()+"/rest/users.php",
 			error: function( xhr, ajaxOptions, thrownError ) {
 				showAJAXError(this.url, "keine Paramter", xhr, ajaxOptions, thrownError)
 			},
@@ -1076,7 +1168,7 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		var theTours = [];
 		$.ajax({
 			async: false,
-			url: root+"/rest/tours.php",
+			url: root()+"/rest/tours.php",
 			error: function( xhr, ajaxOptions, thrownError ) {
 				showAJAXError(this.url, "keine Parameter", xhr, ajaxOptions, thrownError)
 			},
@@ -1097,7 +1189,7 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 							}else{
 								tour = new Tour(   0,           "", members, dateFromServer(t.datetime), t.duration, t.distance, t.elevation, t.speed, t.skill,                  "",                  "",                  0,                   0, tt, t.desc, night, true);
 								if("attendees_count" in t){
-									for(i = 0; i<t.attendees_count; i++){
+									for(var i = 0; i<t.attendees_count; i++){
 										members.push(".");
 									}
 								}
@@ -1185,9 +1277,9 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		self.upText = function() { return(makeAltitudeString( self.up, true)); };    			
 
 		self.pace = pace;
-		self.getPaceCSS = function() { return('tl-icon-rate-' + pace); };
+		self.getPaceCSS = function() { return('s2g-icon-rate-' + pace); };
 		self.technic = technic;
-		self.getTechnicCSS = function() { return('tl-icon-rate-' + technic); };
+		self.getTechnicCSS = function() { return('s2g-icon-rate-' + technic); };
 	
 		self.meetingpoint = meetingpoint;
 		self.meetingpointInfo = function(latitude, longitude) { var a = self.adresse; var d = getDistance(latitude, longitude, self.latitude, self.longitude); return(a + " [" + d + "]");};
@@ -1197,9 +1289,10 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		self.night = night;
 		self.active = active;
 		self.tourtype = tourtype;
-		self.getTourtypeCSS = function() { return(data.getTourTypebyType(self.tourtype).icon + (self.night?" tl-nightaction ":"") + (self.active?"":" img-b"));};
-		self.getTourtypeCanceledCSS = function() { return( "tl-icon-sport-canceled img-a");};
-		self.getTourtypeOldCSS = function() { return( "tl-icon-sport-history disable img-c");};
+		self.getTourCSS = function() { return(data.getTourTypebyType(self.tourtype).icon + (self.night?" s2g-icon-sport-nightaction":""));};
+		self.getTourCanceledCSS = function() { return( self.night?"s2g-icon-sport-canceled-nightaction":"s2g-icon-sport-canceled");};
+		self.getTourOldCSS = function() { return( "s2g-icon-sport-history");};
+		self.getTourEventCSS = function() { return( "s2g-icon-sport-event" + (self.night?" s2g-icon-sport-event-nightaction":""));};
 		
 		self.description = description;
 		self.shorttourday = function() { return( self.datetime.getDate()  + "." + (self.datetime.getMonth()+1) + "." + self.datetime.getFullYear() ); };
@@ -1216,16 +1309,58 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		self.tourRegisterTitle = function() { return ("Bei der Tour vom " + self.tourday() + " um " + self.tourtime() + " anmelden"); };
 		self.tourUnRegisterTitle = function() { return ("Bei der Tour vom " + self.tourday() + " um " + self.tourtime() + " abmelden"); };
 		// info for mail
-		self.tourMail2Guide = function(tourmember) { return ("Mail zur Tour von " + tourmember + " am " + self.tourday() + " um " + self.tourtime()); };
-		self.tourMail2Tour = function(tourmember) { return (self.tourMail2Guide(self.guide + " von " + tourmember+ " an alle Mitfahrer")); };
-		self.tourMail2User = function() { return (self.tourMail2Guide(self.guide)); };
-		
+		self.tourMail2Guide = function(tourmember) { return ("Mail zur Tour von " + self.guide + " am " + self.tourday() + " um " + self.tourtime() + " von " + tourmember); };
+		self.tourMail2Tour = function(tourmember) { return (self.tourMail2Guide(self.guide) + " von " + tourmember + " an alle Mitfahrer"); };
+		self.tourMail2User = function(tourmember) { return (self.tourMail2Guide(tourmember)); };
 		
 		self.shorttourDescription = function() { return(self.shorttourday() + " mit " + self.guide + " um " + self.tourtime() + " ab Treffpunkt " + self.meetingpoint ); };		
-		//self.tourDescription = function() { return(self.tourday() + " um " + self.tourtime() + " ab Treffpunkt " + self.meetingpoint + (self.guide!=null?" mit " + self.guide:"") ); };
 		
+		self.isEvent = function(){
+			const event = '[Event]';
+			return(self.description.lastIndexOf(event)!=-1);
+		}
+		
+		self.getTourMembersLimit = function(){
+			// check if limitation is set
+			const start_tag = '[max:';
+			const end_tag = 'Teilnehmer]';
+			const newline_mark = '\n';
+			var last_position = self.description.lastIndexOf(newline_mark);
+			if (last_position != -1){
+				var last_line = self.description.substr(last_position + newline_mark.length);
+				if(startWith(last_line,start_tag) && endsWith(last_line,end_tag)){
+					var max = parseInt(last_line.substring(start_tag.length, last_line.length-end_tag.length),10);
+					if(!isNaN(max)){
+						return(max);
+					}					
+				}
+			}
+			return(0);
+		}
+		self.availableTourMembers = function() {
+			// check if limitation is set
+			var limit = self.getTourMembersLimit();
+			return(limit>0?limit - self.tourMembers():1);
+		}
 		self.tourMembers = function() { return(self.members.length); };
 		self.oldTour = function(now){ return(now>=self.datetime.getTime()); };
+		
+		self.isCountableTour = function(year, now, withEvents, withFutureTours){
+			var counts = active;
+			// check events
+			if(counts){
+				counts = withEvents?true:!self.isEvent();
+			}
+			// check year
+			if(counts){
+				counts = year==-1?true:self.datetime.getFullYear()==year;
+			}
+			// check future tours
+			if(counts){
+				counts = withFutureTours?true:self.oldTour(now);
+			}
+			return(counts);
+		}
 		
 		self.isTourMember = function(member) {return(self.members.contains(member));};
 		self.isPossibleTourMember = function(searchMember){
@@ -1276,46 +1411,51 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 	function DataModell() {
 		var self = this;
 
-		self.versioninfo = version;
+		self.versioninfo = version();
 		
 		self.lastUpdate = null;
 		
 		self.users = ko.observableArray().extend({ rateLimit: 50 });		
-		self.getUser = function(nickname){ return(ko.utils.arrayFirst(self.users(), function(user) {return (user.nickname == nickname);}));	};
+		self.getUser = function(nickname){ 
+			var _user = ko.utils.arrayFirst(self.users(), function(user) {return (user.nickname == nickname);});
+			if(_user==null){
+				_user = new User("unbekannte User", 1234, "", "", 0, 0, null, "", false, new Date());
+			}
+			return(_user);
+		};
 		
 		self.tours = ko.observableArray().extend({ rateLimit: 50 });
 		self.getTour = function(id){ return(ko.utils.arrayFirst(self.tours(), function(tour) {return (tour.id == id);})); };
 		
-		var sort_year = 0;
-		self.setStatistics = function(year){
+		self.setStatistics = function(year, withEvents, withFutureTours){
+			var now = getDate();
 			if(self.users().length>0){
-				if(sort_year!=year){
-					sort_year = year;
-					// reset statistics
-					self.tours().forEach(function(t,i,ts){ self.getUser(t.guide).guidedTours([]); t.members.forEach(function(m,i,ts){ self.getUser(m).toursGuided([]) }); });
-					// set statistic by criteria
-					self.tours().forEach(function(t,i,ts){
-						if(t.active && (year==-1?true:t.datetime.getFullYear()==year) ){
-							var g = self.getUser(t.guide);
-							g.guidedTours.push(t.id);
-							t.members.forEach(function(m,i,ts){
-								var u = self.getUser(m);
-								if(u==null){
-									dump("Member not found", m);
-								}
-								u.toursGuided.push(t.id);
-							});
-						}
-					});	
-				}
-			}				
+				sort_year = year;
+				// reset statistics
+				self.tours().forEach(function(t,i,ts){ self.getUser(t.guide).guidedTours([]); t.members.forEach(function(m,i,ts){ self.getUser(m).toursGuided([]) }); });
+				// set statistic by criteria
+				self.tours().forEach(function(t,i,ts){
+					if( t.isCountableTour(year, now, withEvents, withFutureTours) ){
+						var g = self.getUser(t.guide);
+						g.guidedTours.push(t.id);
+						t.members.forEach(function(m,i,ts){
+							var u = self.getUser(m);
+							if(u==null){
+								dump("Member not found", m);
+							}
+							u.toursGuided.push(t.id);
+						});
+					}
+				});		
+			}
+			//console.log("Statistik aufbauen : "+ (new Date().getTime() - now.getTime())/1000);			
 		}
-		
+				
 		self.initFromServer = function(lastUpdate, theUsers, theTours){
 			self.lastUpdate = lastUpdate;
 			self.users(theUsers);
 			self.tours(theTours);
-			self.setStatistics(-1);
+			self.setStatistics(-1, false, false);
 		};
 		
 		self.toJSON = function(){
@@ -1347,45 +1487,29 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 			self.lastUpdate = dateFromLokal(json.lastUpdate);
 			self.users = ko.observableArray(theUsers);
 			self.tours = ko.observableArray(theTours);
-			self.setStatistics(-1);	
+			self.setStatistics(-1, false, false);	
 		}
-		// default values for
-		// tour-list
-		const tl_showMore = false;
-		const tl_showFilter = false;
-		const tl_showActiveTours = true;
-		const tl_showOldTours = false;
-		const tl_showNightlyTours = true;
-		const tl_showDeactivateTours = false;	
-		const tl_showMailLink = true;
-		const tl_showPhoneLink = true;
-		
-		// tour
-		const to_showMore = false;
-		const to_showMap = false;
-		const to_showSlider = true;
-		// userlist
-		const ul_showMore = false;
-		const ul_showFilter = false;
 
+		// alle Wahlmöglichkeiten
+		self.getTourtypes = function(){ return(["abgesage Touren", "nächtliche Touren", "Events", "Mail Link", "Telefon Link"]) };		
 
 		// tourtype entspricht sportsubname
 		self.tourtypes = [
-			{ tourtype: "mtb",  tourtypeid: "1", tourart: "MTB", description: "Geländefahren", icon: "tl-icon-sport-mtb" },
-			{ tourtype: "rennrad", tourtypeid: "3", tourart: "Rennrad fahren", description: "Asphalthobeln", icon: "tl-icon-sport-rennrad" },
-			{ tourtype: "crosser", tourtypeid: "4", tourart: "Crosser", description: "ist das noch Radfahren", icon: "tl-icon-sport-crosser" },
-			{ tourtype: "lauf", tourtypeid: "5", tourart: "Laufen", description: "Platte Füsse", icon: "tl-icon-sport-run" },
-			{ tourtype: "trail-running", tourtypeid: "6", tourart: "Trailrun", description: "Aufie", icon: "tl-icon-sport-trailrun" },
-			{ tourtype: "schwimmen", tourtypeid: "7", tourart: "Schwimmen", description: "Treiben mit dem Wind", icon: "tl-icon-sport-schwimmen" },
-			{ tourtype: "triathlon", tourtypeid: "9", tourart: "Triathlon", description: "3 Sachen, drittel gut", icon: "tl-icon-sport-triathlon" },
-			{ tourtype: "duathlon", tourtypeid: "8", tourart: "Duathlon", description: "2 Sachen halb gut", icon: "tl-icon-sport-duathlon" },
-			{ tourtype: "swim & bike", tourtypeid: "10", tourart: "Schwimmen & Biken", description: "nur Fatbikes schwimmen", icon: "tl-icon-sport-swim-bike" },
-			{ tourtype: "langlauf", tourtypeid: "11", tourart: "Ski-Langlauf", description: "immer nur runter", icon: "tl-icon-sport-ski" },
-			{ tourtype: "feier", tourtypeid: "12", tourart: "Feiern", description: "Let's dance", icon: "tl-icon-sport-feier" },
-			{ tourtype: "downhill", tourtypeid: "13", tourart: "Downhill", description: "immer nur runter", icon: "tl-icon-sport-downhill-bike" },
-			{ tourtype: "e-bike", tourtypeid: "14", tourart: "E-Bike", description: "nur soviel Kraft um das höhere Gewicht auszugleichen", icon: "tl-icon-sport-e-bike" }
+			{ tourtype: "mtb",  tourtypeid: "1", tourart: "MTB", description: "Geländefahren", icon: "s2g-icon-sport-mtb" },
+			{ tourtype: "rennrad", tourtypeid: "3", tourart: "Rennrad fahren", description: "Asphalthobeln", icon: "s2g-icon-sport-rennrad" },
+			{ tourtype: "crosser", tourtypeid: "4", tourart: "Crosser", description: "ist das noch Radfahren", icon: "s2g-icon-sport-crosser" },
+			{ tourtype: "lauf", tourtypeid: "5", tourart: "Laufen", description: "Platte Füsse", icon: "s2g-icon-sport-run" },
+			{ tourtype: "trail-running", tourtypeid: "6", tourart: "Trailrun", description: "Aufie", icon: "s2g-icon-sport-trailrun" },
+			{ tourtype: "schwimmen", tourtypeid: "7", tourart: "Schwimmen", description: "Treiben mit dem Wind", icon: "s2g-icon-sport-schwimmen" },
+			{ tourtype: "triathlon", tourtypeid: "9", tourart: "Triathlon", description: "3 Sachen, drittel gut", icon: "s2g-icon-sport-triathlon" },
+			{ tourtype: "duathlon", tourtypeid: "8", tourart: "Duathlon", description: "2 Sachen halb gut", icon: "s2g-icon-sport-duathlon" },
+			{ tourtype: "swim & bike", tourtypeid: "10", tourart: "Schwimmen & Biken", description: "nur Fatbikes schwimmen", icon: "s2g-icon-sport-swim-bike" },
+			{ tourtype: "langlauf", tourtypeid: "11", tourart: "Ski-Langlauf", description: "immer nur runter", icon: "s2g-icon-sport-ski" },
+			{ tourtype: "feier", tourtypeid: "12", tourart: "Feiern", description: "Let's dance", icon: "s2g-icon-sport-feier" },
+			{ tourtype: "downhill", tourtypeid: "13", tourart: "Downhill", description: "immer nur runter", icon: "s2g-icon-sport-downhill-bike" },
+			{ tourtype: "e-bike", tourtypeid: "14", tourart: "E-Bike", description: "nur soviel Kraft um das höhere Gewicht auszugleichen", icon: "s2g-icon-sport-e-bike" }
 		]
-		self.getTourTypes = function(){
+		self.getSporttypes = function(){
 			var result = [];
 			
 			ko.utils.arrayForEach(this.tourtypes, function(tourtype) { result.push( tourtype.tourart );});
@@ -1400,12 +1524,12 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 			return(result);
 		};
 		self.rate = [
-			{ ratetype: "1", icon: "tl-icon-rate-1", stk_description: "Forstwege" ,stk_average: "", stk_max: "", speed: "Kinder geeignet" },
-			{ ratetype: "2", icon: "tl-icon-rate-2", stk_description: "leichte Trails", stk_average: "S0", stk_max: "S0", speed: "langsam"  },
-			{ ratetype: "3", icon: "tl-icon-rate-3", stk_description: "trailige Wege, max S1", stk_average: "S0", stk_max: "S1", speed: "gemütlich" },
-			{ ratetype: "4", icon: "tl-icon-rate-4", stk_description: "anspruchsvollere Trails", stk_average: "S1", stk_max: "S2", speed: "normal" },
-			{ ratetype: "5", icon: "tl-icon-rate-5", stk_description: "sehr anspruchsvolle Trails",stk_average: "S2", stk_max: "S3", speed: "zügig" },
-			{ ratetype: "6", icon: "tl-icon-rate-6", stk_description: "eher unfahrbar, >S2", stk_average: "S3", stk_max: "S4", speed: "Renntempo"  }
+			{ ratetype: "1", icon: "s2g-icon-rate-1", stk_description: "Forstwege" ,stk_average: "", stk_max: "", speed: "Kinder geeignet" },
+			{ ratetype: "2", icon: "s2g-icon-rate-2", stk_description: "leichte Trails", stk_average: "S0", stk_max: "S0", speed: "langsam"  },
+			{ ratetype: "3", icon: "s2g-icon-rate-3", stk_description: "trailige Wege, max S1", stk_average: "S0", stk_max: "S1", speed: "gemütlich" },
+			{ ratetype: "4", icon: "s2g-icon-rate-4", stk_description: "anspruchsvollere Trails", stk_average: "S1", stk_max: "S2", speed: "normal" },
+			{ ratetype: "5", icon: "s2g-icon-rate-5", stk_description: "sehr anspruchsvolle Trails",stk_average: "S2", stk_max: "S3", speed: "zügig" },
+			{ ratetype: "6", icon: "s2g-icon-rate-6", stk_description: "eher unfahrbar, >S2", stk_average: "S3", stk_max: "S4", speed: "Renntempo"  }
 		];
 				
 		self.getSTKDescription = function( rate ){
@@ -1424,36 +1548,77 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		var checkBooleanPreference = function(value){
 			return(typeof value === 'boolean');
 		}
+		
+		// default values for
+		// tour-list
+		const tl_showMore = false;
+		const tl_showSearch = false;
+		const tl_showTours = "rb_activ";
+		const tl_showCopy = false;
+		const tl_showCompact = true;
+		const tl_selectedSporttypes = self.getSporttypes();
+		const tl_selectedTourtypes = ["nächtliche Touren", "Events", "Mail Link", "Telefon Link"];
+		// tour
+		const to_showMore = false;
+		const to_showMap = false;
+		const to_showSlider = true;
+		// userlist
+		const ul_showMore = false;
+		const ul_showFilter = false;
+		// statistic
+		const st_showMore = false;
+		const st_showFilter = false;
+		const st_showEvents = false;
+		const st_showFutureTours = false;
+		// profil
+		const pr_showMap = false;
+
+		self.setpreferences = function( me ){
+			// update user preferences
+			if(!checkBooleanPreference(getUserPreference(me, "tl_showMore")))			{ setUserPreference(me, "tl_showMore",tl_showMore);}
+			if(!checkBooleanPreference(getUserPreference(me, "tl_showSearch"))) 		{ setUserPreference(me, "tl_showSearch",tl_showSearch);}
+			if(getUserPreference(me, "tl_showTours")=="") 								{ setUserPreference(me, "tl_showTours",tl_showTours);}
+			if(!checkBooleanPreference(getUserPreference(me, "tl_showCopy"))) 			{ setUserPreference(me, "tl_showCopy",tl_showCopy);}
+			if(!checkBooleanPreference(getUserPreference(me, "tl_showCompact")))		{ setUserPreference(me, "tl_showCompact",tl_showCompact);}
+			if(getUserPreference(me, "tl_selectedSporttypes")=="") 						{ setUserPreference(me, "tl_selectedSporttypes",ko.toJSON(tl_selectedSporttypes)); }	
+			if(getUserPreference(me, "tl_selectedTourtypes")=="") 						{ setUserPreference(me, "tl_selectedTourtypes",ko.toJSON(tl_selectedTourtypes)); }	
+			if(!checkBooleanPreference(getUserPreference(me, "to_showMore"))) 			{ setUserPreference(me, "to_showMore",to_showMore);}
+			if(!checkBooleanPreference(getUserPreference(me, "to_showMap"))) 			{ setUserPreference(me, "to_showMap",to_showMap);}		
+			if(!checkBooleanPreference(getUserPreference(me, "to_showSlider"))) 		{ setUserPreference(me, "to_showSlider",to_showSlider);}		
+			if(!checkBooleanPreference(getUserPreference(me, "ul_showMore"))) 			{ setUserPreference(me, "ul_showMore",ul_showMore);}
+			if(!checkBooleanPreference(getUserPreference(me, "ul_showFilter"))) 		{ setUserPreference(me, "ul_showFilter",ul_showFilter);}
+			if(!checkBooleanPreference(getUserPreference(me, "st_showMore"))) 			{ setUserPreference(me, "st_showMore",st_showMore);}
+			if(!checkBooleanPreference(getUserPreference(me, "st_showFilter"))) 		{ setUserPreference(me, "st_showFilter",st_showFilter);}
+			if(!checkBooleanPreference(getUserPreference(me, "st_showEvents"))) 		{ setUserPreference(me, "st_showEvents",st_showEvents);}
+			if(!checkBooleanPreference(getUserPreference(me, "st_showFutureTours"))) 	{ setUserPreference(me, "st_showFutureTours",st_showFutureTours);}
+			if(!checkBooleanPreference(getUserPreference(me, "pr_showMap"))) 			{ setUserPreference(me, "pr_showMap",to_showMap);}				
+		}
 		/* --------- Construction --------- */
-		// update user preferences
-		if(!checkBooleanPreference(getPreference("tl_showMore"))){ setPreference("tl_showMore",tl_showMore);}
-		if(!checkBooleanPreference(getPreference("tl_showFilter"))) { setPreference("tl_showFilter",tl_showFilter);}
-		if(!checkBooleanPreference(getPreference("tl_showActiveTours"))) { setPreference("tl_showActiveTours",tl_showActiveTours);}
-		if(!checkBooleanPreference(getPreference("tl_showOldTours"))) { setPreference("tl_showOldTours",tl_showOldTours);}
-		if(!checkBooleanPreference(getPreference("tl_showNightlyTours"))) { setPreference("tl_showNightlyTours",tl_showNightlyTours);}
-		if(!checkBooleanPreference(getPreference("tl_showDeactivateTours"))) { setPreference("tl_showDeactivateTours",tl_showDeactivateTours);}	
-		if(!checkBooleanPreference(getPreference("tl_showPhoneLink"))) { setPreference("tl_showPhoneLink",tl_showPhoneLink);}	
-		if(!checkBooleanPreference(getPreference("tl_showMailLink"))) { setPreference("tl_showMailLink",tl_showMailLink);}	
-		if(getPreference("tl_selectedTourtype")=="") { setPreference("tl_selectedTourtype",ko.toJSON(self.getTourTypes())); }	
-		if(!checkBooleanPreference(getPreference("to_showMore"))) { setPreference("to_showMore",to_showMore);}
-		if(!checkBooleanPreference(getPreference("to_showMap"))) { setPreference("to_showMap",to_showMap);}		
-		if(!checkBooleanPreference(getPreference("to_showSlider"))) { setPreference("to_showSlider",to_showSlider);}		
-		if(!checkBooleanPreference(getPreference("ul_showMore"))) { setPreference("ul_showMore",ul_showMore);}
-		if(!checkBooleanPreference(getPreference("ul_showFilter"))) { setPreference("ul_showFilter",ul_showFilter);}
+		self.setpreferences( null );
+
 	}	
 	
 	var data = null;
 	
 	function getData(){
-		// TODO: GW get from server
 		var lastServerUpdate = getLastUpdate();
-		var lastLocalUpdate = getSessionStorage("lastUpdate");
-		// does local data exist?
-		if(lastLocalUpdate == null || lastLocalUpdate == ""){
+		var lastLocalUpdate;
+		
+		if(useLocalStorage){	
+			lastLocalUpdate = getSessionStorage("lastUpdate");
+			// does local data exist?
+			if(lastLocalUpdate == null || lastLocalUpdate == ""){
+				// no, make last update old then server date
+				lastLocalUpdate = new Date(1000*60);
+			}
+		}else{
 			// no, make last update old then server date
 			lastLocalUpdate = new Date(1000*60);
-		}else{
-			lastLocalUpdate = dateFromServer(lastLocalUpdate);
+		}
+		
+		if(lastServerUpdate == null || lastServerUpdate == ""){
+			// no date on the server
+			lastServerUpdate = new Date(2000*60);
 		}
 		
 		if(lastServerUpdate > lastLocalUpdate){
@@ -1466,12 +1631,14 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 			data.lastUpdate = lastServerUpdate;
 			// and save it
 			saveData();
+			console.log("Server");
 		}else{
 			// local data is up to date		
 			if(data==null){
 				// get from local storage
 				data = new DataModell();
 				data.initFromJSON(getSessionStorage("data"));
+				console.log("Lokal");
 			}			
 		}
 		return(data);
@@ -1483,11 +1650,14 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		removeSessionStorage("lastUpdate");
 	}
 	
-	function saveData(){
-		// TODO GW: Save data
+	var saveData = function(){
+		// TODO GW: Save data   return;
 		if(data!=null){				
 			// save it
+			var t = new Date();
 			setSessionStorage("data", data.toJSON());
+			setSessionStorage("lastUpdate", data.lastUpdate.toJSON());
+			console.log("lokales Speichern : "+ (new Date().getTime() - t.getTime())/1000);			
 		}else{
 			removeSessionStorage("data");
 			removeSessionStorage("lastUpdate");
@@ -1506,10 +1676,21 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		}
 	}
 	
-	function getMe(){
-		var nickname = WhoAmI();
-
-		return(data!=null&&nickname!=""?data.getUser(nickname):null);
+	function checkAuthentification( needsAuthentification, me, okDestination, cancelDestination ){ 
+		if(me==null){
+			var nickname = WhoAmI();
+			
+			if(nickname!=""){
+				me = data!=null&&nickname!=""?data.getUser(nickname):null;
+			} else if(needsAuthentification){
+				go2LoginPage(okDestination, cancelDestination);
+			}
+		}
+		return(me);
+	}
+	
+	function getMe(needsAuthentification){
+		return(checkAuthentification( needsAuthentification, null, "tl","tl" ));
 	}
 	function setMe(nickname){
 		setTempStorage("global", "nickname", nickname);
@@ -1550,7 +1731,7 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 				keys.push(key);
 			}
 		}
-		for (i=0;i<keys.length;i++){
+		for(var i=0;i<keys.length;i++){
 			removeStorageWN(keys[i]);
 		}
 	}
@@ -1656,26 +1837,50 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 	};
 	
 	// handling storage via local storage
+	var _nickname =function(me) { return((me!=null?me.nickname:"anonym")); }
+	
 	function setPreference(name, value){
 		setLocalStorage("Pref" + "_" + name, value)
+	}
+	
+	function setUserPreference(me, name, value){
+		setLocalStorage("Pref" + "_" + _nickname(me) + "_" + name, value)
 	}
 	
 	function getPreference(name){
 		return(getLocalStorage("Pref" + "_" + name));
 	}
 	
+	function getUserPreference(me, name){
+		return(getLocalStorage("Pref" + "_" + _nickname(me) + "_" + name));
+	}
+	
 	function clearPreferences(){
 		var keys = [];
 		var obj = getAllLocalStorage();
 		for(var key in obj){
-			if(key.indexOf("Pref" + "_")==0){ IE11
+			if(key.indexOf("Pref" + "_")==0){
 				keys.push(key);
 			}
 		}
-		for (i=0;i<keys.length;i++){
+		for(var i=0;i<keys.length;i++){
 			removeLocalStorage(keys[i]);
 		}
 	}
+	
+	function clearUserPreferences(me){
+		var keys = [];
+		var obj = getAllLocalStorage();
+		for(var key in obj){
+			if(key.indexOf("Pref" + "_" + _nickname(me) + "_")==0){
+				keys.push(key);
+			}
+		}
+		for(var i=0;i<keys.length;i++){
+			removeLocalStorage(keys[i]);
+		}
+	}
+	
 	
 	function getLocalStorage(name){
 		var value = localstorage.get(name); 
@@ -1702,27 +1907,27 @@ dumpInfo("TourID geändert von " + tour.id + " nach " + parameter.tours[0].id );
 		/* --------- Private Methods --------- */
 		function checkStorage(){
 			try {
-					var x = 'test-localstorage-' + Date.now();
-					localStorage.setItem(x, x);
-					var y = localStorage.getItem(x);
-					localStorage.removeItem(x);
-					if (y !== x) {throw new Error();}
-					this.db = localStorage; // localStorage is fully functional!
+				var x = 'test-localstorage-' + Date.now();
+				localStorage.setItem(x, x);
+				var y = localStorage.getItem(x);
+				localStorage.removeItem(x);
+				if (y !== x) {throw new Error();}
+				db = localStorage; // localStorage is fully functional!
 			} catch (e) {
-				this.db = new MemoryStorage('GW-localstorage'); // fall back to a memory-based implementation
+				db = new MemoryStorage('GW-localstorage'); // fall back to a memory-based implementation
 			}
 		}
 		
 		function read() {
 			if (useLocalStorage) {
-				var ds = this.db.getItem("dataContainer");
+				var ds = db.getItem("dataContainer");
 				if(ds!=null && typeof(ds) != undefined){
 					dataContainer = JSON.parse(ds);
 				}
 			}
 		}
 		
-		function write () { if(useLocalStorage){ this.db.setItem("dataContainer", ko.toJSON(dataContainer));} } 
+		function write () { if(useLocalStorage){ db.setItem("dataContainer", ko.toJSON(dataContainer));} } 
 		
 		/* --------- Public Variable--------- */
 		this.hasStorage = checkStorage();

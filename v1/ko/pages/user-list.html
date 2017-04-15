@@ -1,25 +1,45 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
-	<meta name="viewport" content="width=600">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../script/perfect-scrollbar/css/perfect-scrollbar.min.css">
     <link rel="stylesheet" type="text/css" href="../css/s2g.css" />
-    <link rel="stylesheet" type="text/css" href="../css/s2g-index.css" />
-    <link rel="stylesheet" type="text/css" href="../css/s2g-ul.css" />
+	<link rel="stylesheet" type="text/css" href="../css/s2g-ul.css" />
  	<script type='text/javascript' src='../script/jquery-3.0.0.js'></script>
-	<script type='text/javascript' src='../script/knockout-3.4.0.js'></script>
+	<script type='text/javascript' src='../script/perfect-scrollbar/js/perfect-scrollbar.min.js'></script>
+	<script type='text/javascript' src='../script/knockout-3.4.1.js'></script>
 	<script type='text/javascript' src='../script/memorystorage.js'></script>
 	<script type='text/javascript' src='../script/data.js'></script>
 	<script type='text/javascript' >
-	
-	// 'use strict';	// view_dont_use_strict
-	
+
+	//'use strict';	// don't_view_use_strict
+
+	function setHeight(){
+		setAvailableHeight('s2g-tablecontent', ['s2g-top','s2g-navigation','s2g-pagetools','s2g-tableheader'], 's2g-footer');
+	}
+
 	// class to represent all users
 	var UsersViewModel = function() {
+		const s_id = "user-list";
+		const needs_authentification = true;	
 		var self = this;
-		
+
 		self.data = getData();
-		self.me = getMe();
+		var _me = ko.observable(null);
+		self.me = ko.computed({
+			read: function() { if(needs_authentification){ checkAuthentification(needs_authentification, _me(), 'ul','tl'); }; return(_me());},
+			write: function (me) { _me(me); },
+			owner: self
+		});		
+		
+		self.init = function(){
+			self.me(checkAuthentification( needs_authentification, null, "ul","tl" ));
+			self.data.setpreferences(self.me());
+			self.showMore(getUserPreference(_me(), "ul_showMore"));
+			self.showSearch(getUserPreference(_me(), "ul_showSearch"));
+		}
 		
 		self.getPhoneLink= function(cn){
 			if(cn!=""){
@@ -132,18 +152,21 @@
 		};
 		
 		// search/filter
-		var _showMore = ko.observable(getPreference("ul_showMore"));
+		var _showMore = ko.observable(getUserPreference(_me(), "ul_showMore"));
 		self.showMore = ko.computed({
 			read: function() { return(_showMore());},
-			write: function (value) { _showMore(value); setPreference("ul_showMore", value)},
+			write: function (value) { _showMore(value); fireResizeEvent(); setUserPreference(_me(), "ul_showMore", value)},
 			owner: self
 		});
-		var _showFilter = ko.observable(getPreference("ul_showFilter"));
-		self.showFilter = ko.computed({
-			read: function() { return(_showFilter());},
-			write: function (value) { _showFilter(value); setPreference("ul_showFilter", value)},
+		self.toggleShowMore = function(){ self.showMore(!self.showMore());}
+		var _showSearch = ko.observable(getUserPreference(_me(), "ul_showSearch"));
+		self.showSearch = ko.computed({
+			read: function() { return(_showSearch());},
+			write: function (value) { _showSearch(value); fireResizeEvent(); setUserPreference(_me(), "ul_showSearch", value)},
 			owner: self
 		});
+		self.toggleShowSearch = function(){ self.showSearch(!self.showSearch());}
+
 		self.searchUser = ko.observable("");
 		self.searchName = ko.observable("");
 		self.searchPhone = ko.observable("");
@@ -158,7 +181,10 @@
 		self.filteredUsers = ko.computed(function() {
 			var result = ko.utils.arrayFilter(self.data.users(), 
 				function(user) { 
-					var accept = user.nickname != self.me.nickname;
+					var accept = true;
+					if(self.me()!=null){
+						accept = user.nickname != self.me().nickname;
+					}
 					if(accept&&self.actFilter()){
 						accept = self.actFilter()(user);
 					}
@@ -200,18 +226,17 @@
 		});
 
 		self.showMessage = function(info){
-			showMessage(info, document, 'message', durationShowMail);
+			showMessage(info, document, 's2g-message', durationShowMessage);
 		};
 
 		/* --------- Construction --------- */
-		// if logged out, login and stay, otherwise goto tour list
-		checkAutentification('ul','tl');
+		self.init();
 
 			// sort tour list by nickname
 		self.sort(self.getHeader('User'));
 		
 		// reset tour statistik
-		self.data.setStatistics(-1);
+		self.data.setStatistics(-1, false, false);
 	
 		// show message if available
 		var message = getMessage();
@@ -219,126 +244,134 @@
 			self.showMessage(message);
 		}		
 	}
-	
+
+	window.onerror = function (msg, url, line, col, error) {
+		return(globalError("Benutzer Liste", msg, url, line, col, error));
+	};
+
+	var init = function(){
+		ko.applyBindings( new UsersViewModel() );
+		setTitle();
+		Ps.initialize(document.getElementById('s2g-tablecontent'));
+	}
+
+	ko.options.deferUpdates = true;
+
 	</script>
-	<title>Sport2Gether (KnockOut)</title>
+<title>Sport2gether</title>		
 </head>
-<body onload="ko.applyBindings(new UsersViewModel());">
-	<div class="total">
-		<div id="navigation">
+<body onload="init();" onresize="setHeight();" >
+<!-- ko template: {afterRender: setHeight } -->
+	<div data-bind='visible: false'> Wo sind die Mitfahrer... 
+		<img width="100" src="../img/spinner.gif" alt="DEIN BILD" style="float:left">
+	</div>
+	<div  style="display: none" data-bind="visible: true">
+		<div id="s2g-top">
 			<div id="navigation-top" class="minimum-V-big">
-				<div id="message"></div>
-				<div id="logo"></div>
-			</div> <!--End div navigation-top -->
-			<div id="navigation-bottom">
-				<div id="navigation-buttons">
-					<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
-					<span data-bind="if: me!=null"  class="minimum-V-medium">
-						<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
-						<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
-					</span >
-				</div> <!--End div navigation-buttons -->
-				<div id="navigation-buttons-logout" data-bind="if: me!=null">
-					<button id="btn-logout" data-bind="click: Logout">Logout</button>
-					<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me.nickname), text: 'Profil '+ (me!=null?me.nickname:'')">Profil</button>
-				</div> <!--End div navigation-buttons-logout (logged in) -->
-				<div id="navigation-buttons-login" data-bind="ifnot: me!=null">
-					<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
-					<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
-				</div> <!--End div navigation-buttons-in (logged out) -->
-			</div> <!--End div navigation-bottom -->
-		</div> <!--End div navigation -->
-		<div class="content" id="main">
-			<div id="userlisttools"data-bind="if: me!=null">
-				<div id="cb_tools">
-					<div id="cb_tools_top">
-						<label for="check5"><input name="cb_showMore" data-bind="checked: showMore" id="check5" type="checkbox">Mehr..</label>
-					</div> <!--End div cb_tools_top -->
-					<div id="cb_tools_bottom" data-bind="if: showMore" class="minimum-V-medium">
-						<label for="check6"><input name="cb_showFilter" data-bind="checked: showFilter" id="check6" type="checkbox">Filter</label>
-						<span data-bind="if: showFilter">
-							<select data-bind="options: filters,
-								optionsText: 'title',
-								optionsValue: 'filter',
-								value: actFilter,
-								optionsCaption: 'Wähle...'">
-						   </select>						
-						</span>
-					</div> <!--End div cb_tools_bottom -->
-				</div>  <!--End div cb_tools -->
-			</div>  <!--End div userlisttools -->
-
-			<div class="ul-Table">
-				<div class="ul-TableRow ul-TableHeading">
-					<div class="ul-TableHead ul-TableCell-Nummer"><span id="ID_Nr" class="ul-TableHead-Content-Nummer" data-bind="text: getHeader('Nr').title"></span></div>
-					<div class="ul-TableHead ul-TableCell-User"><span id="ID_User" class="ul-TableHead-Content-User" data-bind="click: sort.bind($data,getHeader('User')), attr: {title: getHeader('User').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Mail"><span id="ID_Mail" class="ul-TableHead-Content-Mail" data-bind="attr: {title: getHeader('Mail').title}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Name"><span id="ID_Name" class="ul-TableHead-Content-Name" data-bind="click: sort.bind($data,getHeader('Namen')), attr: {title: getHeader('Namen').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Telefon"><span id="ID_Telefon" class="ul-TableHead-Content-Telefon" data-bind="click: sort.bind($data,getHeader('Telefon')), attr: {title: getHeader('Telefon').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Entfernung big"><span id="ID_Entfernung" class="ul-TableHead-Content-Entfernung" data-bind="text: getHeader('Entfernung zu mir').title"></span></div>
-					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><span id="ID_Jahr" class="ul-TableHead-Content-Geburtsjahr" data-bind="click: sort.bind($data,getHeader('Jahr')), attr: {title: getHeader('Jahr').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span id="ID_Register" class="ul-TableHead-Content-Registrierung" data-bind="click: sort.bind($data,getHeader('Register')), attr: {title: getHeader('Register').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Guide medium"><span id="ID_G" class="ul-TableHead-Content-Guide" data-bind="click: sort.bind($data,getHeader('G')), attr: {title: getHeader('G').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Mitfahrer medium"><span id="ID_M" class="ul-TableHead-Content-Mitfahrer" data-bind="click: sort.bind($data,getHeader('M')), attr: {title: getHeader('M').sortTitle}"></span></div>
-					<div class="ul-TableHead ul-TableCell-Scrollbar"><span>&nbsp;</span></div>
-				</div> <!-- div ul-TableRow ENDE -->
+				<div id="s2g-message"></div>
+				<div id="s2g-logo"></div>
+			</div> <!-- End div navigation-top -->
+		</div> <!--End div s2g-top -->
+		<div id="s2g-navigation">
+			<div id="s2g-left-navigation-buttons">
+				<button id="btn-tour-list" data-bind="click: go2TourlistPage">Touren</button>
+				<span data-bind="if: me()!=null" class="minimum-V-medium">
+					<button id="btn-user-list" data-bind="click: go2UserlistPage">Benutzerliste</button>
+					<button id="btn-statistic" data-bind="click: go2StatisticPage">Statistik</button>
+				</span >
+			</div> <!--End div navigation-buttons -->
+			<div id="s2g-right-navigation-buttons-logout" data-bind="if: me()!=null">
+				<button id="btn-logout" data-bind="click: Logout">Logout</button>
+				<button id="btn-profil" data-bind="click: go2ProfilPage.bind($data, me().nickname), text: 'Profil '+ me().nickname">Profil</button>
+			</div> <!-- End div navigation-buttons-logout -->
+			<div id="s2g-right-navigation-buttons-login" data-bind="ifnot: me()!=null">
+				<button id="btn-register" data-bind="click: go2RegisterPage">Register</button>
+				<button id="btn-login" data-bind="click: go2LoginPage.bind($data, 'tl','tl')">Login</button>
+			</div> <!-- End div navigation-buttons-login -->
+		</div> <!--End div s2g-navigation -->
+		<div id="s2g-pagetools">
+			<div class="s2g-tablerow">
+				<div id="ul-cb-tools-add">
+					<div id="ul-tools-add-more" class="minimum-V-medium">
+						<input type="button" title="zeige Suchbox" class="s2g-icon-more" data-bind="click: toggleShowSearch" />
+					</div> <!--End div ul-tools-add-more -->
+				</div>
+				<span data-bind="if: showSearch">
+					<select data-bind="options: filters,
+						optionsText: 'title',
+						optionsValue: 'filter',
+						value: actFilter,
+						optionsCaption: 'Wähle...'">
+				   </select>
+				</span>
+			</div>
+		</div> <!--End div s2g-pagetools -->
+		
+		<div id="s2g-table">
+			<div id="s2g-tableheader"> 
+				<div class="s2g-tablerow  s2g-odd">
+					<div class="ul-table-col-number">	<div class="s2g-tablecell">	<span id="ID_Nr" data-bind="text: getHeader('Nr').title"></span>	</div>	</div>
+					<div class="ul-table-col-user">		<div class="s2g-tablecell">	<span id="ID_User" data-bind="click: sort.bind($data,getHeader('User')), attr: {title: getHeader('User').sortTitle}"></span>	</div>	</div>
+					<div class="ul-table-col-mail">		<div class="s2g-tablecell">	<span id="ID_Mail" data-bind="attr: {title: getHeader('Mail').title}"></span>	</div>	</div>
+					<div class="ul-table-col-name">		<div class="s2g-tablecell">	<span id="ID_Name" data-bind="click: sort.bind($data,getHeader('Namen')), attr: {title: getHeader('Namen').sortTitle}"></span>	</div>	</div>
+					<div class="ul-table-col-phone">	<div class="s2g-tablecell">	<span id="ID_Telefon" data-bind="click: sort.bind($data,getHeader('Telefon')), attr: {title: getHeader('Telefon').sortTitle}"></span>	</div>	</div>
+					<div class="ul-table-col-distance">	<div class="s2g-tablecell">	<span id="ID_Entfernung" data-bind="text: getHeader('Entfernung zu mir').title"></span>	</div>	</div>
+					<div class="ul-table-col-age">		<div class="s2g-tablecell">	<span id="ID_Jahr" data-bind="click: sort.bind($data,getHeader('Jahr')), attr: {title: getHeader('Jahr').sortTitle}"></span>	</div>	</div>
+					<div class="ul-table-col-register">	<div class="s2g-tablecell">	<span id="ID_Register" data-bind="click: sort.bind($data,getHeader('Register')), attr: {title: getHeader('Register').sortTitle}"></span>	</div>	</div>
+					<div class="ul-table-col-guide">	<div class="s2g-tablecell">	<span id="ID_G" data-bind="click: sort.bind($data,getHeader('G')), attr: {title: getHeader('G').sortTitle}"></span>	</div>	</div>
+					<div class="ul-table-col-member">	<div class="s2g-tablecell">	<span id="ID_M" data-bind="click: sort.bind($data,getHeader('M')), attr: {title: getHeader('M').sortTitle}"></span>	</div>	</div>
+				</div> <!-- div s2g-tablerow ENDE -->
 				<!-- User me -->
-				<div class="ul-TableRow ul-TableHeading even">
-					<div class="ul-TableHead ul-TableCell-Nummer"><span class="ul-TableHead-Content-Nummer">&nbsp;</span></div>
-					<div class="ul-TableHead ul-TableCell-User"><span class="ul-TableHead-Content-User" ><a class="ul-a-member-profil" data-bind="text: sh(me.nickname), click: go2ProfilPage.bind($data, me.nickname), attr: { title: me.userPhoneInfo()}">User</a></span></div>
-					<div class="ul-TableHead ul-TableCell-Mail"><span class="ul-TableHead-Content-Mail ul-member"><span class="ul-member-mail"><span class="ul-icon-member-mail" ></span></span></span></div>
-					<div class="ul-TableHead ul-TableCell-Name"><span class="ul-TableHead-Content-Name" data-bind="text: sh($root.me.name)">name</span></div>
-					<div class="ul-TableHead ul-TableCell-Telefon"><span class="ul-TableHead-Content-Telefon"><a data-bind="text: sh($root.me.phone), attr: {title: sh($root.me.phone) }">phone</a></span></div>
-					<div class="ul-TableHead ul-TableCell-Entfernung big"><span class="ul-TableHead-Content-Entfernung" data-bind="text: sh($root.me.adress)">adress</span></div>
-					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><span class="ul-TableHead-Content-Geburtsjahr" data-bind="text: sh($root.me.getBirthday())" >0000</span></div>
-					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span class="ul-TableHead-Content-Registrierung" data-bind="text: sh($root.me.getRegistration())">00.00.0000</span></div>
-					<div class="ul-TableHead ul-TableCell-Guide medium"><span class="ul-TableHead-Content-Guide" data-bind="text: sh($root.me.guidedToursNo())">123</span></div>
-					<div class="ul-TableHead ul-TableCell-Mitfahrer medium"><span class="ul-TableHead-Content-Mitfahrer" data-bind="text: sh($root.me.toursGuidedNo())">345</span></div>
-					<div class="ul-TableHead ul-TableCell-Scrollbar"><span>&nbsp;</span></div>
-				</div> <!-- div tl-TableRow ENDE -->
-				<div class="ul-TableRow ul-TableHeading" data-bind="if: showFilter">
-					<div class="ul-TableHead ul-TableCell-Nummer"><span>&nbsp;</span></div>
-					<div class="ul-TableHead ul-TableCell-User"><input class="searchfield" data-bind="value: $root.searchUser, valueUpdate: 'afterkeydown'" /></div>
-					<div class="ul-TableHead ul-TableCell-Mail"><span>&nbsp;</span></div>
-					<div class="ul-TableHead ul-TableCell-Name"><input class="searchfield" data-bind="value: $root.searchName, valueUpdate: 'afterkeydown'" /></div>
-					<div class="ul-TableHead ul-TableCell-Telefon"><input class="searchfield" data-bind="value: $root.searchPhone, valueUpdate: 'afterkeydown'" /></div>
-					<div class="ul-TableHead ul-TableCell-Entfernung big"><span>&nbsp;</span></div>
-					<div class="ul-TableHead ul-TableCell-Geburtsjahr medium"><input class="searchfield" data-bind="value: $root.searchYear, valueUpdate: 'afterkeydown'" /></div>
-					<div class="ul-TableHead ul-TableCell-Registrierung medium"><span>&nbsp;</span></div>
-					<div class="ul-TableHead ul-TableCell-Guide medium"><span>&nbsp;</span></div>
-					<div class="ul-TableHead ul-TableCell-Mitfahrer medium"><span>&nbsp;</span></div>
-					<div class="ul-TableHead ul-TableCell-Scrollbar"><span>&nbsp;</span></div>
-				</div> <!-- div ul-TableRow ENDE -->
-				<!-- User -->
-				<div class="ul-TableBody" data-bind="foreach: filteredUsers()">
-					<div class="ul-TableRow ul-TableRow-Content" data-bind="css: (($index()%2)==0)?'odd':'even'">
-						<div class="ul-TableCell ul-TableCell-Nummer"><span class="ul-TableHead-Content-Nummer" data-bind="text: ($index() + 1)"></span>&nbsp;</div>
-						<div class="ul-TableCell ul-TableCell-User"><span class="ul-TableHead-Content-User"><a class="ul-a-member-profil" data-bind="text: sh(nickname), click:  go2ProfilPage.bind($data, nickname), attr: { title: userPhoneInfo()}">User</a></span></div>
-						<div class="ul-TableCell ul-TableCell-Mail">
-							<span class="ul-TableCell-Content-Mail ul-member">
-								<span class="ul-member-mail"><a class="ul-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2user', nickname, nickname, 'ul', 'ul'), attr: { title: sh(userMailTitle()) }"></a></span>
-							</span>
-						</div>
-						<div class="ul-TableCell ul-TableCell-Name"><span class="ul-TableCell-Content-Name" data-bind="text: sh(name)">name</span></div>
-						<div class="ul-TableCell ul-TableCell-Telefon"><span class="ul-TableCell-Content-Telefon"><a data-bind="text: sh(phone), attr: { href: getPhoneLink(), title: sh(phone) }">phone</a></span></div>
-						<div class="ul-TableCell ul-TableCell-Entfernung big"><span class="ul-TableCell-Content-Entfernung" data-bind="text: distance($root.me.latitude, $root.me.longitude)">distance(</span></div>
-						<div class="ul-TableCell ul-TableCell-Geburtsjahr medium"><span class="ul-TableCell-Content-Geburtsjahr" data-bind="text: sh(getBirthday())" >0000</span></div>
-						<div class="ul-TableCell ul-TableCell-Registrierung medium"><span class="ul-TableCell-Content-Registrierung" data-bind="text: sh(getRegistration())">00.00.0000</span></div>
-						<div class="ul-TableCell ul-TableCell-Guide medium"><span class="ul-TableCell-Content-Guide" data-bind="text: sh(guidedToursNo())">123</span></div>
-						<div class="ul-TableCell ul-TableCell-Mitfahrer medium"><span class="ul-TableCell-Content-Mitfahrer" data-bind="text: sh(toursGuidedNo())">345</span></div>
-					</div> <!-- div tl-TableRow ENDE -->
-				</div> <!-- div ul-TableBody ENDE -->
-			</div>  <!-- div tl-Table ENDE -->
-		</div> <!--End div content -->
-		<div id="footer" class="minimum-V-big">
-			<div id="version">
-				<a href="html/FAQ.php" target="_blank" >FAQ</a>
-				<a href="html/disclaimer.php" target="_blank" >Regeln</a>
-				<a href="html/impressum.php" target="_blank" >Impressum</a>
-				<span data-bind="text: data.versioninfo" ></span>
-			</div> <!--End div version -->
-		</div> <!--End div footer -->
-	</div> <!--End div total -->
+				<div class="s2g-tablerow s2g-even">
+					<div class="ul-table-col-number">	<div class="s2g-tablecell">	<span>&nbsp;</span>	</div>	</div>
+					<div class="ul-table-col-user">		<div class="s2g-tablecell">	<span><a class="ul-a-member-profil" data-bind="text: sh(me().nickname), click: go2ProfilPage.bind($data, me().nickname), attr: { title: me().userPhoneInfo()}">User</a></span>	</div>	</div>
+					<div class="ul-table-col-mail">		<div class="s2g-tablecell">	<span class="s2g-icon-member-mail" ></span>	</div>	</div>
+					<div class="ul-table-col-name">		<div class="s2g-tablecell">	<span data-bind="text: sh(me().name)">name</span>	</div>	</div>
+					<div class="ul-table-col-phone">	<div class="s2g-tablecell">	<span><a data-bind="text: sh(me().phone), attr: {title: sh(me().phone) }">phone</a></span>	</div>	</div>
+					<div class="ul-table-col-distance">	<div class="s2g-tablecell">	<span data-bind="text: sh(me().adress)">adress</span></span>	</div>	</div>
+					<div class="ul-table-col-age">		<div class="s2g-tablecell">	<span data-bind="text: sh(me().getBirthday())" >0000</span>	</div>	</div>
+					<div class="ul-table-col-register">	<div class="s2g-tablecell">	<span data-bind="text: sh(me().getRegistration())">00.00.0000</span>	</div>	</div>
+					<div class="ul-table-col-guide">	<div class="s2g-tablecell">	<span data-bind="text: sh(me().guidedToursNo())">123</span>	</div>	</div>
+					<div class="ul-table-col-member">	<div class="s2g-tablecell">	<span data-bind="text: sh(me().toursGuidedNo())">345</span>	</div>	</div>
+				</div> <!-- div s2g-tablerow ENDE -->
+				<div id="s2gFilter" class="s2g-tablerow tablerow s2g-even" data-bind="if: showSearch" >
+					<div class="ul-table-col-number">	<div class="s2g-tablecell">	<span>&nbsp;</span>	</div>	</div>
+					<div class="ul-table-col-user">		<div class="s2g-tablecell">	<input class="s2g-searchfield" data-bind="value: $root.searchUser, valueUpdate: 'afterkeydown'" />	</div>	</div>
+					<div class="ul-table-col-mail">		<div class="s2g-tablecell"> <span>&nbsp;</span>	</div>	</div>
+					<div class="ul-table-col-name">		<div class="s2g-tablecell">	<input class="s2g-searchfield" data-bind="value: $root.searchName, valueUpdate: 'afterkeydown'" />	</div>	</div>
+					<div class="ul-table-col-phone">	<div class="s2g-tablecell">	<input class="s2g-searchfield" data-bind="value: $root.searchPhone, valueUpdate: 'afterkeydown'" />	</div>	</div>
+					<div class="ul-table-col-distance">	<div class="s2g-tablecell">	<span>&nbsp;</span>	</div>	</div>
+					<div class="ul-table-col-age">		<div class="s2g-tablecell">	<input class="s2g-searchfield" data-bind="value: $root.searchYear, valueUpdate: 'afterkeydown'" />	</div>	</div>
+					<div class="ul-table-col-register">	<div class="s2g-tablecell">	<span>&nbsp;</span>	</div>	</div>
+					<div class="ul-table-col-guide">	<div class="s2g-tablecell">	<span>&nbsp;</span>	</div>	</div>
+					<div class="ul-table-col-member">	<div class="s2g-tablecell">	<span>&nbsp;</span>	</div>	</div>
+				</div>
+			</div> <!--End div s2g-tableheader -->
+			<div id="s2g-tablecontent" data-bind="foreach: filteredUsers()">
+				<div class="s2g-tablerow" data-bind="css: (($index()%2)==0)?'s2g-odd':'s2g-even'">
+					<!-- User -->
+					<div class="ul-table-col-number">	<div class="s2g-tablecell">	<span class="ul-TableHead-Content-Nummer" data-bind="text: ($index() + 1)">&nbsp;</span></div>	</div>
+					<div class="ul-table-col-user">		<div class="s2g-tablecell">	<span class="ul-TableHead-Content-User"><a class="ul-a-member-profil" data-bind="text: sh(nickname), click:  go2ProfilPage.bind($data, nickname), attr: { title: userPhoneInfo()}">User</a></span> </div>	</div>
+					<div class="ul-table-col-mail">		<div class="s2g-tablecell">	<span class="ul-member-mail"><a class="s2g-icon-member-mail" data-bind="click: go2MailPage.bind($data, '2user', nickname, nickname, 'ul', 'ul'), attr: { title: sh(userMailTitle()) }"></a></span>	</div>	</div>
+					<div class="ul-table-col-name">		<div class="s2g-tablecell">	<span class="ul-TableCell-Content-Name" data-bind="text: sh(name)">name</span>	</div>	</div>
+					<div class="ul-table-col-phone">	<div class="s2g-tablecell">	<span class="ul-TableCell-Content-Telefon"><a data-bind="text: sh(phone), attr: { href: getPhoneLink(), title: sh(phone) }">phone</a></span>	</div>	</div>
+					<div class="ul-table-col-distance">	<div class="s2g-tablecell">	<span class="ul-TableCell-Content-Entfernung" data-bind="text: distance($root.me().latitude, $root.me().longitude)">distance(</span>	</div>	</div>
+					<div class="ul-table-col-age">		<div class="s2g-tablecell">	<span class="ul-TableCell-Content-Geburtsjahr" data-bind="text: sh(getBirthday())" >0000</span>	</div>	</div>
+					<div class="ul-table-col-register">	<div class="s2g-tablecell">	<span class="ul-TableCell-Content-Registrierung" data-bind="text: sh(getRegistration())">00.00.0000</span>	</div>	</div>
+					<div class="ul-table-col-guide">	<div class="s2g-tablecell">	<span class="ul-TableCell-Content-Guide" data-bind="text: sh(guidedToursNo())">123</span>	</div>	</div>
+					<div class="ul-table-col-member">	<div class="s2g-tablecell">	<span class="ul-TableCell-Content-Mitfahrer" data-bind="text: sh(toursGuidedNo())">345</span>	</div>	</div>
+				</div>
+			</div> <!--End div s2g-tablecontent -->
+		</div> <!--End div s2g-table -->
 
+		<div id="s2g-footer">
+			<div id="s2g-version">
+				<a href="info_faq.html" target="_blank">FAQ</a>
+				<a href="info_disclaimer.html" target="_blank">Regeln</a>
+				<a href="info_impressum.html" target="_blank">Impressum</a>
+				[<a href="info_version.html" data-bind="text: data.versioninfo" target="_blank"></a>] <span data-bind="text: makeDateString(data.lastUpdate,4)"> </span>
+			</div> <!--End div version -->
+		</div> <!--End div s2g-footer -->
+	</div>
+<!-- /ko -->
 </body>
-</html>
