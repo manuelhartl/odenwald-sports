@@ -2,7 +2,7 @@
 	
 	// diese beiden Konstanten müssen angepasst werden
 	const stage = "v1"; // v1, alpha, beta
-	const vers = "14.03";
+	const vers = "2.01";
 	const dumpAJAX = false;
 	const useLocalStorage = true;
 	
