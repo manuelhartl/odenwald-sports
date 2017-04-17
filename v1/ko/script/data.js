@@ -2,7 +2,7 @@
 	
 	// diese beiden Konstanten müssen angepasst werden
 	const stage = "v1"; // v1, alpha, beta
-	const vers = "2.01";
+	const vers = "2.02x";
 	const dumpAJAX = false;
 	const useLocalStorage = true;
 	
@@ -40,13 +40,6 @@
 		return(adressat)
 	}	
 	
-	// 14.02	- Version
-	//				Umstellung sprite
-	//
-	// 14.01	- Version
-	//				login:	trigger storage of password & username in browser
-	//				data:	set tourtype correctly
-	//
 	const durationShowMessage = 60;
 
 	function globalError(page, msg, url, line, col, error) {
@@ -1603,15 +1596,17 @@
 	function getData(){
 		var lastServerUpdate = getLastUpdate();
 		var lastLocalUpdate;
+		var hasLocalStorage = false;
 		
 		if(useLocalStorage){	
 			lastLocalUpdate = getSessionStorage("lastUpdate");
-			// does local data exist?
-			if(lastLocalUpdate == null || lastLocalUpdate == ""){
-				// no, make last update old then server date
-				lastLocalUpdate = new Date(1000*60);
+			hasLocalStorage = lastLocalUpdate != null && lastLocalUpdate != ""; // does local data exist?
+			if(hasLocalStorage){
+				var lastVersion = getSessionStorage("lastVersion");
+				hasLocalStorage = version() == lastVersion; // use only the same version
 			}
-		}else{
+		}
+		if(!hasLocalStorage){
 			// no, make last update old then server date
 			lastLocalUpdate = new Date(1000*60);
 		}
@@ -1648,6 +1643,7 @@
 		data = null;
 		removeSessionStorage("data");
 		removeSessionStorage("lastUpdate");
+		removeSessionStorage("lastVersion");
 	}
 	
 	var saveData = function(){
@@ -1657,10 +1653,12 @@
 			var t = new Date();
 			setSessionStorage("data", data.toJSON());
 			setSessionStorage("lastUpdate", data.lastUpdate.toJSON());
+			setSessionStorage("lastVersion", data.versioninfo);
 			console.log("lokales Speichern : "+ (new Date().getTime() - t.getTime())/1000);			
 		}else{
 			removeSessionStorage("data");
 			removeSessionStorage("lastUpdate");
+			removeSessionStorage("lastVersion");
 		}
 	}
 	
