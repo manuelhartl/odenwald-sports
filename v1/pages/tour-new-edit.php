@@ -5,7 +5,6 @@
 
 <?php
 require_once __DIR__ . '/../lib/db_tours.php';
-
 ?>
 <h1><?php echo isset($input['tourid']) ? 'Tour editieren' : 'Neue Tour';?></h1>
 
@@ -53,11 +52,11 @@ require_once __DIR__ . '/../lib/db_tours.php';
 							lon.value = this.value.split(';')[1].replace(',','.'); 
 							$('meetingpoint-lon').trigger('change');
 							
-							var mp_desc = document.getElementById('meetingpoint_desc');
-							mp_desc.value = this.options[this.selectedIndex].text!='Karte'?this.options[this.selectedIndex].text:'';
+							var mp = document.getElementById('meetingpoint');
+							mp.value = this.options[this.selectedIndex].text!='Karte'?this.options[this.selectedIndex].text:'';
 														
-							var el1 = document.getElementById('row_meetingpoint_desc');
-							var el2 = document.getElementById('row_meetingpoint');
+							var el1 = document.getElementById('row_meetingpoint');
+							var el2 = document.getElementById('row_meetingpoint_desc');
 							var el3 = document.getElementById('meetingpoint-map');
 							if (this.options[this.selectedIndex].text == 'Karte') {
 								el1.className = el1.className.replace( /(?:^|\s)hide(?!\S)/g , '' );
@@ -76,52 +75,68 @@ require_once __DIR__ . '/../lib/db_tours.php';
 		<?php
 		$pdo = db_open ();
 		$places = getPlaces ( $pdo );
-		// get preferred tour description
-		$hasptd = isset ( $config ['PTD'] ) && $config ['PTD'];
-		$ptd = $hasptd ? $config ['PTD'] : "Karte";
-		$lasttd = $ptd;
-		
-		// var_dump ( $input );
-		
-		echo '<option value="49.85212170040001;8.670546531677246"' . (($lasttd == "Karte") ? " selected" : "") . '>Karte</option>', PHP_EOL;
-		foreach ( $places as $place ) {
-			echo '<option value="' . $place->lat . ';' . $place->lon . '"' . (($lasttd == $place->name) ? " selected" : "") . '>' . $place->name . '</option>', PHP_EOL;
+		// get meetingpoint description
+		if ($update){
+			$lasttd = 'Karte';
+			if(isset( $input['meetingpoint']) && $input['meetingpoint'] && strlen($input['meetingpoint'])>0){
+				foreach ( $places as $place ) {
+					if($input['meetingpoint'] == $place->name){
+						$lasttd = $input['meetingpoint'];
+					}
+				}
+			}
+		}else{
+			// get preferred tour description
+			$hasptd = isset ( $config ['PTD'] ) && $config ['PTD'];
+			$lasttd = $hasptd ? utf8_encode($config ['PTD']) : 'Karte';
 		}
-		
+		$karte = ($lasttd=='Karte');
+
+		$selected = $karte ? ' selected' : '';
+		echo '<option value="49.85212170040001;8.670546531677246' . '"' . $selected . '">Karte</option>', PHP_EOL;
+		foreach ( $places as $place ) {
+			$selected = $lasttd==$place->name ? ' selected ' : '';
+			echo '<option value="' . $place->lat . ';' . $place->lon . '"' . $selected . '">' . $place->name . '</option>', PHP_EOL;
+		}
 		?>
 		</select></td>
 					</tr>
-					<tr id="row_meetingpoint_desc" <?php echo(($lasttd=='Karte'?'':' class="hide"'));?>>
+					<tr id="row_meetingpoint" <?php echo($karte?'':' class="hide"');?>>
 						<td>Treffpunkt Info</td>
-						<td><input type="text" id="meetingpoint_desc" style="width: 100%" name="meetingpoint_desc"
-							value="<?php echo isset($input['meetingpoint_desc']) ? $input['meetingpoint_desc'] : '';?>" /></td>
-					</tr>
-					<!-- end row row_meetingpoint_desc -->
-					<tr id="row_meetingpoint" <?php echo(($lasttd=='Karte'?'':'class="hide"'));?>>
-						<td>Adresse</td>
-						<td><input type="text" id="meetingpoint" style="width: 100%" name="meetingpoint"
-							value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" /></td>
+						<td>
+							<input type="text" id="meetingpoint" style="width: 100%" name="meetingpoint" value="<?php echo isset($input['meetingpoint']) ? $input['meetingpoint'] : '';?>" />
+						</td>
 					</tr>
 					<!-- end row row_meetingpoint -->
-				</table> <input type="hidden" id="meetingpoint-radius" /> <!--  --> <input type="hidden" id="meetingpoint-lat"
-				name="meetingpoint-lat" /> <!--  --> <input type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
-				<div id="meetingpoint-map" style="width: 100%; height: 400px; display: <?php echo($lasttd=="Karte"?'block':'none');?>;"></div>
-				<!-- END div "meetingpoint-map --> <script>$('#meetingpoint-map').locationpicker({
-	location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
-	radius: 50,
-	inputBinding: {
-        latitudeInput: $('#meetingpoint-lat'),
-        longitudeInput: $('#meetingpoint-lon'),
-        radiusInput: $('#meetingpoint-radius'),
-        locationNameInput: $('#meetingpoint')
-    },
-    onchanged: function (currentLocation, radius, isMarkerDropped) {
-     	 var addressComponents = $('#meetingpoint-map').locationpicker('map').location.addressComponents;
-      	document.getElementById('meetingpoint').value = addressComponents.addressLine1+', '+addressComponents.postalCode+' '+addressComponents.city+', '+addressComponents.country; 
-    },
-	enableAutocomplete: true
-	});
-</script>
+					<tr id="row_meetingpoint_desc" <?php echo($karte?'':' class="hide"');?>>
+						<td>Adresse</td>
+						<td>
+							<input type="text" id="meetingpoint_desc" style="width: 100%" name="meetingpoint_desc" value="<?php echo isset($input['meetingpoint_desc']) ? $input['meetingpoint_desc'] : '';?>" />
+						</td>
+					</tr>
+					<!-- end row row_meetingpoint_desc -->
+				</table> 
+				<input type="hidden" id="meetingpoint-radius" /> <!--  --> 
+				<input type="hidden" id="meetingpoint-lat" name="meetingpoint-lat" /> <!--  --> 
+				<input type="hidden" id="meetingpoint-lon" name="meetingpoint-lon" />
+				<div id="meetingpoint-map" style="width: 100%; height: 400px; display: <?php echo($karte?'block':'none');?>;">
+				</div>	<!-- END div "meetingpoint-map --> 
+				<script>$('#meetingpoint-map').locationpicker({
+					location: {latitude: <?php echo isset($input['meetingpoint-lat']) ? $input['meetingpoint-lat'] : '49.85212170040001';?>, longitude: <?php echo isset($input['meetingpoint-lon']) ? $input['meetingpoint-lon'] : '8.670546531677246';?>},	
+					radius: 50,
+					inputBinding: {
+				        latitudeInput: $('#meetingpoint-lat'),
+				        longitudeInput: $('#meetingpoint-lon'),
+				        radiusInput: $('#meetingpoint-radius'),
+				        locationNameInput: $('#meetingpoint_desc')
+				    },
+				    onchanged: function (currentLocation, radius, isMarkerDropped) {
+				    	var addressComponents = $('#meetingpoint-map').locationpicker('map').location.addressComponents;
+				      	document.getElementById('meetingpoint_desc').value = addressComponents.addressLine1+', '+addressComponents.postalCode+' '+addressComponents.city+', '+addressComponents.country; 
+				    },
+					enableAutocomplete: true
+					});
+				</script>
 			</td>
 		</tr>
 		<!-- end row row_meetingmap -->

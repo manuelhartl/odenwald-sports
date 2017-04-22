@@ -190,8 +190,9 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		echo createUserProfilLink ( $u, 'style = "display: block; line-height: 18px;"', createUserInfo ( $u, $ue ) ) . PHP_EOL;
 		echo "</td>" . PHP_EOL;
 		
-		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
-		$meetingpoint_long = $tour->meetingPoint;
+		$meetingpoint_short = ! empty ( $tour->meetingPoint ) ? $tour->meetingPoint : $tour->meetingPoint_desc;
+		$meetingpoint_short = $tour->meetingPoint;
+		$meetingpoint_long = $tour->meetingPoint_desc;
 		
 		if (isset ( $row ['refm'] )) {
 			$dist = ", Tourstart ist in " . formatMeters ( $row ['refm'] ) . " Entfernung";

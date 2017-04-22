@@ -684,17 +684,32 @@ div1 > .tl-guide {
 		return(globalError("Tour Liste", msg, url, line, col, error));
 	};
 	
-	ko.options.deferUpdates = true;
-
 	var init = function(){
 		ko.applyBindings( new ToursViewModel() );
 		setTitle();
+		
 		Ps.initialize(document.getElementById('s2g-tablecontent'));
-		{
-			[].forEach.call(document.querySelectorAll('.tl-content-Beschreibung'), function (el) { Ps.initialize(el); });
+		
+		[].forEach.call(document.querySelectorAll('.tl-content-Beschreibung'), function (el) { 
+				Ps.initialize(el);
+			});
 		};
-	}
-	
+
+	var updateSB = function(){
+			[].forEach.call(document.querySelectorAll('.tl-content-Beschreibung'), function (el) { 
+					Ps.update(el);
+				});
+			console.log("ddd");
+		};
+		
+	ko.bindingHandlers.updateSB = {
+			    update: function(element) {    
+			    	Ps.update(element); 
+			    	console.log("eee");
+			    }    
+			};
+
+	ko.options.deferUpdates = true;
 
 	</script>
 <title>Sport2gether</title>		
@@ -788,7 +803,7 @@ div1 > .tl-guide {
 						<div class="tl-table-col-Teilnehmer">	<div class="s2g-tablecell"><input class="s2g-searchfield" data-bind="value: $root.searchMembers, valueUpdate: 'afterkeydown', attr: {title: getHeader('Teilnehmer').searchTitle}" /></div></div>
 					</div>
 				</div> <!--End div s2g-tableheader -->
-				<div id="s2g-tablecontent" data-bind="foreach: pagedRows">
+				<div id="s2g-tablecontent" data-bind="foreach: pagedRows, updateSB: true">
 					<!-- Tour Title -->
 					<div class="s2g-tablerow" data-bind="css: isEven()?'s2g-even-title':'s2g-odd-title'">
 						<div class="tl-table-col-title">
@@ -833,7 +848,7 @@ div1 > .tl-guide {
 							</div> <!-- div tl-table-col-Sport --> 
 							<div class="s2g-tablecell tl-table-col-Beschreibung" data-bind="click: $root.showTour.bind($data, id)">
 								<div><span class="tl-content-Treffpunkt" data-bind="text: meetingpoint, attr: {title: meetingpointInfo($root.me().latitude, $root.me().longitude)}" ></span></div>
-								<div onload="Ps.initialize(this);"><span class="tl-content-Beschreibung" data-bind="text: description, css: $root.showCompact()?'tl-compact':'tl-wrap'" ></span></div>
+								<div><span class="tl-content-Beschreibung" data-bind="text: description, css: $root.showCompact()?'tl-compact':'tl-wrap'" ></span></div>
 							</div> <!-- div tl-TableCell-Beschreibung -->
 							<div class="s2g-tablecell tl-table-col-Dauer medium"><span class="tl-TableCell-Content-Dauer" data-bind="text: durationText()" ></span></div>
 							<div class="s2g-tablecell tl-table-col-Distanz medium"><span class="tl-TableCell-Content-Distanz" data-bind="text: distanceText()" ></span></div>

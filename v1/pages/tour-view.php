@@ -32,8 +32,8 @@ echo $title;
 echo '<tr>';
 
 if (hasAuth ()) {
-	$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
-	$meetingpoint_long = $tour->meetingPoint;
+	$meetingpoint_short = ! empty ( $tour->meetingPoint ) ? $tour->meetingPoint : $tour->meetingPoint_desc;
+	$meetingpoint_long = $tour->meetingPoint_desc;
 	echo '<td title="' . $meetingpoint_long . '">' . $meetingpoint_short . '<br>(' . $meetingpoint_long . ')</td>';
 }
 echo "<td>" . $tour->description . "</td>";
