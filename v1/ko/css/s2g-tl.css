@@ -54,17 +54,17 @@
 }
 
 /* flow */
-#tl-tools-search {
-	float:	right;	
-}
 .tl-table-col-Sport, .tl-table-col-Beschreibung, .tl-table-col-Beschreibung-WA, .tl-table-col-Dauer, .tl-table-col-Distanz, .tl-table-col-Bergauf, .tl-table-col-Pace, .tl-table-col-Technik, .tl-table-col-Teilnehmer, .tl-table-col-Teilnehmer-WA, .tl-table-col-Scollbar {
-	float: left;
-}
-
-#tl-btn-tour, #tl-btn-rss, #tl-cb-group{
 	float:	left;
 }
-#tl-cb-tools, #tl-cb-tools-add{
+
+#tl-cb-tools, #tl-btn-tour, #tl-btn-rss, #tl-cb-group {
+	float:	left;
+}
+div#tl-tools-pagination, div#tl-tools-pagination > div {
+	float:	left;	
+}
+#tl-tools-add, #tl-tools-search {
 	float:	right;
 }
 

@@ -241,8 +241,8 @@ button[id=btn-logout]:hover {
 
 .s2g-icon-more, .s2g-icon-s-f, .s2g-icon-more:hover, .s2g-icon-s-f:hover {
     display: inline-block;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
 	vertical-align:	text-bottom;
     border: none;
 }

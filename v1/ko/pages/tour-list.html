@@ -760,13 +760,26 @@ div1 > .tl-guide {
 						</form>
 					</div> <!--End div topcheckbox -->
 				</div>  <!--End div tl-cb-group -->
-				<div id="tl-cb-tools">
-				</div>  <!--End div tl-cb_tools -->
-				<div id="tl-cb-tools-add">
+				
+				<div id="tl-tools-add">
+					<div id="tl-tools-pagination">
+						<div id="firstbutton" data-bind="visible: pageIndex() > 1">
+							<button id="btn-first" data-bind="click: firstPage, text:actPages('first', true)">&lt;&lt;</button>
+						</div><!--End div firstbutton -->
+						<div id="prevbutton" data-bind="visible: pageIndex() > 0">
+							<button id="btn-prev" data-bind="click: previousPage, text:actPages('previous', true)">&lt;</button>
+						</div><!--End div prevbutton -->
+						<div id="nextbutton" data-bind="visible: pageIndex() < maxPageIndex()">
+							<button id="btn-next" data-bind="click: nextPage, text:actPages('next', true)">&gt;</button>
+						</div><!--End div nextbutton -->
+						<div id="lastbutton" data-bind="visible: pageIndex() < maxPageIndex()">
+							<button id="btn-last" data-bind="click: lastPage, text:actPages('last', true)">&gt;&gt;</button>
+						</div><!--End div lastbutton -->
+					</div>  <!--End div tl-tools-pagination -->
 					<div id="tl-tools-search" class="minimum-V-medium">
 						<input type="button" title="zeige Suchbox" class="s2g-icon-s-f" data-bind="click: toggleShowSearch" />
 					</div>
-				</div>
+				</div> <!--End div tl-tools-add -->
 			</div>
 		</div> <!--End div s2g-pagetools -->
 		
