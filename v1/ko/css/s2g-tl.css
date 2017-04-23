@@ -49,13 +49,10 @@
 	width: calc( 200px );
 }
 
-.tl-table-col-Dauer, .tl-table-col-Distanz, .tl-table-col-Bergauf,.tl-table-col-Pace, .tl-table-col-Technik {
-    padding-top: 5px;
-}
-
 /* flow */
 .tl-table-col-Sport, .tl-table-col-Beschreibung, .tl-table-col-Beschreibung-WA, .tl-table-col-Dauer, .tl-table-col-Distanz, .tl-table-col-Bergauf, .tl-table-col-Pace, .tl-table-col-Technik, .tl-table-col-Teilnehmer, .tl-table-col-Teilnehmer-WA, .tl-table-col-Scollbar {
 	float:	left;
+    padding-top: 5px;
 }
 
 #tl-cb-tools, #tl-btn-tour, #tl-btn-rss, #tl-cb-group {
