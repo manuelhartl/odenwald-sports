@@ -26,7 +26,7 @@ function formatMeters($meters) {
 		return round ( $meters / 1000, 1 ) . ' km';
 	}
 }
-function getMailText(DBTour $tour, $attendees = 0) {
+function getMailText(DBTour $tour, $attendees = 0, $forGuide = false) {
 	return '<html><body><table>' . //
 '<tr><td>Sport:</td><td>' . $tour->sport->sportsubname . '</td></tr>' . //
 '<tr><td>Datum/Uhrzeit:</td><td>' . Utilities::getWeekDay ( $tour->startDateTime ) . ', ' . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '</td></tr>' . //
@@ -39,7 +39,7 @@ function getMailText(DBTour $tour, $attendees = 0) {
 '<tr><td>Pace:</td><td>' . $tour->speed . '/6</td></tr>' . //
 '<tr><td>Beschreibung:</td><td>' . htmlspecialchars ( $tour->description ) . '</td></tr>' . //
 '</table>' . //
-'<a href="' . getUrlPrefix () . '/index.php?action=tour-join&tourid=' . $tour->id . '">Mich bei dieser Tour anmelden</a><br/>' . //
+($forGuide?'':'<a href="' . getUrlPrefix () . '/index.php?action=tour-join&tourid=' . $tour->id . '">Mich bei dieser Tour anmelden</a><br/>') . //
 '<a href="' . getUrlPrefix () . '/index.php?action=tour-view&tourid=' . $tour->id . '">Diese Tour anzeigen</a><br/>' . //
 '<a href="' . getUrlPrefix () . '/index.php?action=tour-list">Touren auflisten</a>' . //
 '</body><html>'; //
@@ -70,6 +70,17 @@ function mailCancelTour($pdo, $tour) {
 	foreach ( $users as $user ) {
 		sendmail ( $user ['email'], $subject, $text, false );
 	}
+} 
+function mailJoinTour($pdo, $tour, $attendee) {
+	$subject = $attendee->username. ' hat sich bei deiner Tour angemeldet';
+	$users = getAttendees ( $pdo, $tour->id );
+	$text = getMailText ( $tour, count ( $users ), true);
+	sendmail ( $tour->guide->email, $subject, $text, false );
 }
-
+function mailLeaveTour($pdo, $tour, $attendee) {
+	$subject = $attendee->username. ' hat sich bei deiner Tour leider abgemeldet';
+	$users = getAttendees ( $pdo, $tour->id );
+	$text = getMailText ( $tour, count ( $users ), true);
+	sendmail ( $tour->guide->email, $subject, $text, false );
+}
 ?>

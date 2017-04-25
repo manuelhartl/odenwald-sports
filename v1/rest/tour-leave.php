@@ -21,6 +21,7 @@ if (! $tour) {
 } else {
 	if ((! $tour->canceled) && ($tour->startDateTime >= new DateTime ())) {
 		tourLeave ( $pdo, authUser ()->id, $tourid );
+		mailLeaveTour($pdo, $tour, authUser());
 		http_response_code ( 200 );
 	} else {
 		http_response_code ( 500 );
