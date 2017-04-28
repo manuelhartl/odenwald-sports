@@ -1603,6 +1603,7 @@
 			hasLocalStorage = lastLocalUpdate != null && lastLocalUpdate != ""; // does local data exist?
 			if(hasLocalStorage){
 				var lastVersion = getSessionStorage("lastVersion");
+				lastLocalUpdate = dateFromLokal(lastVersion);
 				hasLocalStorage = version() == lastVersion; // use only the same version
 			}
 		}
