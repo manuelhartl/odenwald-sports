@@ -1,4 +1,4 @@
-﻿	//'use strict';	// view_use_strict
+﻿	 'use strict';	// view_use_strict
 	
 	// diese beiden Konstanten müssen angepasst werden
 	const stage = "v1"; // v1, alpha, beta
@@ -1406,6 +1406,8 @@
 
 		self.versioninfo = version();
 		
+		self.origin = null;
+		
 		self.lastUpdate = null;
 		
 		self.users = ko.observableArray().extend({ rateLimit: 50 });		
@@ -1423,7 +1425,7 @@
 		self.setStatistics = function(year, withEvents, withFutureTours){
 			var now = getDate();
 			if(self.users().length>0){
-				sort_year = year;
+				var sort_year = year;
 				// reset statistics
 				self.tours().forEach(function(t,i,ts){ self.getUser(t.guide).guidedTours([]); t.members.forEach(function(m,i,ts){ self.getUser(m).toursGuided([]) }); });
 				// set statistic by criteria
@@ -1446,6 +1448,7 @@
 				
 		self.initFromServer = function(lastUpdate, theUsers, theTours){
 			self.lastUpdate = lastUpdate;
+			self.origin = "s";
 			self.users(theUsers);
 			self.tours(theTours);
 			self.setStatistics(-1, false, false);
@@ -1478,6 +1481,7 @@
 			}
 
 			self.lastUpdate = dateFromLokal(json.lastUpdate);
+			self.origin = "l";
 			self.users = ko.observableArray(theUsers);
 			self.tours = ko.observableArray(theTours);
 			self.setStatistics(-1, false, false);	
@@ -1603,7 +1607,7 @@
 			hasLocalStorage = lastLocalUpdate != null && lastLocalUpdate != ""; // does local data exist?
 			if(hasLocalStorage){
 				var lastVersion = getSessionStorage("lastVersion");
-				lastLocalUpdate = dateFromLokal(lastVersion);
+				lastLocalUpdate = dateFromLokal(lastLocalUpdate);
 				hasLocalStorage = version() == lastVersion; // use only the same version
 			}
 		}
@@ -1627,14 +1631,12 @@
 			data.lastUpdate = lastServerUpdate;
 			// and save it
 			saveData();
-			console.log("Server");
 		}else{
 			// local data is up to date		
 			if(data==null){
 				// get from local storage
 				data = new DataModell();
 				data.initFromJSON(getSessionStorage("data"));
-				console.log("Lokal");
 			}			
 		}
 		return(data);
