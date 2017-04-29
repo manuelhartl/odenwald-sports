@@ -1061,6 +1061,7 @@
 			tour.active = active;
 		}
 		if(saveTourObject(tour)){
+			data.dirty
 			if(id <= 0){
 				data.tours().push(tour);
 			}else{
@@ -1407,7 +1408,7 @@
 		self.versioninfo = version();
 		
 		self.origin = null;
-		
+		self.dirty = false;
 		self.lastUpdate = null;
 		
 		self.users = ko.observableArray().extend({ rateLimit: 50 });		
@@ -1630,6 +1631,7 @@
 			data.initFromServer(lastServerUpdate, theUsers, theTours);
 			data.lastUpdate = lastServerUpdate;
 			// and save it
+			data.dirty=true;
 			saveData();
 		}else{
 			// local data is up to date		
@@ -1651,13 +1653,16 @@
 	
 	var saveData = function(){
 		// TODO GW: Save data   return;
-		if(data!=null){				
-			// save it
-			var t = new Date();
-			setSessionStorage("data", data.toJSON());
-			setSessionStorage("lastUpdate", data.lastUpdate.toJSON());
-			setSessionStorage("lastVersion", data.versioninfo);
-			console.log("lokales Speichern : "+ (new Date().getTime() - t.getTime())/1000);			
+		if(data!=null){
+			if(data.dirty){
+				// save it
+				var t = new Date();
+				setSessionStorage("data", data.toJSON());
+				setSessionStorage("lastUpdate", data.lastUpdate.toJSON());
+				setSessionStorage("lastVersion", data.versioninfo);
+				data.dirty=false;
+				console.log("lokales Speichern : "+ (new Date().getTime() - t.getTime())/1000);	
+			}
 		}else{
 			removeSessionStorage("data");
 			removeSessionStorage("lastUpdate");
