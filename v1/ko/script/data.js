@@ -972,6 +972,7 @@
 			},
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
+				setSessionStorage("lastUpdate", 0); // force server update
 				retValue = true;
 			}
 		});
@@ -981,7 +982,6 @@
 	
 	function saveTourObject(tour){
 		var retValue = false;
-		data.lastUpdate = getDate();
 		var tourtype = data.getTourTypebyType(tour.tourtype);
 		var guide = data.getUser(tour.guide);
 		
@@ -1030,6 +1030,7 @@
 			},
 			success: function( parameter, textstatus, xhr ) {
 				showAJAXSuccess(this.url, parameter, textstatus, xhr);
+				setSessionStorage("lastUpdate", 0); // force server update
 				// übernehme aus response die neue tour ID
 				if(tour.id<0){
 					tour.id = parameter.tours[0].id;
@@ -1061,7 +1062,6 @@
 			tour.active = active;
 		}
 		if(saveTourObject(tour)){
-			data.dirty
 			if(id <= 0){
 				data.tours().push(tour);
 			}else{
@@ -1073,9 +1073,6 @@
 				if(tour.members.length==members.length && tour.members.every(function(v,i) { return v === members[i]})){
 					var diff_lefttour = $(tour.members).not(members).get();
 					var diff_addtour = $(members).not(tour.members).get();
-					
-					// TODO: GW set date from return values
-					data.lastUpdate = getDate();
 				}
 			}
 			setMessage((id <= 0?"Neue Tour wurde eingegeben":"Tour wurde geändert"));
@@ -1629,10 +1626,8 @@
 			data = new DataModell();		
 			
 			data.initFromServer(lastServerUpdate, theUsers, theTours);
-			data.lastUpdate = lastServerUpdate;
 			// and save it
-			data.dirty=true;
-			saveData();
+			saveData(true);
 		}else{
 			// local data is up to date		
 			if(data==null){
@@ -1651,17 +1646,24 @@
 		removeSessionStorage("lastVersion");
 	}
 	
-	var saveData = function(){
+	var saveData = function(ignore){
 		// TODO GW: Save data   return;
 		if(data!=null){
-			if(data.dirty){
-				// save it
+			// save it
+			var shouldSave = ignore;
+			if(!shouldSave){
+				// check local content
+				var lastUpdate = getSessionStorage("lastUpdate");
+				if(lastUpdate != null && lastUpdate != ""){
+					shouldSave = dateFromLokal(lastUpdate)<data.lastUpdate;
+				}
+			}
+			if(shouldSave){
 				var t = new Date();
 				setSessionStorage("data", data.toJSON());
 				setSessionStorage("lastUpdate", data.lastUpdate.toJSON());
 				setSessionStorage("lastVersion", data.versioninfo);
-				data.dirty=false;
-				console.log("lokales Speichern : "+ (new Date().getTime() - t.getTime())/1000);	
+				console.log("lokales Speichern : "+ (new Date().getTime() - t.getTime())/1000);
 			}
 		}else{
 			removeSessionStorage("data");
@@ -1674,7 +1676,8 @@
 		// TODO: GW only if destination changes
 		// get actual location
 		if(getLocation() != destination){
-			saveData();
+			// only if neccessary
+			saveData(false);
 			
 			// save new location
 			// soll das von der seite gemacht werden?
