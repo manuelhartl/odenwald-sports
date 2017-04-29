@@ -63,6 +63,7 @@ require_once __DIR__ . '/../lib/db_tours.php';
 								el2.className = el2.className.replace( /(?:^|\s)hide(?!\S)/g , '' );
 								el3.style.display = 'block';
 							} else {
+								el2.value='';		
 								if(!el1.className.match( /(?:^|\s)hide(?!\S)/g , '' )){
 									el1.className += 'hide';
 								}
@@ -89,9 +90,11 @@ require_once __DIR__ . '/../lib/db_tours.php';
 			// get preferred tour description
 			$hasptd = isset ( $config ['PTD'] ) && $config ['PTD'];
 			$lasttd = $hasptd ? utf8_encode($config ['PTD']) : 'Karte';
+			
+// gw echo  '<td>$lasttd ist ' . ($lasttd) .  '---' . utf8_encode($config ['PTD']) . '</td>', PHP_EOL;
 		}
 		$karte = ($lasttd=='Karte');
-
+// gw echo  '<td>Karte ist ' . ($karte?'wahr':'falsch') .'</td>', PHP_EOL;
 		$selected = $karte ? ' selected' : '';
 		echo '<option value="49.85212170040001;8.670546531677246' . '"' . $selected . '">Karte</option>', PHP_EOL;
 		foreach ( $places as $place ) {
