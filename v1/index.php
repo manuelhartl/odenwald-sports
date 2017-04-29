@@ -309,7 +309,7 @@ if (array_key_exists ( 'action', $_REQUEST )) {
 						setPage ( 'tour-new' );
 						break;
 					case 'tour-edit' :
-						$tourid = $_POST ['tourid'];
+						$tourid = $_REQUEST ['tourid'];
 						$tour = getDBTourById ( $pdo, $tourid );
 						$input ['tourid'] = $tourid;
 						$input ['sport'] = $tour->sport->sportsubid;

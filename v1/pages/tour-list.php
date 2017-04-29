@@ -14,6 +14,7 @@ if (hasAuth ()) {
 	echo '  <form action="" method="post"><input type="hidden" name="action" value="tour-new"/><input type="submit" value="Neue Tour"/></form>';
 	echo '</div> <!--End div tourbutton -->' . PHP_EOL;
 	// checkbox
+	
 
 	echo '<div id="checkbox">' . PHP_EOL;
 	echo '  <div id="topcheckbox">' . PHP_EOL;
@@ -26,8 +27,7 @@ if (hasAuth ()) {
 	echo '        </label>' . PHP_EOL;
 	echo '     </fieldset>' . PHP_EOL;
 	echo '    </form>' . PHP_EOL;
-	echo '  </div> <!--End div topcheckbox -->' . PHP_EOL;
-
+	
 	echo '  <div id="bottomcheckbox">' . PHP_EOL;
 	echo '    <form name="hiddenTours" action="" method="post">' . PHP_EOL;
 	echo '    <input name="action" type="hidden" value="tour-list-canceled" />';
@@ -38,9 +38,8 @@ if (hasAuth ()) {
 	echo '        </label>' . PHP_EOL;
 	echo '      </fieldset>' . PHP_EOL;
 	echo '    </form>' . PHP_EOL;
-	echo '  </div> <!--End div bottomcheckbox -->' . PHP_EOL;
 	echo '</div> <!--End div checkbox -->' . PHP_EOL;
-
+	
 	// show RSS-feed
 	echo '<div id="rssbutton">' . PHP_EOL;
 	echo '  <a href="rss/">RSS</a>';
@@ -90,8 +89,11 @@ if (hasAuth ()) {
 	}
 }
 
-//$stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
-$stmt = $pdo->prepare ( 'select *,t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
+$stmt = $pdo->prepare ( // 
+'select t.id,t.fk_guide_id,t.fk_guide_id,t.fk_sport_subtype_id,t.startdate,t.duration,t.meetingpoint,t.meetingpoint_desc,t.description,t.status,t.skill,t.speed,t.distance,t.elevation,t.bringlight' . //
+',111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
+',X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long, ss.id as sportid, bringlight' . //
+',s.sportname,ss.sportsubname' . //
 ' from tour t' . //
 ' left join user g ON (t.fk_guide_id=g.id) ' . //
 ' left join sport_subtype ss ON (t.fk_sport_subtype_id=ss.id) ' . //
@@ -102,8 +104,8 @@ $stmt = $pdo->prepare ( 'select *,t.status as tourstatus,t.id as id, g.id as gui
 ($showold == 'true' ? ' AND startdate<now() ORDER BY startdate DESC LIMIT 100' : ' AND startdate>=now() ORDER BY startdate ASC') . //
 '' ); //
 ex2er ( $stmt, array (
-		//$reference->gps->lat,
-		//$reference->gps->long
+    $reference->gps->lat,
+    $reference->gps->long
 ) );
 
 $daystyle = 'even';
@@ -122,30 +124,30 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	foreach ( $users as $user ) {
 		// $tourmember = DB_member::getMemberById ( $pdo, $user ['id'] );
 		$u = new DBUser ();
-		$u->id = $user ['id'];
+
 		$u->email = $user ['email'];
 		$u->username = $user ['username'];
 		$ue = getDBUserExtraById ( $pdo, $u->id );
-
+		
 		$emailString = '<a id="tour-mail1" class="icon-attendee-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&touserid=' . $u->id . '&subject=' . urlencode ( $tourDescription ) . '"> </a>';
-		$attendeeString = $attendeeString . '<div class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profil">' . createUserProfilLink ( $u, "style='border: none; line-height: 18px;'", createUserInfo ( $u, $ue ) ) . '</div></div> ';
-		if ($user ['id'] == $authuserid) {
+
+
 			$joinedTour = true;
 		}
 	}
-
+	
 	$startdate = $tour->startDateTime;
-
+	
 	// has day changed?
 	if (! isset ( $lastdate ) || $lastdate->format ( 'ymd' ) != $startdate->format ( 'ymd' )) {
-		$daystyle = ($daystyle == 'even') ? 'odd' : 'even';
+
 		$linestyle = '';
 	} else {
 		$linestyle = 'line';
 	}
 	$cancelstyle = ($tour->canceled) ? 'canceled' : '';
 	$dstyle = $daystyle . (strlen ( $linestyle ) > 0 ? ' ' . $linestyle : "") . (strlen ( $cancelstyle ) > 0 ? ' ' . $cancelstyle : "");
-
+	
 	$firsttableentry = ! (isset ( $lastdate ) && $lastdate->format ( 'ymd' ) == $startdate->format ( 'ymd' ));
 	if ($firsttableentry) {
 		echo '<tr class="' . $daystyle . '">', PHP_EOL;
@@ -164,35 +166,35 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo '        <tr>', PHP_EOL;
 	echo '          <td style="color: black;">' . $startdate->format ( 'H:i' ) . '</td>', PHP_EOL;
 	echo '        <tr>', PHP_EOL;
-	echo '        </tr>', PHP_EOL;
+
 	echo '          <td style="color: black; font-size: 0.8em;">' . ($countAttendees > 0 ? $countAttendees . " TN" : "") . '</td>', PHP_EOL;
 	echo '        </tr>', PHP_EOL;
 	echo '      </table>', PHP_EOL;
 	echo '    </td>', PHP_EOL;
 	echo '  </tr>', PHP_EOL;
 	echo '</table>', PHP_EOL;
-	echo '</td>', PHP_EOL;
+
 
 	if (hasAuth ()) {
 		// guide
-		$u = new DBUser ();
+
 		$u->id = $tour->guide->id;
 		$u->email = $tour->guide->email;
 		$u->username = $tour->guide->username;
-		$ue = getDBUserExtraById ( $pdo, $u->id );
-
+		$meetingpoint_short = ! empty ( $tour->meetingPoint ) ? $tour->meetingPoint : $tour->meetingPoint_desc;
+		$meetingpoint_long = $tour->meetingPoint_desc;
 		$emailString = '<a id="tour-mail" class="icon-guide-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&touserid=' . $u->id . '&subject=' . urlencode ( $tourDescription ) . '"></a>' . PHP_EOL;
-
+		
 		echo "<td width='30%' style='text-align: left;'>" . PHP_EOL;
 		echo (($tour->guide->id == $authuserid) ? "" : $emailString) . PHP_EOL;
 		echo "</td>" . PHP_EOL;
-
+		
 		echo "<td width='70%' style='text-align: left;'>" . PHP_EOL;
 		echo createUserProfilLink ( $u, 'style = "display: block; line-height: 18px;"', createUserInfo ( $u, $ue ) ) . PHP_EOL;
 		echo "</td>" . PHP_EOL;
 		
-		$meetingpoint_short = ! empty ( $tour->meetingPoint ) ? $tour->meetingPoint : $tour->meetingPoint_desc;
-		$meetingpoint_long = $tour->meetingPoint_desc;
+		$meetingpoint_short = ! empty ( $tour->meetingPoint_desc ) ? $tour->meetingPoint_desc : $tour->meetingPoint;
+		$meetingpoint_long = $tour->meetingPoint;
 		
 		if (isset ( $row ['refm'] )) {
 			$dist = ", Tourstart ist in " . formatMeters ( $row ['refm'] ) . " Entfernung";
@@ -206,20 +208,20 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 		echo "<td style='text-align: left;'><span class='flex1'>" . $tour->description . "</span></td>" . PHP_EOL;
 	} else {
 		echo "<td style='text-align: left;'><span class='flex'>" . Utilities::clearText4Display ( $tour->description ) . "</span></td>" . PHP_EOL;
-	}
+	} 
 	echo "<td class='medium' >" . formatMinutes ( $tour->duration ) . "</td>" . PHP_EOL;
 	echo "<td class='medium' >" . formatMeters ( $tour->distance ) . "</td>" . PHP_EOL;
 	echo "<td class='medium' >" . formatMeters ( $tour->elevation ) . "</td>" . PHP_EOL;
 	echo "<td class='big' >" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>" . PHP_EOL;
 	echo "<td class='big' >" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>" . PHP_EOL;
+	
 
-	if (hasAuth ()) {
 		// attendees
 		echo "<td style='text-align: left;'><span class='attendees, clearfix'>" . $attendeeString . '</span></td>' . PHP_EOL;
-
+		
 		// functions
 		echo "<td style='text-align: left;'>" . PHP_EOL;
-
+		
 		if ($tour->startDateTime >= new DateTime ()) {
 			// Mail to all
 			$userIDs = strval ( $tour->guide->id );
@@ -229,7 +231,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 				$userIDs .= "," . $user ['id'];
 			}
 			echo '<a id="tour-mail" class="icon-tour-mail" title="Mail an alle Mitfahrer und Guide" href="?action=mail-user&totourid=' . $tour->id . '&subject=' . urlencode ( 'Fragen (an alle) zur Tour am ' ) . $tour->startDateTime->format ( 'd.m.Y H:i' ) . '"></a>' . PHP_EOL;
-
+			
 			if ($tour->guide->id == $authuserid) {
 				// edit
 				if (! $tour->canceled) {

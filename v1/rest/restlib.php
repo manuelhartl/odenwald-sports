@@ -7,12 +7,19 @@ function htmlHeader($redirect, $to = 'index.php') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta http-equiv="refresh"
-	content="<?php echo $redirect.'; url='.$to ?>">
+<meta http-equiv="refresh" content="<?php echo $redirect.'; url='.$to ?>">
 <title>Touren</title>
 </head>
 <body>
 <?php
+}
+function error($str) {
+	header ( 'Content-type: application/json' );
+	$json = array ();
+	$json ['text'] = $str;
+	echo json_encode ( $json );
+	http_response_code ( 400 );
+	exit ();
 }
 function jsonCheckAuth() {
 	if (! hasAuth ()) {
@@ -39,7 +46,10 @@ function getTourStmt($pdo, $id = -1) {
 		}
 	}
 	
-	$stmt = $pdo->prepare ( 'select *,111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
+	$stmt = $pdo->prepare ( //
+'select t.id,t.fk_guide_id,t.fk_guide_id,t.fk_sport_subtype_id,t.startdate,t.duration,t.meetingpoint,t.meetingpoint_desc,t.description,t.status,t.skill,t.speed,t.distance,t.elevation,t.bringlight' . //
+',s.sportname,ss.sportsubname' . //
+',111195 * ST_Distance(POINT(?,?), meetingpoint_coord) as refm, t.status as tourstatus,t.id as id, g.id as guide, g.username as guidename' . //
 ',X(meetingpoint_coord) as meetingpoint_lat,Y(meetingpoint_coord) as meetingpoint_long, ss.id as sportid, bringlight' . //
 ' from tour t' . //
 ' left join user g ON (t.fk_guide_id=g.id) ' . //
