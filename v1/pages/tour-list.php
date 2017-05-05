@@ -124,14 +124,14 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	foreach ( $users as $user ) {
 		// $tourmember = DB_member::getMemberById ( $pdo, $user ['id'] );
 		$u = new DBUser ();
-
+		$u->id = $user ['id'];
 		$u->email = $user ['email'];
 		$u->username = $user ['username'];
 		$ue = getDBUserExtraById ( $pdo, $u->id );
 		
 		$emailString = '<a id="tour-mail1" class="icon-attendee-mail" title="Mail an ' . $u->username . '" href="?action=mail-user&touserid=' . $u->id . '&subject=' . urlencode ( $tourDescription ) . '"> </a>';
-
-
+		$attendeeString = $attendeeString . '<div class="attendee"><div class="attendee_mail">' . $emailString . '</div><div class="attendee_profil">' . createUserProfilLink ( $u, "style='border: none; line-height: 18px;'", createUserInfo ( $u, $ue ) ) . '</div></div> ';
+		if ($user ['id'] == $authuserid) {
 			$joinedTour = true;
 		}
 	}
@@ -215,7 +215,7 @@ while ( $row = $stmt->fetch ( PDO::FETCH_ASSOC ) ) {
 	echo "<td class='big' >" . getStars ( $tour->speed, 'speed' . $tour->id ) . "</td>" . PHP_EOL;
 	echo "<td class='big' >" . getStars ( $tour->skill, 'skill' . $tour->id ) . "</td>" . PHP_EOL;
 	
-
+	if (hasAuth ()) {
 		// attendees
 		echo "<td style='text-align: left;'><span class='attendees, clearfix'>" . $attendeeString . '</span></td>' . PHP_EOL;
 		
